@@ -1,19 +1,17 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet, Text, View } from 'react-native';
-import MainScreen from './Screens/Main';
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { firebaseAuth } from './firebaseConfig';
 import ForgetPasswordScreen from './Screens/ForgetPassword';
-import UserDatesScreen from './Screens/UserDates';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import AdminComponentWrapper from './contexts/Admin/AdminComponentWrapper';
 import LoginComponentWrapper from './contexts/Login/LoginComponentWrapper';
 import CreateUserComponentWrapper from './contexts/Login/CreateUserComponentWrapper';
-import DatesComponentWrapper from './contexts/Dates/DatesComponentWrapper';
 import AboutComponentWrapper from './contexts/About/AboutComponentWrapper';
+import MainComponentWrapper from './contexts/Main/MainComponentWrapper';
 
 
 const Stack = createNativeStackNavigator()
@@ -40,7 +38,7 @@ export default function App({ navigation }) {
       <NavigationContainer>
         <Stack.Navigator initialRouteName='/Login'>
           {user ?
-            <Stack.Screen name='Main' component={MainScreen} initialParams={{}}
+            <Stack.Screen name='Main' component={MainComponentWrapper} initialParams={{}}
               options={({ navigation }) => ({
                 headerShown: false
               })} />
@@ -79,12 +77,6 @@ export default function App({ navigation }) {
                   <Text style={{ color: "#fff", fontSize: 24, marginLeft: 10 }} onPress={() => navigation.navigate("Login")}>Back</Text>
                 </View>
               ))
-          })} />
-
-          <Stack.Screen name='Dates' component={DatesComponentWrapper} options={({ navigation }) => ({
-            title: "",
-            headerShown: false,
-            headerTransparent: true,
           })} />
 
           <Stack.Screen name='Admin' component={AdminComponentWrapper} options={({ navigation }) => ({

@@ -1,74 +1,110 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { useContext } from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, ScrollView } from 'react-native'
+import React, { useContext, useEffect } from 'react'
 import AboutContext from '../../contexts/About/AboutContext'
 import Timetable from 'react-native-calendar-timetable'
-import { range, windowWidth } from '../../variables'
+import { range, windowHeight, windowWidth } from '../../variables'
 import Event from '../Event'
-import { StyleSheet } from 'react-native'
-import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
-import { TouchableOpacity } from 'react-native'
+import Header from '../Header'
+
+
+
 
 const StudentView = ({ navigation, route }) => {
 
-    const { userWeek, days, handlePressedID, filterDays, filteredCalendarDays, userInfo, pressedID } = useContext(AboutContext)
+    const { userWeek, days, handlePressedID, filterDays, filteredCalendarDays, userInfo, pressedID, handlePlannedDates, handleStudentPopup, studentPopup } = useContext(AboutContext)
+
+
+
+    useEffect(() => {
+        filterDays(userWeek, pressedID);
+    }, [userWeek[pressedID].from, userWeek[pressedID].to])
+
 
     return (
-        <View>
-            {userInfo.status === "student"
-                ?
-                <View>
-                    {userWeek != "undefined" ?
-                        <View style={{ ...styles.item__wrapper, marginBottom: 30, width: windowWidth, flex: 1, flexDirection: "column", justifyContent: 'center', alignItems: 'center' }}>
-                            <View style={styles.days__container}>
-                                {
-                                    days != "undefined" ?
-                                        days.map((item, i) => {
-                                            return (
-                                                <View style={{
-                                                    height: 50
-                                                }} key={i}>
-                                                    <Text onPress={() => { handlePressedID(i); filterDays(userWeek, i) }}
-                                                        style={pressedID === i ? styles.days__item_active : styles.days__item}>{item.slice(0, 1)}</Text>
-                                                </View>
-                                            )
-                                        })
-                                        :
-                                        <></>
-                                }
-                            </View>
-                            <View style={{ width: windowWidth * 0.85 }}>
-                                <Timetable
-                                    fromHour={7.30}
-                                    toHour={20.00}
-                                    scrollViewProps={{ scrollEnabled: false }}
-                                    items={filteredCalendarDays}
-                                    hideNowLine={true}
-                                    columnWidth={windowWidth * 0.85}
-                                    style={{ width: windowWidth * 0.85, marginLeft: 'auto', marginRight: 'auto' }}
-                                    renderItem={props => <Event props={props} key={Math.random() * 10000} />}
-                                    // provide only one of these
-                                    range={range}
-                                />
-                            </View>
-                            <TouchableOpacity style={styles.button__bg} onPress={() => navigation.navigate('Dates')}>
-                                <IconAnt name="calendar" size={24} color="#000" style={{ textAlign: 'center', height: 40 }} />
-                            </TouchableOpacity>
+
+        userInfo.status === "student"
+            ?
+            <View style={styles.container}>
+
+                < ImageBackground style={styles.bg} source={require('../../images/Books.jpg')} blurRadius={1}>
+                    <Header navigation={navigation} status={userInfo.status} />
+                    <ScrollView>
+
+                        <View>
+                            {userWeek != "undefined" ?
+                                <View style={{ ...styles.item__wrapper, marginBottom: 30, width: windowWidth, flex: 1, flexDirection: "column", justifyContent: 'center', alignItems: 'center' }}>
+                                    <View style={styles.days__container}>
+                                        {
+                                            days != "undefined" ?
+                                                days.map((item, i) => {
+                                                    return (
+                                                        <TouchableOpacity
+                                                            onLongPress={() => {
+                                                                handlePressedID(i);
+                                                                handlePlannedDates(i);
+                                                                filterDays(userWeek, i);
+                                                                handleStudentPopup({ isVisible: !studentPopup.isVisible });
+                                                            }}
+                                                            onPress={() => { handlePressedID(i); handlePlannedDates(i); filterDays(userWeek, i) }}
+                                                            style={{
+                                                                height: 50
+                                                            }}
+                                                            key={i}>
+                                                            <Text
+                                                                style={pressedID === i ? styles.days__item_active : styles.days__item}>
+                                                                {item.slice(0, 1)}
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                    )
+                                                })
+                                                :
+                                                <></>
+                                        }
+                                    </View>
+
+                                    <View style={{ width: windowWidth * 0.85 }}>
+                                        <Timetable
+                                            fromHour={7.30}
+                                            toHour={20.00}
+                                            scrollViewProps={{ scrollEnabled: false }}
+                                            items={filteredCalendarDays}
+                                            hideNowLine={true}
+                                            columnWidth={windowWidth * 0.85}
+                                            style={{ width: windowWidth * 0.85, marginLeft: 'auto', marginRight: 'auto' }}
+                                            renderItem={props => <Event props={props} key={Math.random() * 10000} />}
+                                            // provide only one of these
+                                            range={range}
+                                        />
+                                    </View>
+                                </View>
+                                : <></>
+                            }
                         </View>
-                        : <></>
-                    }
-                    :
-                    <></>
-                </View>
-                :
-                <></>
-            }
-        </View>
+                    </ScrollView>
+                </ImageBackground>
+
+            </View>
+            :
+            <></>
+
     )
 }
 
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+    },
+    bg: {
+        width: windowWidth,
+        height: windowHeight,
+        flex: 2,
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start'
+    },
     item__wrapper: {
         marginTop: 5,
         width: windowWidth - 40

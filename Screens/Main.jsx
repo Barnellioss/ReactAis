@@ -1,114 +1,25 @@
 import { View, StyleSheet, ImageBackground, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { setGroup, setGroups, setUser, setUserInfo, setWeek } from '../redux/reducers/reducers';
-import { getDocs, query, where } from 'firebase/firestore';
-import { firebaseAuth, firebaseGroupsInfo, firebaseUserDatesColumn, firebaseUserInfo } from '../firebaseConfig';
+import React, { useEffect } from 'react'
+import { firebaseAuth } from '../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
-import { windowWidth, windowHeight, week, weekStart, weekEnd } from '../variables';
-import Timetable from 'react-native-calendar-timetable';
-import { Text } from 'react-native';
-import Event from '../components/Event';
+import { windowWidth, windowHeight, week } from '../variables';
 import Header from '../components/Header';
+import { useContext } from 'react';
+import MainContext from '../contexts/Main/MainContext';
 
 
 
 function MainScreen({ navigation, route }) {
 
-  const dispatch = useDispatch();
-  let { userWeek, userInfo, user, groups } = useSelector((store) => store.state);
-  //let days = userWeek.map(a => a.day);
-
-
-
-  //const range = { from: new Date(weekStart), till: new Date(weekEnd) };
-  //const [filteredCalendarDays, setFilteredDays] = useState([]);
-  //const [pressedID, setPressed] = useState(0);
-
-
-  /*
-  function filterDays(userWeek, index) {
-    if (userWeek.length > 0) {
-      let filteredDays = [];
-      userWeek.filter(a => {
-        let americanDay = new Date(a.from * 1000).getDay();
-        if (americanDay === 0 && index === 6) {
-          filteredDays.push({ title: a.title, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000) });
-        }
-        else if (americanDay === index + 1) {
-          filteredDays.push({ title: a.title, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000) });
-        }
-      });
-      setFilteredDays(filteredDays);
-    }
-  }*/
-
-
+  const { getUserInfo, getDates, user, userInfo } = useContext(MainContext);
 
   useEffect(() => {
     onAuthStateChanged(firebaseAuth, (user) => {
 
-      //Get user info from firebase
+      //Get info from firebase
       if (user != null) {
-
-        let infoRes = [];
-        let usersInfoStorage = [];
-
-        getDocs(query(firebaseUserInfo, where("userID", "==", user.uid)))
-          .then((data) => {
-            data.docs.forEach((item) => {
-              usersInfoStorage.push(({ ...item.data() }))
-            });
-            infoRes = JSON.parse(JSON.stringify(usersInfoStorage));
-
-            getDocs(query(firebaseGroupsInfo), where("year", "==", infoRes[0]?.currentYear))
-              .then((snapshot) => {
-                let groups = []
-                snapshot.docs.forEach((item) => {
-                  groups.push(({ ...item.data() }))
-                });
-                dispatch(setGroups(JSON.parse(JSON.stringify(groups))))
-              }).catch(error => {
-                console.log(error.message);
-              })
-
-            dispatch(setUserInfo(...infoRes))
-          }).catch(error => {
-            console.log(error.message);
-          })
-
-
-          //Get dates
-        let usersStorage = [];
-        let res = [];
-        getDocs(query(firebaseUserDatesColumn, where("userID", "==", user.uid)))
-          .then((snapshot) => {
-            snapshot.docs.forEach((item) => {
-              usersStorage.push(({ ...item.data() }))
-            });
-
-            let parsed = JSON.parse(JSON.stringify(usersStorage))
-            userWeek.map((item, i) => {
-              let serverDay = parsed.filter(a => a.day === item.day);
-              if (serverDay.length === 1) {
-                res.push({ ...item, from: serverDay[0].from.seconds, to: serverDay[0].to.seconds, title: serverDay[0].title })
-              }
-              else {
-                res.push(item)
-              }
-            })
-            dispatch(setWeek(res));
-
-            filterDays(res, pressedID);
-
-          }).catch(error => {
-            console.log(error.message);
-          })
-      }
-
-      else {
-        dispatch(setWeek(week));
-        dispatch(setGroups([]));
+        getUserInfo(user);
+        getDates(user);
       }
 
     })
@@ -121,7 +32,7 @@ function MainScreen({ navigation, route }) {
     <View style={styles.container}>
       <ImageBackground style={styles.bg} source={require('../images/Books.jpg')} blurRadius={1}>
         <Header navigation={navigation} status={userInfo != null ? userInfo.status : "student"} />
-        <ScrollView >
+        <ScrollView>
           {/* userWeek != "undefined" ?
             <View style={{ ...styles.item__wrapper, marginBottom: 30, width: windowWidth, flex: 1, flexDirection: "column", justifyContent: 'center', alignItems: 'center' }}>
               <View style={styles.days__container}>

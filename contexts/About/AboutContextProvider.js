@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AboutContext from './AboutContext';
 import * as ImagePicker from 'expo-image-picker';
-import { doc, setDoc, updateDoc } from 'firebase/firestore';
-import { firebaseUserInfo } from '../../firebaseConfig';
-import { setUserInfo } from '../../redux/reducers/reducers';
-import { weekEnd, weekStart } from '../../variables';
+import { addDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { firebaseAuth, firebaseUserDatesColumn, firebaseUserInfo } from '../../firebaseConfig';
+import { setUserInfo, setWeek } from '../../redux/reducers/reducers';
+import { dayInSeconds, hourInSeconds, weekEnd, weekStart } from '../../variables';
 
 
 const AboutContextProvider = ({ children }) => {
+
+    const auth = firebaseAuth;
 
     let dispatch = useDispatch();
 
@@ -106,7 +108,7 @@ const AboutContextProvider = ({ children }) => {
                 dispatch(setUserInfo({ ...userInfo, name: name, lastname: lastname }));
             })
         } catch (error) {
-            setError(error.message);
+            handleError(error.message);
         }
         finally {
             handleLoading(false);
@@ -136,6 +138,97 @@ const AboutContextProvider = ({ children }) => {
         }
     }
 
+    /*
+    const data = {
+        labels: userWeek.map(a => a.day), // optional
+        data: [0.6, 0.7, 0.5, 0.8, 0.9]
+    };
+    */
+
+
+    //Planned dates
+
+
+    const [plannedDates, setDates] = useState({
+        from: new Date(userWeek[pressedID].from * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000)),
+        to: new Date(userWeek[pressedID].to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 120000))
+    });
+
+
+
+
+    const handlePlannedDates = (pressedID) => {
+        setDates((prevDatesData) => ({
+            ...prevDatesData,
+            from: new Date(userWeek[pressedID].from * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000)),
+            to: new Date(userWeek[pressedID].to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000))
+        }));
+    }
+
+
+    const handlePickerChange = (e) => {
+        const { name, value } = e;
+        setDates((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    }
+
+
+
+    //Set localy User day
+    const handleSetUserWeek = async (pressedID) => {
+
+        handleLoading(true);
+        let dateFrom = new Date(plannedDates.from.getTime());
+        let dateTo = new Date(plannedDates.to.getTime());
+
+
+        let fromFirebase = new Date(weekStart + ((pressedID) * dayInSeconds) + (dateFrom.getHours() * hourInSeconds) + (dateFrom.getMinutes() * 60000)).getTime();
+        let toFirebase = new Date(weekStart + ((pressedID) * dayInSeconds) + (dateTo.getHours() * hourInSeconds) + (dateTo.getMinutes() * 60000)).getTime();
+
+        //Change
+        let newUserWeek = [...userWeek];
+        newUserWeek[pressedID] = {
+            ...userWeek[pressedID],
+            from: fromFirebase / 1000,
+            to: toFirebase / 1000,
+        }
+        //
+
+
+        let date = {
+            day: days[pressedID],
+            userID: auth.currentUser.uid,
+            title: "",
+            from: new Date(fromFirebase),
+            to: new Date(toFirebase)
+        }
+
+        try {
+            if (userWeek[pressedID].docID != "") {
+                const datesDocRef = doc(firebaseUserDatesColumn, `${userWeek[pressedID].docID}`);
+                await setDoc(datesDocRef, date);
+            }
+            else {
+                await addDoc(firebaseUserDatesColumn, date);
+            }
+            dispatch(setWeek(newUserWeek));
+        } catch (error) {
+            handleError(error.message);
+        }
+        handleLoading(false);
+    }
+
+    //Student planning date state. Popup opens on long press
+
+    const [studentPopup, setPopupData] = useState(
+        { isVisible: false }
+    );
+
+    const handleStudentPopup = (e) => {
+        setPopupData(e);
+    }
 
 
     return (
@@ -145,7 +238,10 @@ const AboutContextProvider = ({ children }) => {
             updateUser, error, nameData,
             loading, handlePressedID, filterDays,
             pressedID, pickImage, isActive, handleActiveMode,
-            handleNameChange, userWeek, filteredCalendarDays
+            handlePlannedDates, userWeek, filteredCalendarDays,
+            handleSetUserWeek, plannedDates,
+            range, studentPopup, handleStudentPopup,
+            handlePickerChange
         }}>
             {children}
         </AboutContext.Provider>

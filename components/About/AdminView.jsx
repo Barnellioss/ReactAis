@@ -1,19 +1,22 @@
-import { View, Text, StyleSheet, TextInput, Button, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Button, Image, TouchableOpacity, ActivityIndicator, ImageBackground } from 'react-native'
 import React, { useContext } from 'react'
 import { windowHeight, windowWidth } from '../../variables'
 import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
 import AboutContext from '../../contexts/About/AboutContext'
+import Header from '../Header';
 
 const AdminView = ({ navigation, route }) => {
 
     const { image, pickImage, nameData, isActive, handleActiveMode, userInfo, updateUser, loading, error, handleNameChange } = useContext(AboutContext)
 
 
+
     return (
-        <View style={{ paddingHorizontal: 10, marginTop: 15 }}>
-            {
-                userInfo.status === "admin"
-                    ?
+        userInfo.status === "admin"
+            ?
+            <View style={styles.container}>
+                <ImageBackground style={styles.bg} source={require('../../images/Books.jpg')} blurRadius={1}>
+                    <Header navigation={navigation} status={userInfo.status} />
                     <View style={styles.items__wrapper}>
                         <View style={styles.item__wrapper}>
                             <Text style={styles.label}>Email</Text>
@@ -25,9 +28,7 @@ const AdminView = ({ navigation, route }) => {
                                 !isActive ?
 
                                     <Text style={styles.text}>{nameData.name}</Text>
-
                                     :
-
                                     <TextInput style={styles.input} value={nameData.name} placeholderTextColor="#000" placeholder="Name" autoCapitalize="none" clearButtonMode="always" onChangeText={(value) => handleNameChange({ name: "name", value: value })}></TextInput>
 
                             }
@@ -49,7 +50,7 @@ const AdminView = ({ navigation, route }) => {
                         <View style={styles.item__wrapper}>
                             <Text style={{ ...styles.label, marginBottom: 10 }}>Photo</Text>
                             <Button title="Pick an image from camera roll" onPress={pickImage} />
-                            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+                            {image === "" ? <View></View> : <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
                         </View>
 
 
@@ -87,15 +88,21 @@ const AdminView = ({ navigation, route }) => {
                         </View>
 
                     </View>
-                    :
-                    <></>
-            }
-        </View>
+                </ImageBackground>
+            </View>
+            :
+            <></>
+
     )
 }
 
 const styles = StyleSheet.create({
-
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+    },
     photo: {
         width: 100,
         height: 100,
@@ -104,7 +111,9 @@ const styles = StyleSheet.create({
     },
 
     items__wrapper: {
-        marginBottom: 50
+        marginTop: 20,
+        paddingHorizontal: 10,
+        marginBottom: 50,
     },
     item__wrapper: {
         marginTop: 5,
@@ -150,6 +159,13 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         height: 35,
         width: 35
+    },
+    bg: {
+        width: windowWidth,
+        height: windowHeight,
+        flex: 2,
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start'
     },
     buttons__wrapper: {
         flexDirection: "row",
