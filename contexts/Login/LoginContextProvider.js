@@ -102,6 +102,8 @@ const LoginContextProvider = ({ children, navigation }) => {
             await sendEmailVerification(auth.currentUser);
             await setDoc(doc(firebaseUserInfo, auth.currentUser.uid), userData);
             await signOut(auth);
+            
+            //Firebase doesn't provide Admin SDK, for testing only
             signIn({ email: "beautyofglassstore@gmail.com", password: "test123" });
         } catch (error) {
             console.log("Registration failed " + error.message)

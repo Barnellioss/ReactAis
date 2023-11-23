@@ -6,8 +6,10 @@ export let week = [{ from: "", to: "", day: "Monday", acronym: "M" }, { from: ""
 export const windowWidth = Dimensions.get('window').width;
 export const windowHeight = Dimensions.get('window').height;
 export const yearInSeconds = 31536000000;
+
 // 1 September 2020 Date.now() in seconds 
 export const startCounting =  1598911200000;
+
 export const dayInSeconds = 86400000;
 export const hourInSeconds = 3600000;
 export const weekStart = dayInSeconds * 4;
