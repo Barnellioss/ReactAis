@@ -10,7 +10,8 @@ const messageSlice = createSlice({
     userWeek: [{ from: "", to: "", day: "Monday", acronym: "M", docID: "" }, { from: "", to: "", day: "Tuesday", acronym: "T", docID: "" }, { from: "", to: "", day: "Wednesday", acronym: "W", docID: "" }, { from: "", to: "", day: "Thursday", acronym: "T", docID: "" }, { from: "", to: "", day: "Friday", acronym: "F", docID: "" }, { from: "", to: "", day: "Saturday", acronym: "S", docID: "" }, { from: "", to: "", day: "Sunday", acronym: "S", docID: "" }],
     busyDays: [],
     usersInfo: [],
-    groups: []
+    groups: [],
+    subjects: []
   },
   reducers: {
     setUser(state, action) {
@@ -32,9 +33,13 @@ const messageSlice = createSlice({
     setUsersInfo(state, action) {
       state.usersInfo = action.payload
     },
+
+    setSubjects(state, action) {
+      state.subjects = action.payload
+    }
   }
 })
 
 
-export const { setMessage, setUser, setUserInfo, setWeek, setBusyDays, setGroups, setUsersInfo } = messageSlice.actions
+export const { setMessage, setUser, setUserInfo, setWeek, setBusyDays, setGroups, setUsersInfo, setSubjects } = messageSlice.actions
 export default messageSlice.reducer

@@ -54,9 +54,8 @@ const MainContextProvider = ({ children }) => {
                         usersStorage.push(({ ...item.data(), docID: item.id }))
                     });
 
-                    let parsed = JSON.parse(JSON.stringify(usersStorage))
-
-
+                    let parsed = JSON.parse(JSON.stringify(usersStorage));
+                    
                     userWeek.map((item, i) => {
                         let serverDay = parsed.filter(a => a.day === item.day);
                         if (serverDay.length === 1) {

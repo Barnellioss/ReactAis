@@ -241,7 +241,7 @@ const AboutContextProvider = ({ children }) => {
             handlePlannedDates, userWeek, filteredCalendarDays,
             handleSetUserWeek, plannedDates,
             range, studentPopup, handleStudentPopup,
-            handlePickerChange
+            handlePickerChange, handleNameChange
         }}>
             {children}
         </AboutContext.Provider>
