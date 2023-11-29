@@ -14,6 +14,8 @@ import AboutComponentWrapper from "./contexts/About/AboutComponentWrapper";
 import MainComponentWrapper from "./contexts/Main/MainComponentWrapper";
 import SubjectsComponentWrapper from "./contexts/Subjects/SubjectsComponentWrapper";
 
+//test push
+
 const Stack = createNativeStackNavigator();
 
 export default function App({ navigation }) {
