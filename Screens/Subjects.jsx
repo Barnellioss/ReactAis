@@ -10,18 +10,17 @@ import React, { useEffect } from "react";
 import { useContext } from "react";
 import SubjectsContext from "../contexts/Subjects/SubjectsContext";
 import Header from "../components/Header";
-import { default as IconSettings } from "react-native-vector-icons/Feather";
-import { default as IconAnt } from "react-native-vector-icons/AntDesign";
+import { default as IconFeather } from "react-native-vector-icons/Feather";
+import { default as IconAwesome } from "react-native-vector-icons/FontAwesome";
 import { Pressable } from "react-native";
 import { windowHeight, windowWidth } from "../variables";
 import { StyleSheet } from "react-native";
+import { HoverEffect } from "react-native-gesture-handler";
 
 const SubjectsScreen = ({ navigation, route }) => {
-  const { userInfo, subjects, getSubjects } = useContext(SubjectsContext);
 
-  useEffect(() => {
-    getSubjects();
-  }, []);
+  const { userInfo, semestersYear, years, handleVisibility, visibleSubjects} = useContext(SubjectsContext);
+
 
   return (
     <View>
@@ -32,19 +31,84 @@ const SubjectsScreen = ({ navigation, route }) => {
           blurRadius={1}
         >
           <Header navigation={navigation} status={userInfo?.status} />
+
           <FlatList
             style={styles.list}
-            data={subjects}
+            data={years}
             renderItem={({ item }) => {
               return (
-                <View style={styles.listItemWrapper}>
-                  <ScrollView horizontal>
-                    <Pressable
-                      style={{ flex: 1, flexDirection: "row", marginTop: 10 }}
-                      onPress={() => handleUserPopup(true, item)}
-                    >
-                      <Text style={styles.listItem}>{item.subject}</Text>
-                    </Pressable>
+                <View style={{ marginTop: 20 }}>
+                  <ScrollView>
+                    <View style={{ display: "flex", flexDirection: "column" }}>
+                      <View
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            ...styles.listItem,
+                            marginTop: 15,
+                            textAlign: "center",
+                            paddingTop: 10,
+                          }}
+                        >
+                          {item}
+                        </Text>
+
+                        <FlatList
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            marginTop: 15,
+                          }}
+                          data={semestersYear.filter((a) => a.year === item)}
+                          renderItem={({ item }) => {
+                            return (
+                              <Pressable
+                                onPress={() => handleVisibility(true, item.year, item.semester)}
+                                style={{
+                                  ...styles.listItemWrapper,
+                                  backgroundColor: "#c5bac4",
+                                  borderRadius: 20,
+                                  marginRight: 20,
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                {item.semester === "winter" ? (
+                                  <IconAwesome
+                                    name="snowflake-o"
+                                    size={18}
+                                    color="#000"
+                                    style={{
+                                      textAlign: "center",
+                                    }}
+                                  />
+                                ) : (
+                                  <IconFeather
+                                    name="sun"
+                                    size={18}
+                                    color="#000"
+                                    style={{
+                                      textAlign: "center",
+                                    }}
+                                  />
+                                )}
+                                <Text style={styles.listItem}>
+                                  {item.semester}
+                                </Text>
+                              </Pressable>
+                            );
+                          }}
+                        />
+                      </View>
+                    </View>
                   </ScrollView>
                 </View>
               );
@@ -63,6 +127,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     position: "inherit",
+  },
+  gridWrapper: {
+    padding: 10,
   },
   centeredView: {
     flex: 1,
@@ -206,9 +273,10 @@ const styles = StyleSheet.create({
   listItem: {
     color: "#fff",
     fontSize: 14,
-    width: 160,
-    paddingBottom: 10,
+    width: 80,
+    textAlign: "left",
     marginLeft: 10,
+    marginBottom: 4,
   },
   listItemFirstChild: {
     color: "#fff",
@@ -232,6 +300,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomColor: "#fff",
     borderBottomWidth: 1,
+    width: windowWidth * 0.35,
     flexDirection: "row",
     justifyContent: "flex-start",
   },

@@ -10,8 +10,6 @@ import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
 
 
 
-
-
 export default function AdminScreen({ navigation, route }) {
 
     const { userInfo} = useSelector((store) => store.state);

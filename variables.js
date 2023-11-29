@@ -5,6 +5,7 @@ export let days = [{ acronym: "M", day: "Monday" }, { acronym: "T", day: "Tuesda
 export let week = [{ from: "", to: "", day: "Monday", acronym: "M" }, { from: "", to: "", day: "Tuesday", acronym: "T" }, { from: "", to: "", day: "Wednesday", acronym: "W" }, { from: "", to: "", day: "Thursday", acronym: "T" }, { from: "", to: "", day: "Friday", acronym: "F" }, { from: "", to: "", day: "Saturday", acronym: "S" }, { from: "", to: "", day: "Sunday", acronym: "S" }];
 export const windowWidth = Dimensions.get('window').width;
 export const windowHeight = Dimensions.get('window').height;
+export const semestersYear = [{year: 1, semester: "winter"}, {year: 1, semester: "summer"}, {year: 2, semester: "winter"}, {year: 2, semester: "summer"}, {year: 3, semester: "winter"}, {year: 3, semester: "summer"}, {year: 4, semester: "winter"}, {year: 4, semester: "summer"}, {year: 5, semester: "winter"}, {year: 5, semester: "summer"}];
 export const yearInSeconds = 31536000000;
 
 // 1 September 2020 Date.now() in seconds 
