@@ -1,6 +1,14 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[javascriptreact]": {
-    "editor.defaultFormatter": "svipas.prettier-plus"
-  }
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"[javascriptreact]": {
+		"editor.defaultFormatter": "svipas.prettier-plus"
+	},
+	"prettier.bracketSpacing": false,
+	"prettier.proseWrap": "never",
+	"prettier.useTabs": true,
+	"prettier.trailingComma": "none",
+	"prettier.semi": false,
+	"prettier.useEditorConfig": false,
+	"prettier.printWidth": 250,
+	"editor.formatOnSave": true
 }

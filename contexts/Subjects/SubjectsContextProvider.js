@@ -13,11 +13,11 @@ const SubjectsContextProvider = ({ children }) => {
 
 
   const getSubjects = () => {
+    console.log(SubjectsInfo);
     let res = [];
     getDocs(query(firebaseSubjects, 
-            where("year", "==", visibleSubjects.year), 
-            where("semester", "==", visibleSubjects.semester ))).then((data) => {
-      console.log(data)
+            where("year", "==", SubjectsInfo.year), 
+            where("semester", "==", SubjectsInfo.semester ))).then((data) => {
       data.docs.forEach((item) => {
         res.push({ ...item.data() });
       });
@@ -28,22 +28,67 @@ const SubjectsContextProvider = ({ children }) => {
 
   let years = [...new Set(semestersYear.map(item => item.year))];
 
-  const [visibleSubjects, setVisibility] = useState({
-    isVisible: false,
+
+  //Popup visibility
+  const [SubjectsInfo, setSubjectsInfo] = useState({
     year: 0,
     semester: ""
   });
 
-  const handleVisibility = (visibility, year, semester) => {
-    setVisibility({ isVisible: visibility, year: year, semester: semester });
+  const handleInfo = (year, semester) => {
+    setSubjectsInfo({ year: year, semester: semester });
   }
+
+
+  //Modal modes
+   const [modes, setModes] = useState({
+    editMode: false,
+    createMode: false,
+    viewMode: false
+  });
+
+  const handleModes = (obj) => { 
+        setModes({editMode: obj.editMode, createMode: obj.createMode, viewMode: obj.viewMode});
+  }
+
+  //Active edit subject
+  const [activeSubject, setActiveSubject] = useState({});
+
+  const handleActiveSubject = (subject) => {
+    setActiveSubject(subject);
+  }
+
+  const handleActiveSubjectChange = (e) => {
+        const { name, value } = e;
+        setActiveSubject((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    }
+
+  const [activeEditMode, setActiveEditMode] = useState(false);
+  
+  const handleActiveEditMode = (active) => {
+    setActiveEditMode(active);
+  }
+
+ const [updating, setUpdating] = useState(false);
+ 
+ const handleUpdating = (state) => {
+    setUpdating(state);
+ }
+
+
 
 
   return (
     <SubjectsContext.Provider value={{
       userInfo, years, subjects,
       semestersYear, getSubjects, 
-      visibleSubjects, handleVisibility
+      SubjectsInfo, handleInfo, modes,
+      handleModes, activeSubject, handleActiveSubject,
+      handleActiveSubjectChange, activeEditMode, handleActiveEditMode,
+      updating, activeEditMode
     }}>
       {children}
     </SubjectsContext.Provider>
