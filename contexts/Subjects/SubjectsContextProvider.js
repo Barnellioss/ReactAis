@@ -1,30 +1,52 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import SubjectsContext from "./SubjectsContext";
 import { useSelector } from "react-redux";
-import { getDocs, query, where } from "firebase/firestore";
+import { doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { firebaseSubjects } from "../../firebaseConfig";
 import { useDispatch } from "react-redux";
 import { setSubjects } from "../../redux/reducers/reducers";
 import { semestersYear } from "../../variables";
 
 const SubjectsContextProvider = ({ children }) => {
+
   let { userInfo, subjects } = useSelector((store) => store.state);
   const dispatch = useDispatch();
 
-
   const getSubjects = () => {
-    console.log(SubjectsInfo);
     let res = [];
     getDocs(query(firebaseSubjects, 
             where("year", "==", SubjectsInfo.year), 
             where("semester", "==", SubjectsInfo.semester ))).then((data) => {
       data.docs.forEach((item) => {
-        res.push({ ...item.data() });
+        res.push({ ...item.data(), id: item.id });
       });
       dispatch(setSubjects(JSON.parse(JSON.stringify(res))));
     }
     );
   };
+
+  
+  const updateSubject = async (subject) => {
+
+        handleUpdating(true)
+        
+        const { id } = subject;
+        const subjectDocRef = doc(firebaseSubjects, `${id}`);
+        await setDoc(subjectDocRef, subject);
+
+        try {
+            await updateDoc(subjectDocRef, subject).then(() => {
+              getSubjects();
+            })
+        } finally {
+            handleUpdating(false);
+            //alert("Profile has been updated");
+        }
+    }
+
+
+
+
 
   let years = [...new Set(semestersYear.map(item => item.year))];
 
@@ -88,7 +110,7 @@ const SubjectsContextProvider = ({ children }) => {
       SubjectsInfo, handleInfo, modes,
       handleModes, activeSubject, handleActiveSubject,
       handleActiveSubjectChange, activeEditMode, handleActiveEditMode,
-      updating, activeEditMode
+      updating, activeEditMode, updateSubject 
     }}>
       {children}
     </SubjectsContext.Provider>
