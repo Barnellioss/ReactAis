@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import SubjectsContext from "./SubjectsContext";
 import { useSelector } from "react-redux";
-import { doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { deleteDoc, doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { firebaseSubjects } from "../../firebaseConfig";
 import { useDispatch } from "react-redux";
 import { setSubjects } from "../../redux/reducers/reducers";
@@ -32,9 +32,9 @@ const SubjectsContextProvider = ({ children }) => {
         
         const { id } = subject;
         const subjectDocRef = doc(firebaseSubjects, `${id}`);
-        await setDoc(subjectDocRef, subject);
 
         try {
+            await setDoc(subjectDocRef, subject);
             await updateDoc(subjectDocRef, subject).then(() => {
               getSubjects();
             })
@@ -44,9 +44,21 @@ const SubjectsContextProvider = ({ children }) => {
         }
     }
 
+    
+  const deleteSubject = async (id) => {
+      handleUpdating(true);
 
-
-
+      const subjectDocRef = doc(firebaseSubjects, `${id}`);
+       try {
+            await deleteDoc(subjectDocRef).then(() => {
+              getSubjects();
+            })
+        } finally {
+            handleUpdating(false);
+            //alert("Profile has been updated");
+        } 
+  }
+ 
 
   let years = [...new Set(semestersYear.map(item => item.year))];
 
@@ -110,7 +122,7 @@ const SubjectsContextProvider = ({ children }) => {
       SubjectsInfo, handleInfo, modes,
       handleModes, activeSubject, handleActiveSubject,
       handleActiveSubjectChange, activeEditMode, handleActiveEditMode,
-      updating, activeEditMode, updateSubject 
+      updating, activeEditMode, updateSubject, deleteSubject 
     }}>
       {children}
     </SubjectsContext.Provider>

@@ -1,16 +1,16 @@
-import {View, Text, ImageBackground, ScrollView, TouchableOpacity, FlatList} from "react-native"
-import React, {useEffect} from "react"
-import {useContext} from "react"
+import { View, Text, ImageBackground, ScrollView, TouchableOpacity, FlatList } from "react-native"
+import React, { useEffect } from "react"
+import { useContext } from "react"
 import SubjectsContext from "../contexts/Subjects/SubjectsContext"
 import Header from "../components/Header"
-import {default as IconFeather} from "react-native-vector-icons/Feather"
-import {default as IconAwesome} from "react-native-vector-icons/FontAwesome"
-import {Pressable} from "react-native"
-import {windowHeight, windowWidth} from "../variables"
-import {StyleSheet} from "react-native"
+import { default as IconFeather } from "react-native-vector-icons/Feather"
+import { default as IconAwesome } from "react-native-vector-icons/FontAwesome"
+import { Pressable } from "react-native"
+import { windowHeight, windowWidth } from "../variables"
+import { StyleSheet } from "react-native"
 
-const SubjectsScreen = ({navigation, route}) => {
-	const {userInfo, semestersYear, years, SubjectsInfo, handleInfo, handleModes} = useContext(SubjectsContext)
+const SubjectsScreen = ({ navigation, route }) => {
+	const { userInfo, semestersYear, years, SubjectsInfo, handleInfo, handleModes } = useContext(SubjectsContext)
 
 	return (
 		<View style={styles.container}>
@@ -20,11 +20,11 @@ const SubjectsScreen = ({navigation, route}) => {
 				<FlatList
 					style={styles.list}
 					data={years}
-					renderItem={({item}) => {
+					renderItem={({ item }) => {
 						return (
-							<View style={{marginTop: 20}}>
+							<View style={{ marginTop: 20 }}>
 								<ScrollView>
-									<View style={{display: "flex", flexDirection: "column"}}>
+									<View style={{ display: "flex", flexDirection: "column" }}>
 										<View
 											style={{
 												display: "flex",
@@ -56,7 +56,7 @@ const SubjectsScreen = ({navigation, route}) => {
 													marginTop: 15
 												}}
 												data={semestersYear.filter((a) => a.year === item)}
-												renderItem={({item}) => {
+												renderItem={({ item }) => {
 													return (
 														<Pressable
 															onPress={() => {
@@ -78,26 +78,38 @@ const SubjectsScreen = ({navigation, route}) => {
 																justifyContent: "center"
 															}}
 														>
-															{item.semester === "winter" ? (
-																<IconAwesome
-																	name="snowflake-o"
-																	size={18}
-																	color="#000"
-																	style={{
-																		textAlign: "center"
-																	}}
-																/>
-															) : (
-																<IconFeather
-																	name="sun"
-																	size={18}
-																	color="#000"
-																	style={{
-																		textAlign: "center"
-																	}}
-																/>
-															)}
-															<Text style={styles.listItem}>{item.semester}</Text>
+															<Pressable
+																onPress={() => {
+																	handleInfo(item.year, item.semester)
+																	handleModes({
+																		viewMode: true,
+																		editMode: false,
+																		createMode: false
+																	})
+																}} style={{ width: 80, display: "flex", flexDirection: "row" }}>
+																{item.semester === "winter" ? (
+																	<IconAwesome
+																		name="snowflake-o"
+																		size={18}
+																		color="#000"
+																		style={{
+																			marginTop: 2,
+																			textAlign: "center",
+																			textAlignVertical: "center"
+																		}}
+																	/>
+																) : (
+																	<IconFeather
+																		name="sun"
+																		size={18}
+																		color="#000"
+																		style={{
+																			textAlign: "center"
+																		}}
+																	/>
+																)}
+																<Text style={styles.listItem}>{item.semester}</Text>
+															</Pressable>
 														</Pressable>
 													)
 												}}
@@ -268,9 +280,8 @@ const styles = StyleSheet.create({
 		color: "#fff",
 		fontSize: 14,
 		width: 80,
-		textAlign: "left",
-		marginLeft: 10,
-		marginBottom: 4
+		textAlign: "center",
+		marginLeft: 5,
 	},
 	listItemFirstChild: {
 		color: "#fff",

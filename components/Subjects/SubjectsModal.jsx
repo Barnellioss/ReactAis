@@ -1,19 +1,19 @@
-import {View, Text, Modal, StyleSheet, FlatList, TouchableOpacity, Pressable, TextInput} from "react-native"
-import {default as IconIonicons} from "react-native-vector-icons/Ionicons"
-import {default as IconAnt} from "react-native-vector-icons/AntDesign"
-import {windowHeight, windowWidth} from "../../variables"
-import {useContext} from "react"
-import {React, useSelector} from "react-redux"
-import {default as IconAwesome} from "react-native-vector-icons/FontAwesome"
+import { View, Text, Modal, StyleSheet, FlatList, TouchableOpacity, Pressable, TextInput } from "react-native"
+import { default as IconIonicons } from "react-native-vector-icons/Ionicons"
+import { default as IconAnt } from "react-native-vector-icons/AntDesign"
+import { windowHeight, windowWidth } from "../../variables"
+import { useContext } from "react"
+import { React, useSelector } from "react-redux"
+import { default as IconAwesome } from "react-native-vector-icons/FontAwesome"
 import SubjectsContext from "../../contexts/Subjects/SubjectsContext"
-import {ScrollView} from "react-native"
-import {useEffect} from "react"
-import {default as IconFeather} from "react-native-vector-icons/Feather"
+import { ScrollView } from "react-native"
+import { useEffect } from "react"
+import { default as IconFeather } from "react-native-vector-icons/Feather"
 import RNPickerSelect from "react-native-picker-select"
-import {ActivityIndicator} from "react-native"
+import { ActivityIndicator } from "react-native"
 
-const SubjectsModal = ({navigation}) => {
-	const {subjects, SubjectsInfo, handleInfo, getSubjects, modes, handleModes, activeSubject, handleActiveSubject, handleActiveSubjectChange, activeEditMode, handleActiveEditMode, updateSubject, updating} = useContext(SubjectsContext)
+const SubjectsModal = ({ navigation }) => {
+	const { subjects, SubjectsInfo, handleInfo, getSubjects, modes, handleModes, activeSubject, handleActiveSubject, handleActiveSubjectChange, activeEditMode, handleActiveEditMode, updateSubject, updating, deleteSubject } = useContext(SubjectsContext)
 
 	useEffect(() => {
 		getSubjects()
@@ -26,7 +26,7 @@ const SubjectsModal = ({navigation}) => {
 			visible={modes.viewMode || modes.editMode}
 			onRequestClose={() => {
 				handleInfo("", "")
-				handleModes({viewMode: false, editMode: false, createMode: false})
+				handleModes({ viewMode: false, editMode: false, createMode: false })
 			}}
 		>
 			<View style={styles.centeredView}>
@@ -40,44 +40,46 @@ const SubjectsModal = ({navigation}) => {
 							}}
 						>
 							<Text style={styles.modalTitle}>Subjects</Text>
-							<IconAwesome name="university" size={26} style={{marginLeft: 15, marginTop: 5}} />
+							<IconAwesome name="university" size={26} style={{ marginLeft: 15, marginTop: 5 }} />
 						</View>
 						<FlatList
 							style={styles.list}
 							data={subjects}
-							renderItem={({item}) => {
+							renderItem={({ item }) => {
 								return (
-									<Pressable
-										onLongPress={() => {
-											handleActiveSubject(item)
-											handleModes({
-												viewMode: false,
-												editMode: true,
-												createMode: false
-											})
-										}}
-										style={styles.listItemWrapper}
-									>
-										<ScrollView vertical>
+									<View style={{ display: "flex", flexDirection: "row", alignItems: "center", paddingHorizontal: 5 }}>
+										<Pressable
+											onLongPress={() => {
+												handleActiveSubject(item)
+												handleModes({
+													viewMode: false,
+													editMode: true,
+													createMode: false
+												})
+											}}
+											style={styles.listItemWrapper}
+										>
 											<Text>{item.subject}</Text>
-										</ScrollView>
-									</Pressable>
+										</Pressable>
+										<Pressable onPress={() => deleteSubject(item.id)}>
+											<IconAnt name="close" size={20} color="#000" style={{ textAlign: "center" }} />
+										</Pressable>
+									</View>
 								)
 							}}
 						/>
-						<Pressable
-							style={{
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "flex-start",
-								width: windowWidth * 0.9,
-								marginTop: 5,
-								marginLeft: 15
-							}}
-							onPress={() => {}}
-						>
-							<IconIonicons name="add" size={24} color="#000" style={{fontWeight: 600}} />
-						</Pressable>
+						<View style={{ width: 0.9 * windowWidth, marginHorizontal: "auto", display: "flex", alignItems: "center", flexDirection: "row" }}>
+							<Pressable
+								style={{
+									marginTop: 5,
+									marginLeft: 0,
+									textAlign: "left"
+								}}
+								onPress={() => { }}
+							>
+								<IconIonicons name="add" size={24} color="#000" style={{ fontWeight: 600 }} />
+							</Pressable>
+						</View>
 						<Pressable
 							style={[styles.button, styles.buttonClose]}
 							onPress={() => {
@@ -89,7 +91,7 @@ const SubjectsModal = ({navigation}) => {
 								handleActiveSubject({})
 							}}
 						>
-							<IconAnt name="close" size={20} color="#000" style={{textAlign: "center"}} />
+							<IconAnt name="close" size={20} color="#000" style={{ textAlign: "center" }} />
 						</Pressable>
 					</View>
 				) : modes.editMode ? (
@@ -102,11 +104,11 @@ const SubjectsModal = ({navigation}) => {
 							}}
 						>
 							<Text style={styles.modalTitle}>Edit Subjects</Text>
-							<IconAwesome name="university" size={26} style={{marginLeft: 15, marginTop: 5}} />
+							<IconAwesome name="university" size={26} style={{ marginLeft: 15, marginTop: 5 }} />
 						</View>
 
-						<View style={{display: "flex", flexDirection: "row", width: 0.9 * windowWidth}}>
-							<View style={{...styles.studentWrapper, width: 80, marginHorizontal: 0}}>
+						<View style={{ display: "flex", flexDirection: "row", width: 0.9 * windowWidth }}>
+							<View style={{ ...styles.studentWrapper, width: 80, marginHorizontal: 0 }}>
 								<Text style={styles.itemText}>Subject: </Text>
 								<Text style={styles.itemText}>Semester: </Text>
 								<Text style={styles.itemText}>Year: </Text>
@@ -114,7 +116,7 @@ const SubjectsModal = ({navigation}) => {
 								<Text style={styles.itemText}>Info: </Text>
 							</View>
 
-							<View style={{...styles.studentWrapper, marginHorizontal: 0, display: "flex"}}>
+							<View style={{ ...styles.studentWrapper, marginHorizontal: 0, display: "flex" }}>
 								{activeEditMode ? (
 									<TextInput
 										style={styles.input}
@@ -123,15 +125,15 @@ const SubjectsModal = ({navigation}) => {
 										placeholder="Subject"
 										autoCapitalize="none"
 										clearButtonMode="always"
-										onChangeText={(value) => handleActiveSubjectChange({name: "subject", value: value})}
+										onChangeText={(value) => handleActiveSubjectChange({ name: "subject", value: value })}
 									></TextInput>
 								) : (
-									<Text style={{...styles.itemText, width: 250}}>{activeSubject.subject}</Text>
+									<Text style={{ ...styles.itemText, width: 250 }}>{activeSubject.subject}</Text>
 								)}
 								{activeEditMode ? (
-									<View style={{height: 30, paddingVertical: 4, marginLeft: 15}}>
+									<View style={{ height: 30, paddingVertical: 4, marginLeft: 15 }}>
 										<RNPickerSelect
-											placeholder={{label: "Select group", value: ""}}
+											placeholder={{ label: "Select group", value: "" }}
 											value={`${activeSubject.semester}`}
 											onValueChange={(value) =>
 												handleActiveSubjectChange({
@@ -140,8 +142,8 @@ const SubjectsModal = ({navigation}) => {
 												})
 											}
 											items={[
-												{label: "winter", value: `winter`},
-												{label: "summer", value: `summer`}
+												{ label: "winter", value: `winter` },
+												{ label: "summer", value: `summer` }
 											]}
 										/>
 									</View>
@@ -149,9 +151,9 @@ const SubjectsModal = ({navigation}) => {
 									<Text style={styles.itemText}>{activeSubject.semester}</Text>
 								)}
 								{activeEditMode ? (
-									<View style={{height: 30, paddingVertical: 10, marginLeft: 15}}>
+									<View style={{ height: 30, paddingVertical: 10, marginLeft: 15 }}>
 										<RNPickerSelect
-											placeholder={{label: "Select year", value: ""}}
+											placeholder={{ label: "Select year", value: "" }}
 											value={`${activeSubject.year}`}
 											onValueChange={(value) =>
 												handleActiveSubjectChange({
@@ -160,11 +162,11 @@ const SubjectsModal = ({navigation}) => {
 												})
 											}
 											items={[
-												{label: "1", value: `1`},
-												{label: "2", value: `2`},
-												{label: "3", value: `3`},
-												{label: "4", value: `4`},
-												{label: "5", value: `5`}
+												{ label: "1", value: `1` },
+												{ label: "2", value: `2` },
+												{ label: "3", value: `3` },
+												{ label: "4", value: `4` },
+												{ label: "5", value: `5` }
 											]}
 										/>
 									</View>
@@ -179,10 +181,10 @@ const SubjectsModal = ({navigation}) => {
 										placeholder="Teacher"
 										autoCapitalize="none"
 										clearButtonMode="always"
-										onChangeText={(value) => handleActiveSubjectChange({name: "teacher", value: value})}
+										onChangeText={(value) => handleActiveSubjectChange({ name: "teacher", value: value })}
 									></TextInput>
 								) : (
-									<Text style={{...styles.itemText, width: 250}}>{activeSubject.teacher}</Text>
+									<Text style={{ ...styles.itemText, width: 250 }}>{activeSubject.teacher}</Text>
 								)}
 
 								{activeEditMode ? (
@@ -193,54 +195,64 @@ const SubjectsModal = ({navigation}) => {
 										placeholder="Info"
 										autoCapitalize="none"
 										clearButtonMode="always"
-										onChangeText={(value) => handleActiveSubjectChange({name: "info", value: value})}
+										onChangeText={(value) => handleActiveSubjectChange({ name: "info", value: value })}
 									></TextInput>
 								) : (
-									<Text style={{...styles.itemText, width: 250}}>{activeSubject.info}</Text>
+									<Text style={{ ...styles.itemText, width: 250 }}>{activeSubject.info}</Text>
 								)}
+							</View>
+							<View style={{ display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: "space-between" }}>
+								{updating ? (
+									<View style={{ marginHorizontal: "auto", marginTop: 20 }}>
+										<ActivityIndicator size="large" color="#0000ff" />
+									</View>
+								) 
+								: 
+								<></>
+								}
 							</View>
 						</View>
 
-						<View style={{display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: "space-between"}}>
+						<View style={{ display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: "space-between" }}>
 							{updating ? (
-								<View style={{marginHorizontal: "auto", marginTop: 20}}>
+								<View style={{ marginHorizontal: "auto", marginTop: 20 }}>
 									<ActivityIndicator size="large" color="#0000ff" />
 								</View>
 							) : (
-								<View style={{display: "flex", flexDirection: "row"}}>
+								<View style={{ display: "flex", flexDirection: "row" }}>
 									<Pressable
-										style={{width: 40, height: 40}}
+										style={{ width: 40, height: 40 }}
 										onPress={() => {
 											if (activeEditMode) {
-												handleModes({viewMode: false, editMode: true, createMode: false})
+												handleModes({ viewMode: false, editMode: true, createMode: false })
 												handleActiveEditMode(false)
 											} else {
-												handleModes({viewMode: true, editMode: false, createMode: false})
+												handleModes({ viewMode: true, editMode: false, createMode: false })
 												handleActiveSubject({})
 											}
 										}}
 									>
-										<IconIonicons name="arrow-back" size={24} color="#000" style={{textAlign: "center", marginTop: 25, height: 40}} />
+										<IconIonicons name="arrow-back" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 									</Pressable>
 
 									<Pressable
-										style={{width: 40, height: 40}}
+										style={{ width: 40, height: 40 }}
 										onPress={() => {
-											handleModes({viewMode: false, editMode: false, createMode: false})
+											handleModes({ viewMode: false, editMode: false, createMode: false })
 											handleActiveSubject({})
 											handleActiveEditMode(false)
 										}}
 									>
-										<IconAnt name="close" size={24} color="#000" style={{textAlign: "center", marginTop: 25, height: 40}} />
+										<IconAnt name="close" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 									</Pressable>
 
 									{!activeEditMode ? (
-										<Pressable style={{width: 40, height: 40}} onPress={() => handleActiveEditMode(true)}>
-											<IconAnt name="edit" size={24} color="#000" style={{textAlign: "center", marginTop: 25, height: 40}} />
+										<Pressable style={{ width: 40, height: 40 }} onPress={() => handleActiveEditMode(true)}>
+											<IconAnt name="edit" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 										</Pressable>
 									) : (
-										<Pressable style={{width: 40, height: 40}} onPress={() => updateSubject(activeSubject)}>
-											<IconFeather name="save" size={24} color="#000" style={{textAlign: "center", marginTop: 25, height: 40}} />
+										<Pressable style={{ width: 40, height: 40 }} onPress={() => updateSubject(activeSubject)}>
+											<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 										</Pressable>
 									)}
 								</View>
