@@ -80,8 +80,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   header: {
-    height: 90,
-    paddingTop: 40,
+    //height: 90,
+    //paddingTop: 40,
+    height: 70,
+    paddingTop: 20,
     backgroundColor: "#c5bac4",
     width: windowWidth,
     paddingHorizontal: 15,

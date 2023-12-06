@@ -13,22 +13,48 @@ import RNPickerSelect from "react-native-picker-select"
 import { ActivityIndicator } from "react-native"
 
 const SubjectsModal = ({ navigation }) => {
-	const { subjects, SubjectsInfo, handleInfo, getSubjects, modes, handleModes, activeSubject, handleActiveSubject, handleActiveSubjectChange, activeEditMode, handleActiveEditMode, updateSubject, updating, deleteSubject } = useContext(SubjectsContext)
+	const {
+		subjects,
+		SubjectsInfo,
+		handleInfo,
+		getSubjects,
+		modes,
+		handleModes,
+		activeSubject,
+		handleActiveSubject,
+		handleActiveSubjectChange,
+		activeEditMode,
+		handleActiveEditMode,
+		updateSubject,
+		updating,
+		deleteSubject,
+		handleNewSubject,
+		newSubject,
+		createSubject,
+		error
+	} = useContext(SubjectsContext)
 
 	useEffect(() => {
 		getSubjects()
 	}, [modes.viewMode === true])
 
-	return modes.viewMode || modes.editMode ? (
+	return modes.viewMode || modes.editMode || modes.createMode ? (
 		<Modal
 			animationType="slide"
 			transparent={true}
-			visible={modes.viewMode || modes.editMode}
+			visible={modes.viewMode || modes.editMode || modes.createMode}
 			onRequestClose={() => {
 				handleInfo("", "")
 				handleModes({ viewMode: false, editMode: false, createMode: false })
 			}}
 		>
+			{
+				error > 3 ?
+					<View style={{ height: 70, width: windowWidth, backgroundColor: "#FF2300" }}>
+						<Text style={{ color: "#fff", fontSize: 24, paddingTop: 10, paddingLeft: 10 }}>{`fail`.toUpperCase()}</Text>
+					</View>
+					: <></>
+			}
 			<View style={styles.centeredView}>
 				{modes.viewMode ? (
 					<View style={styles.modalView}>
@@ -75,7 +101,9 @@ const SubjectsModal = ({ navigation }) => {
 									marginLeft: 0,
 									textAlign: "left"
 								}}
-								onPress={() => { }}
+								onPress={() => {
+									handleModes({ viewMode: false, editMode: false, createMode: true })
+								}}
 							>
 								<IconIonicons name="add" size={24} color="#000" style={{ fontWeight: 600 }} />
 							</Pressable>
@@ -125,7 +153,7 @@ const SubjectsModal = ({ navigation }) => {
 										placeholder="Subject"
 										autoCapitalize="none"
 										clearButtonMode="always"
-										onChangeText={(value) => handleActiveSubjectChange({ name: "subject", value: value })}
+										onChangeText={(value) => handleActiveSubjectChange({ name: "subject", value: value }, handleActiveSubject)}
 									></TextInput>
 								) : (
 									<Text style={{ ...styles.itemText, width: 250 }}>{activeSubject.subject}</Text>
@@ -136,10 +164,13 @@ const SubjectsModal = ({ navigation }) => {
 											placeholder={{ label: "Select group", value: "" }}
 											value={`${activeSubject.semester}`}
 											onValueChange={(value) =>
-												handleActiveSubjectChange({
-													name: "semester",
-													value: value
-												})
+												handleActiveSubjectChange(
+													{
+														name: "semester",
+														value: value
+													},
+													handleActiveSubject
+												)
 											}
 											items={[
 												{ label: "winter", value: `winter` },
@@ -156,10 +187,13 @@ const SubjectsModal = ({ navigation }) => {
 											placeholder={{ label: "Select year", value: "" }}
 											value={`${activeSubject.year}`}
 											onValueChange={(value) =>
-												handleActiveSubjectChange({
-													name: "year",
-													value: value
-												})
+												handleActiveSubjectChange(
+													{
+														name: "year",
+														value: value
+													},
+													handleActiveSubject
+												)
 											}
 											items={[
 												{ label: "1", value: `1` },
@@ -181,7 +215,7 @@ const SubjectsModal = ({ navigation }) => {
 										placeholder="Teacher"
 										autoCapitalize="none"
 										clearButtonMode="always"
-										onChangeText={(value) => handleActiveSubjectChange({ name: "teacher", value: value })}
+										onChangeText={(value) => handleActiveSubjectChange({ name: "teacher", value: value }, handleActiveSubject)}
 									></TextInput>
 								) : (
 									<Text style={{ ...styles.itemText, width: 250 }}>{activeSubject.teacher}</Text>
@@ -195,21 +229,11 @@ const SubjectsModal = ({ navigation }) => {
 										placeholder="Info"
 										autoCapitalize="none"
 										clearButtonMode="always"
-										onChangeText={(value) => handleActiveSubjectChange({ name: "info", value: value })}
+										onChangeText={(value) => handleActiveSubjectChange({ name: "info", value: value }, handleActiveSubject)}
 									></TextInput>
 								) : (
 									<Text style={{ ...styles.itemText, width: 250 }}>{activeSubject.info}</Text>
 								)}
-							</View>
-							<View style={{ display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: "space-between" }}>
-								{updating ? (
-									<View style={{ marginHorizontal: "auto", marginTop: 20 }}>
-										<ActivityIndicator size="large" color="#0000ff" />
-									</View>
-								) 
-								: 
-								<></>
-								}
 							</View>
 						</View>
 
@@ -255,6 +279,131 @@ const SubjectsModal = ({ navigation }) => {
 											<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 										</Pressable>
 									)}
+								</View>
+							)}
+						</View>
+					</View>
+				) : modes.createMode ? (
+					<View style={styles.modalView}>
+						<View
+							style={{
+								display: "flex",
+								flexDirection: "row",
+								alignItems: "center"
+							}}
+						>
+							<Text style={styles.modalTitle}>Create Subjects</Text>
+							<IconAwesome name="university" size={26} style={{ marginLeft: 15, marginTop: 5 }} />
+						</View>
+
+						<View style={{ display: "flex", flexDirection: "row", width: 0.9 * windowWidth }}>
+							<View style={{ ...styles.studentWrapper, width: 80, marginHorizontal: 0 }}>
+								<Text style={styles.itemText}>Subject: </Text>
+								<Text style={styles.itemText}>Semester: </Text>
+								<Text style={styles.itemText}>Year: </Text>
+								<Text style={styles.itemText}>Teacher: </Text>
+								<Text style={styles.itemText}>Info: </Text>
+							</View>
+
+							<View style={{ ...styles.studentWrapper, marginHorizontal: 0, display: "flex" }}>
+								<TextInput
+									style={styles.input}
+									value={newSubject.subject}
+									placeholderTextColor="#000"
+									placeholder="Subject"
+									autoCapitalize="none"
+									clearButtonMode="always"
+									onChangeText={(value) => handleActiveSubjectChange({ name: "subject", value: value }, handleNewSubject)}
+								></TextInput>
+								<View style={{ height: 30, paddingVertical: 4, marginLeft: 15 }}>
+									<RNPickerSelect
+										placeholder={{ label: "Select semester", value: "" }}
+										value={`${newSubject.semester}`}
+										onValueChange={(value) =>
+											handleActiveSubjectChange(
+												{
+													name: "semester",
+													value: value
+												},
+												handleNewSubject
+											)
+										}
+										items={[
+											{ label: "winter", value: `winter` },
+											{ label: "summer", value: `summer` }
+										]}
+									/>
+								</View>
+								<View style={{ height: 30, paddingVertical: 10, marginLeft: 15 }}>
+									<RNPickerSelect
+										placeholder={{ label: "Select year", value: "" }}
+										value={`${newSubject.year}`}
+										onValueChange={(value) =>
+											handleActiveSubjectChange(
+												{
+													name: "year",
+													value: +value
+												},
+												handleNewSubject
+											)
+										}
+										items={[
+											{ label: "1", value: `1` },
+											{ label: "2", value: `2` },
+											{ label: "3", value: `3` },
+											{ label: "4", value: `4` },
+											{ label: "5", value: `5` }
+										]}
+									/>
+								</View>
+								<TextInput
+									style={styles.input}
+									value={newSubject.teacher}
+									placeholderTextColor="#000"
+									placeholder="Teacher"
+									autoCapitalize="none"
+									clearButtonMode="always"
+									onChangeText={(value) => handleActiveSubjectChange({ name: "teacher", value: value }, handleNewSubject)}
+								></TextInput>
+								<TextInput
+									style={styles.input}
+									value={newSubject.info}
+									placeholderTextColor="#000"
+									placeholder="Info"
+									autoCapitalize="none"
+									clearButtonMode="always"
+									onChangeText={(value) => handleActiveSubjectChange({ name: "info", value: value }, handleNewSubject)}
+								></TextInput>
+							</View>
+						</View>
+
+						<View style={{ display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: "space-between" }}>
+							{updating ? (
+								<View style={{ marginHorizontal: "auto", marginTop: 20 }}>
+									<ActivityIndicator size="large" color="#0000ff" />
+								</View>
+							) : (
+								<View style={{ display: "flex", flexDirection: "row" }}>
+									<Pressable
+										style={{ width: 40, height: 40 }}
+										onPress={() => {
+											handleModes({ viewMode: true, editMode: false, createMode: false })
+										}}
+									>
+										<IconIonicons name="arrow-back" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
+									</Pressable>
+
+									<Pressable
+										style={{ width: 40, height: 40 }}
+										onPress={() => {
+											handleModes({ viewMode: true, editMode: false, createMode: false })
+										}}
+									>
+										<IconAnt name="close" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
+									</Pressable>
+									<Pressable style={{ width: 40, height: 40 }} onPress={() => createSubject({ ...newSubject, id: Date.now() })}>
+										<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
+									</Pressable>
 								</View>
 							)}
 						</View>
