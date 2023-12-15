@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import AdminContext from './AdminContext';
 import { useSelector } from 'react-redux';
-import { firebaseUserInfo } from '../../firebaseConfig';
+import { firebaseUserDatesColumn, firebaseUserInfo } from '../../firebaseConfig';
 import { doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { useDispatch } from 'react-redux';
-import { setUsersInfo } from '../../redux/reducers/reducers';
+import { setUsersDates, setUsersInfo } from '../../redux/reducers/reducers';
 
 const AdminContextProvider = ({ children }) => {
 
-    let { usersInfo } = useSelector((store) => store.state);
-
+    let { usersInfo, groups, usersDates, userWeek } = useSelector((store) => store.state);
 
     //Updating loading
     const [isUpdating, setUpdating] = useState(false);
@@ -23,7 +22,8 @@ const AdminContextProvider = ({ children }) => {
         Degree: true,
         Group: false,
         Start: false,
-        End: false
+        End: false,
+        Graph: false
     });
 
 
@@ -66,9 +66,6 @@ const AdminContextProvider = ({ children }) => {
             }
         )
     }
-
-
-
 
     //Filter state, stores chosen filters
     const [filterState, setFilterState] = useState({
@@ -152,7 +149,7 @@ const AdminContextProvider = ({ children }) => {
     const updateStudent = async (item, data) => {
 
         setUpdating(true)
-        
+
         const { userID } = item;
         const userInfoDocRef = doc(firebaseUserInfo, `${userID}`);
         await setDoc(userInfoDocRef, item);
@@ -176,14 +173,37 @@ const AdminContextProvider = ({ children }) => {
         getDocs(query(firebaseUserInfo, where("status", "==", "student")))
             .then((data) => {
                 data.docs.forEach((item) => {
-                    res.push(({ ...item.data() }))
-                });
+                    res.push(({ ...item.data() }));
+                })
+            })
+            .then((data) => {
                 dispatch(setUsersInfo(JSON.parse(JSON.stringify(res))));
                 handleFilterState({
                     ...filterState,
                     students: JSON.parse(JSON.stringify(res)),
                 })
             })
+    }
+
+    const getDatesForStudents = () => {
+        let res = [];
+        getDocs(query(firebaseUserDatesColumn))
+            .then((data) => {
+                data.docs.forEach((item) => {
+                    res.push(({ ...item.data() }));
+                });
+                dispatch(setUsersDates(JSON.parse(JSON.stringify(res))));
+            });
+    }
+
+
+    function findIndexByKeyValue(array, key, value) {
+        for (let i = 0; i < array.length; i++) {
+            if (array[i][key] === value) {
+                return i;
+            }
+        }
+        return -1; 
     }
 
 
@@ -193,7 +213,8 @@ const AdminContextProvider = ({ children }) => {
             setUserVisibility, handleFilterState, handleFilterChange,
             visibleState, handleVisibileColumnsChange,
             handleFilterVisibleState, updateStudent, isUpdating,
-            getStudents
+            getStudents, groups, getDatesForStudents, userWeek,
+            usersDates, findIndexByKeyValue
         }}>
             {children}
         </AdminContext.Provider>

@@ -52,6 +52,7 @@ const AboutContextProvider = ({ children }) => {
         setFilteredDays(calendar)
     }
 
+
     //Image set
     const [image, setImage] = useState("");
 

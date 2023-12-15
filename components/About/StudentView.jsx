@@ -13,8 +13,6 @@ const StudentView = ({ navigation, route }) => {
 
     const { userWeek, days, handlePressedID, filterDays, filteredCalendarDays, userInfo, pressedID, handlePlannedDates, handleStudentPopup, studentPopup } = useContext(AboutContext)
 
-
-
     useEffect(() => {
         filterDays(userWeek, pressedID);
     }, [userWeek[pressedID].from, userWeek[pressedID].to])
@@ -71,7 +69,7 @@ const StudentView = ({ navigation, route }) => {
                                             hideNowLine={true}
                                             columnWidth={windowWidth * 0.85}
                                             style={{ width: windowWidth * 0.85, marginLeft: 'auto', marginRight: 'auto' }}
-                                            renderItem={props => <Event props={props} key={Math.random() * 10000} />}
+                                            renderItem={props => <Event props={props} key={Math.random() * 10000} height={60} width={0.5} left={0.2}/>}
                                             // provide only one of these
                                             range={range}
                                         />

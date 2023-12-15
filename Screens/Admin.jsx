@@ -10,16 +10,18 @@ import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
 
 
 
+
 export default function AdminScreen({ navigation, route }) {
 
-    const { userInfo} = useSelector((store) => store.state);
-    const { filterState, handleUserPopup, handleFilterState, visibleState, getStudents } = useContext(AdminContext);
+    const { userInfo, userWeek, usersDates } = useSelector((store) => store.state);
+    const { filterState, handleUserPopup, handleFilterState, visibleState, getStudents, getDatesForStudents } = useContext(AdminContext);
 
 
     useEffect(() => {
         if (route.name === "Admin") {
             const unsubscribe = navigation.addListener('focus', () => {
                 getStudents();
+                getDatesForStudents();
                 return unsubscribe;
 
             });
@@ -31,6 +33,7 @@ export default function AdminScreen({ navigation, route }) {
             <ImageBackground style={styles.bg} source={require('../images/Books.jpg')} blurRadius={1}>
 
                 <Header navigation={navigation} status={userInfo?.status} />
+
                 <View style={styles.searchBar}>
                     <View style={styles.labels}>
                         <ScrollView horizontal showsVerticalScrollIndicator={false}>
@@ -42,19 +45,16 @@ export default function AdminScreen({ navigation, route }) {
                             {visibleState.Start === true ? <Text style={{ ...styles.barItem, textAlign: 'center', marginLeft: 5, marginRight: 10 }}>Start</Text> : <></>}
                             {visibleState.End === true ? <Text style={{ ...styles.barItem, textAlign: 'center', marginLeft: 5 }}>End</Text> : <></>}
 
-                            <TouchableOpacity style={styles.barItemLastItem} onPress={() => handleFilterState({ ...filterState, filterModalVisible: true })}>
-                                <IconSettings name="settings" style={{ marginTop: 0, fontSize: 20, color: "#fff" }} />
-                            </TouchableOpacity>
+                            <View style={{display: 'flex', flexDirection: 'row', marginLeft: 'auto'}}>
+                                <TouchableOpacity style={styles.barItemLastItem} onPress={() => handleFilterState({ ...filterState, filterModalVisible: true })}>
+                                    <IconSettings name="settings" style={{ marginTop: 0, fontSize: 20, color: "#fff" }} />
+                                </TouchableOpacity>
 
-                            <TouchableOpacity style={styles.barItemLastItem} onPress={() => { navigation.navigate('Create User') }}>
-                                <IconAnt name="adduser" style={{ marginTop: 0, fontSize: 20, color: "#fff" }} />
-                            </TouchableOpacity>
-
+                                <TouchableOpacity style={styles.barItemLastItem} onPress={() => { navigation.navigate('Create User') }}>
+                                    <IconAnt name="adduser" style={{ marginTop: 0, fontSize: 20, color: "#fff" }} />
+                                </TouchableOpacity>
+                            </View>
                         </ScrollView>
-                    </View>
-
-                    <View style={styles.labels}>
-
                     </View>
                 </View>
 
@@ -87,6 +87,43 @@ export default function AdminScreen({ navigation, route }) {
                                         <IconAnt name="edit" style={{ marginRight: 10, marginTop: 5 }} size={20} color="#fff" />
                                     </Text>*/}
                                     </Pressable>
+                                    {
+                                        visibleState.Graph ?
+                                            <FlatList
+                                                style={styles.daysContainer}
+                                                data={userWeek}
+                                                renderItem={(data) => {
+
+                                                    let day = usersDates.filter(date => date.day === data.item.day && date.userID === item.userID);
+                                                    let isFree = false;
+                                                    if (day.length != 0) {
+                                                        let fromDate = new Date(day[0].from.seconds * 1000);
+                                                        let toDate = new Date(day[0].to.seconds * 1000);
+                                                        if (((toDate.getHours() - fromDate.getHours())
+                                                            + Math.floor((toDate.getMinutes() - fromDate.getMinutes()) * 1.67))
+                                                            >= 6
+                                                        ) {
+                                                            isFree = true;
+                                                        }
+                                                    }
+
+
+                                                    return (
+                                                        <View style={{ width: 20 }}>
+                                                            {
+                                                                isFree ?
+                                                                    <IconAnt name="check" style={{ marginTop: 0, fontSize: 20, color: "#0eff0e" }} />
+                                                                    :
+                                                                    <IconAnt name="close" style={{ marginTop: 0, fontSize: 20, color: "#ff0000" }} />
+                                                            }
+                                                            <Text style={{ color: "#fff", textAlign: 'center' }}>{data.item.acronym}</Text>
+                                                        </View>
+                                                    )
+                                                }}
+                                            />
+                                            :
+                                            <></>
+                                    }
                                 </ScrollView>
                             </View>
                         )
@@ -310,5 +347,11 @@ const styles = StyleSheet.create({
     },
     invisibleText: {
         opacity: 0
+    },
+    daysContainer: {
+        display: "flex",
+        flexDirection: 'row',
+        flexWrap: 'nowrap',
+        alignItems: "flex-end"
     }
 });

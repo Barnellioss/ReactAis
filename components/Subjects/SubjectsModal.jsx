@@ -161,7 +161,7 @@ const SubjectsModal = ({ navigation }) => {
 								{activeEditMode ? (
 									<View style={{ height: 30, paddingVertical: 4, marginLeft: 15 }}>
 										<RNPickerSelect
-											placeholder={{ label: "Select group", value: "" }}
+											placeholder={{ label: "Select semester", value: "" }}
 											value={`${activeSubject.semester}`}
 											onValueChange={(value) =>
 												handleActiveSubjectChange(

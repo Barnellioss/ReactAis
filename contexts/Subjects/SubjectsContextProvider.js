@@ -8,7 +8,7 @@ import { setSubjects } from "../../redux/reducers/reducers"
 import { semestersYear } from "../../variables"
 
 const SubjectsContextProvider = ({ children }) => {
-	let { userInfo, subjects } = useSelector((store) => store.state)
+	let { userInfo, subjects, groups } = useSelector((store) => store.state)
 	const dispatch = useDispatch()
 
 	const getSubjects = () => {
@@ -161,7 +161,7 @@ const SubjectsContextProvider = ({ children }) => {
 				deleteSubject,
 				handleNewSubject,
 				createSubject,
-				newSubject, error
+				newSubject, error, groups
 			}}
 		>
 			{children}

@@ -1,12 +1,15 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, Modal, Pressable, TextInput, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Modal, Pressable, TextInput, ActivityIndicator, ScrollView } from 'react-native';
 import { default as IconFeather } from 'react-native-vector-icons/Feather';
-import { windowWidth } from '../../variables';
+import { range, windowHeight, windowWidth } from '../../variables';
 import AdminContext from '../../contexts/Admin/AdminContext';
 import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
+import Timetable from 'react-native-calendar-timetable';
 //import { Picker } from '@react-native-picker/picker';
+import Event from '../Event'
+
 
 
 
@@ -14,13 +17,14 @@ import RNPickerSelect from 'react-native-picker-select';
 
 const AdminUserModal = () => {
 
-    const { visibleUserSetUp, handleUserPopup, updateStudent, isUpdating } = useContext(AdminContext);
+    const { visibleUserSetUp, handleUserPopup, updateStudent, isUpdating, groups, userWeek, usersDates, findIndexByKeyValue } = useContext(AdminContext);
     const { isVisible, item, start, end } = visibleUserSetUp;
 
     const [activeEdit, setEdit] = useState(false);
     const [student, setStudent] = useState(item);
 
-
+    let filtered = usersDates.map(item => ({ startDate: new Date(item?.from?.seconds * 1000), endDate: new Date(item?.to?.seconds * 1000), day: item?.day }))
+        
 
     const handleStudentChange = (e) => {
         const { name, value } = e;
@@ -131,13 +135,8 @@ const AdminUserModal = () => {
                                             name: "group", value: value
                                         })}
                                         items={
-                                            [
-                                                { label: "03", value: `03` },
-                                                { label: "04", value: `04` },
-                                                { label: "05", value: `05` },
-                                                { label: "06", value: `06` },
-                                                { label: "07", value: `07` },
-                                            ]}
+                                            groups.map(item => ({ label: item.group, value: item.group }))
+                                        }
                                     />
                                 </View>
                             </View>
@@ -178,39 +177,76 @@ const AdminUserModal = () => {
                             <Text style={styles.itemText}>Group: {student.group}</Text>
                             <Text style={styles.itemText}>Start fo study: {start}</Text>
                             <Text style={styles.itemText}>End of study: {end}</Text>
+
+                            <View style={styles.days__container}>
+                                <View style={{ width: windowWidth * 0.75, height: 250 }}>
+                                    <Timetable
+                                        fromHour={7.30}
+                                        toHour={20.00}
+                                        hourHeight={18}
+                                        scrollViewProps={{ scrollEnabled: false }}
+                                        items={filtered}
+                                        hideNowLine={true}
+                                        columnWidth={windowWidth * 0.75}
+                                        style={{ width: windowWidth * 0.75, marginLeft: 'auto', marginRight: 'auto' }}
+                                        renderItem={props => <Event props={props} key={Math.random() * 10000} height={18} width={0.05} left={0.08 * findIndexByKeyValue(userWeek, "day", props.item.day)} />}
+                                        // provide only one of these
+                                        range={range}
+                                    />
+                                </View>
+                                <View style={{ display: "flex", flexDirection: "row", width: windowWidth * 0.5, marginLeft: 0.15 * windowWidth}}>
+                                    {
+                                        userWeek.map((item, i) => {
+                                            return (
+                                                <View key={i}>
+                                                    <TouchableOpacity
+                                                        key={i}>
+                                                        <Text
+                                                            style={i != 0 ? styles.days__item : styles.days__item__first}>
+                                                            {item.acronym}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            )
+                                        })
+                                    }
+                                </View>
+                            </View>
                         </View>
                     }
+
+
                     {
                         isUpdating ?
-                            <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 15 }} />
+                            <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 5 }} />
                             :
-                            <View style={{ display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: 'space-between' }}>
+                            <View style={{ display: "flex", flexDirection: "row", width: 100, height: 30, justifyContent: 'space-between' }}>
                                 <Pressable
-                                    style={{ width: 40, height: 40 }}
+                                    style={{ width: 40, height: 30 }}
                                     onPress={() => {
                                         setEdit(false);
                                         handleUserPopup(false, student);
                                     }}>
-                                    <IconAnt name="close" size={24} color="#000" style={{ textAlign: 'center', marginTop: 25, height: 40 }} />
+                                    <IconAnt name="close" size={24} color="#000" style={{ textAlign: 'center', marginTop: 5, height: 30 }} />
                                 </Pressable>
 
 
                                 {activeEdit ?
                                     <Pressable
-                                        style={{ width: 40, height: 40 }}
+                                        style={{ width: 40, height: 30 }}
                                         onPress={() => {
                                             setEdit(false);
                                             updateStudent(item, student);
                                         }}>
-                                        <IconFeather name="save" size={24} color="#000" style={{ textAlign: 'center', marginTop: 25, height: 40 }} />
+                                        <IconFeather name="save" size={24} color="#000" style={{ textAlign: 'center', marginTop: 5, height: 30 }} />
                                     </Pressable>
                                     :
                                     <Pressable
-                                        style={{ width: 40, height: 40 }}
+                                        style={{ width: 40, height: 30 }}
                                         onPress={() => {
                                             setEdit(true);
                                         }}>
-                                        <IconAnt name="edit" size={24} color="#000" style={{ textAlign: 'center', marginTop: 25, height: 40 }} />
+                                        <IconAnt name="edit" size={24} color="#000" style={{ textAlign: 'center', marginTop: 5, height: 30 }} />
                                     </Pressable>
                                 }
                             </View>
@@ -232,7 +268,7 @@ const styles = StyleSheet.create({
     studentWrapper: {
         width: windowWidth * 0.85,
         marginHorizontal: 'auto',
-        marginTop: 25
+        marginTop: 5
     },
     pickerWrapper: {
         display: "flex",
@@ -291,6 +327,33 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 28
     },
+    days__container: {
+        width: windowWidth * 0.85,
+        marginTop: 5,
+        marginBottom: 10,
+        display: 'flex',
+        flexDirection: "column"
+    },
+    days__item: {
+        height: 40,
+        width: 0.05 * windowWidth,
+        borderRadius: 20,
+        color: "#000",
+        backgroundColor: "fff",
+        textAlign: "center",
+        paddingTop: 8,
+        marginLeft: 0.03 * windowWidth
+    },
+    days__item__first:{
+         height: 40,
+        width: 0.05 * windowWidth,
+        borderRadius: 20,
+        color: "#000",
+        backgroundColor: "fff",
+        textAlign: "center",
+        paddingTop: 8,
+        marginLeft: 0
+    }
 })
 
 export default AdminUserModal

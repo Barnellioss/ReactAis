@@ -16,3 +16,5 @@ export const hourInSeconds = 3600000;
 export const weekStart = dayInSeconds * 4;
 export const weekEnd = dayInSeconds * 11;
 export const range = { from: new Date(weekStart), till: new Date(weekEnd) };
+
+

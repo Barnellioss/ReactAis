@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import AdminContext from '../../contexts/Admin/AdminContext';
 import { React, useSelector } from 'react-redux';
 import { FontAwesome } from '@expo/vector-icons';
-import { CustomButton } from '../Button';
+import { default as Entypo } from 'react-native-vector-icons/Entypo';
 
 
 const AdminFilterModal = ({ navigation }) => {
@@ -34,7 +34,7 @@ const AdminFilterModal = ({ navigation }) => {
 
                         <FlatList
                             scrollEnabled={false}
-                            contentContainerStyle={{ width: windowWidth * 0.8, minHeight: 100, maxHeight: 100, marginTop: 20, flex: 1, justifyContent: 'center' }}
+                            contentContainerStyle={{ width: windowWidth * 0.8, minHeight: 150, maxHeight: 150, marginTop: 20, flex: 1, justifyContent: 'center' }}
                             data={Object.keys(visibleState)}
                             numColumns={3}
                             renderItem={({ item }) => {
