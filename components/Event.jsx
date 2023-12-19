@@ -25,7 +25,7 @@ const Event = ({ props, height, width, left }) => {
             height: ((height * (time.end - 8)) - (height * (time.start - 8))),
             padding: 10,
         }}>
-            <Text style={{ fontSize: 16, color: "#000", textAlign: 'center' }}>{time.title}</Text>
+            {/*<Text style={{ fontSize: 16, color: "#000", textAlign: 'center' }}>{time.title}</Text>*/}
         </View>
     )
 }

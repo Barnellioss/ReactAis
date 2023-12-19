@@ -35,17 +35,16 @@ export default function AdminScreen({ navigation, route }) {
                 <Header navigation={navigation} status={userInfo?.status} />
 
                 <View style={styles.searchBar}>
-                    <View style={styles.labels}>
-                        <ScrollView horizontal showsVerticalScrollIndicator={false}>
-
-                            <Text style={styles.barFirstItem}>Name</Text>
-                            {visibleState.Year === true ? <Text style={{ ...styles.barItem, width: 60, textAlign: 'center' }}>Year</Text> : <></>}
-                            {visibleState.Degree === true ? <Text style={{ ...styles.barItem, textAlign: 'center', marginRight: 5 }}>Degree</Text> : <></>}
-                            {visibleState.Group === true ? <Text style={{ ...styles.barItem, textAlign: 'center' }}>Group</Text> : <></>}
+                    <ScrollView horizontal  scrollEnabled={true} showsHorizontalScrollIndicator={false}>
+                        <View style={styles.labels}>
+                            <Text style={{...styles.barFirstItem, minWidth: 120}}>Name</Text>
+                            {visibleState.Year === true ? <Text style={{ ...styles.barItem,  textAlign: 'center'}}>Year</Text> : <></>}
+                            {visibleState.Degree === true ? <Text style={{ ...styles.barItem, textAlign: 'center', marginRight: 5, marginLeft: 10}}>Degree</Text> : <></>}
+                            {visibleState.Group === true ? <Text style={{ ...styles.barItem, textAlign: 'center', marginLeft: 10 }}>Group</Text> : <></>}
                             {visibleState.Start === true ? <Text style={{ ...styles.barItem, textAlign: 'center', marginLeft: 5, marginRight: 10 }}>Start</Text> : <></>}
                             {visibleState.End === true ? <Text style={{ ...styles.barItem, textAlign: 'center', marginLeft: 5 }}>End</Text> : <></>}
 
-                            <View style={{display: 'flex', flexDirection: 'row', marginLeft: 'auto'}}>
+                            <View style={{ display: 'flex', flexDirection: 'row', marginLeft: 'auto', width: 65 }}>
                                 <TouchableOpacity style={styles.barItemLastItem} onPress={() => handleFilterState({ ...filterState, filterModalVisible: true })}>
                                     <IconSettings name="settings" style={{ marginTop: 0, fontSize: 20, color: "#fff" }} />
                                 </TouchableOpacity>
@@ -54,8 +53,9 @@ export default function AdminScreen({ navigation, route }) {
                                     <IconAnt name="adduser" style={{ marginTop: 0, fontSize: 20, color: "#fff" }} />
                                 </TouchableOpacity>
                             </View>
-                        </ScrollView>
-                    </View>
+                        </View>
+
+                    </ScrollView>
                 </View>
 
 
@@ -72,12 +72,12 @@ export default function AdminScreen({ navigation, route }) {
 
                         return (
                             <View style={styles.listItemWrapper}>
-                                <ScrollView horizontal>
+                                <ScrollView scrollEnable={true} horizontal>
                                     <Pressable style={{ flex: 1, flexDirection: "row", marginTop: 10 }}
                                         onPress={() =>
                                             handleUserPopup(true, item)
                                         }>
-                                        <Text style={styles.listItemFirstChild} numberOfLines={1} ellipsizeMode="tail" >{item.lastname + " " + item.name}</Text>
+                                        <Text style={{...styles.listItemFirstChild, minWidth: 120}} numberOfLines={1} ellipsizeMode="tail" >{item.lastname + " " + item.name}</Text>
                                         {visibleState.Year === true ? <Text style={{ ...styles.listItem, width: 30 }}>{item.currentYear}</Text> : <></>}
                                         {visibleState.Degree === true ? <Text style={{ ...styles.listItem, marginLeft: 17, width: 60 }}>{item.degree}</Text> : <></>}
                                         {visibleState.Group === true ? <Text style={{ ...styles.listItem, width: 20, textAlign: 'left', marginRight: 20 }}>{item.group}</Text> : <></>}
@@ -223,9 +223,10 @@ const styles = StyleSheet.create({
     labels: {
         display: 'flex',
         flexDirection: 'row',
+        width: 0.9 * windowWidth,
+        justifyContent: 'space-between'
     },
     searchBar: {
-        width: windowWidth * 0.9,
         marginTop: 30,
         display: 'flex',
         flexDirection: 'column',
@@ -268,14 +269,14 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
-        width: 45,
+        width: 35,
         height: 25,
         color: "#fff"
     },
     barItem: {
         fontSize: 14,
         color: "#fff",
-        width: 70,
+        minWidth: 60,
         marginLeft: 0,
     },
     barItemText: {

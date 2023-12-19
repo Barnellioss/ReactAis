@@ -23,7 +23,9 @@ const AdminUserModal = () => {
     const [activeEdit, setEdit] = useState(false);
     const [student, setStudent] = useState(item);
 
-    let filtered = usersDates.map(item => ({ startDate: new Date(item?.from?.seconds * 1000), endDate: new Date(item?.to?.seconds * 1000), day: item?.day }))
+    let filtered = usersDates.filter(data => data.userID === student.userID)
+                    .map(item => ({ startDate: new Date(item?.from?.seconds * 1000), endDate: new Date(item?.to?.seconds * 1000), day: item?.day}))
+
         
 
     const handleStudentChange = (e) => {

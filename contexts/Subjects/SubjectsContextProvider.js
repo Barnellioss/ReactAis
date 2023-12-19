@@ -86,11 +86,12 @@ const SubjectsContextProvider = ({ children }) => {
 	//Popup visibility
 	const [SubjectsInfo, setSubjectsInfo] = useState({
 		year: 0,
-		semester: ""
+		semester: "",
+		mode: "view"
 	})
 
-	const handleInfo = (year, semester) => {
-		setSubjectsInfo({ year: year, semester: semester })
+	const handleInfo = (year, semester, mode) => {
+		setSubjectsInfo({ year: year, semester: semester, mode: mode });
 	}
 
 	//Modal modes

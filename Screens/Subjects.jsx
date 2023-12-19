@@ -60,7 +60,7 @@ const SubjectsScreen = ({ navigation, route }) => {
 													return (
 														<Pressable
 															onPress={() => {
-																handleInfo(item.year, item.semester)
+																handleInfo(item.year, item.semester, "view")
 																handleModes({
 																	viewMode: true,
 																	editMode: false,
@@ -80,7 +80,7 @@ const SubjectsScreen = ({ navigation, route }) => {
 														>
 															<Pressable
 																onPress={() => {
-																	handleInfo(item.year, item.semester)
+																	handleInfo(item.year, item.semester, "view")
 																	handleModes({
 																		viewMode: true,
 																		editMode: false,
