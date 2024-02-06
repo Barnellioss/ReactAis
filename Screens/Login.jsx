@@ -1,10 +1,9 @@
 import { View, Text, StyleSheet, ImageBackground, TextInput, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { CustomButton } from '../components/Button';
+import React, { useState } from 'react'
+import { CustomButton } from '../components/common/Button';
 import { windowWidth, windowHeight } from '../variables';
 import { useContext } from 'react';
 import LoginContext from '../contexts/Login/LoginContext';
-import store from '../redux/store';
 
 
 

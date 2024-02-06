@@ -2,8 +2,8 @@ import { View, StyleSheet, ImageBackground, ScrollView } from 'react-native'
 import React, { useEffect } from 'react'
 import { firebaseAuth } from '../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
-import { windowWidth, windowHeight, week } from '../variables';
-import Header from '../components/Header';
+import { windowWidth, windowHeight} from '../variables';
+import Header from '../components/common/Header';
 import { useContext } from 'react';
 import MainContext from '../contexts/Main/MainContext';
 

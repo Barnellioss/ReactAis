@@ -3,8 +3,8 @@ import React, { useContext, useEffect } from 'react'
 import AboutContext from '../../contexts/About/AboutContext'
 import Timetable from 'react-native-calendar-timetable'
 import { range, windowHeight, windowWidth } from '../../variables'
-import Event from '../Event'
-import Header from '../Header'
+import Event from '../common/Event'
+import Header from '../common/Header'
 
 
 

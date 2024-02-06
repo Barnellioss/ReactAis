@@ -1,8 +1,8 @@
-import { View, Text, ImageBackground, ScrollView, TouchableOpacity, FlatList } from "react-native"
-import React, { useEffect } from "react"
+import { View, Text, ImageBackground, ScrollView, FlatList } from "react-native"
+import React, { useReducer } from "react"
 import { useContext } from "react"
 import SubjectsContext from "../contexts/Subjects/SubjectsContext"
-import Header from "../components/Header"
+import Header from "../components/common/Header"
 import { default as IconFeather } from "react-native-vector-icons/Feather"
 import { default as IconAwesome } from "react-native-vector-icons/FontAwesome"
 import { Pressable } from "react-native"
@@ -11,6 +11,9 @@ import { StyleSheet } from "react-native"
 
 const SubjectsScreen = ({ navigation, route }) => {
 	const { userInfo, semestersYear, years, SubjectsInfo, handleInfo, handleModes } = useContext(SubjectsContext)
+	const groups = useReducer((state) => state.groups);
+
+	console.log(groups);
 
 	return (
 		<View style={styles.container}>

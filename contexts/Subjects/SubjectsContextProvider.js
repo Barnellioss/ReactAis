@@ -87,7 +87,7 @@ const SubjectsContextProvider = ({ children }) => {
 	const [SubjectsInfo, setSubjectsInfo] = useState({
 		year: 0,
 		semester: "",
-		mode: "view"
+		mode: ""
 	})
 
 	const handleInfo = (year, semester, mode) => {

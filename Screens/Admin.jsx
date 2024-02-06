@@ -4,7 +4,7 @@ import { windowHeight, windowWidth } from '../variables';
 import { useEffect, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { default as IconSettings } from 'react-native-vector-icons/Feather';
-import Header from '../components/Header';
+import Header from '../components/common/Header';
 import AdminContext from '../contexts/Admin/AdminContext';
 import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
 

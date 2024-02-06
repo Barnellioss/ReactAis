@@ -1,7 +1,7 @@
 {
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"[javascriptreact]": {
-		"editor.defaultFormatter": "svipas.prettier-plus"
+		"editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
 	},
 	"prettier.bracketSpacing": false,
 	"prettier.proseWrap": "never",

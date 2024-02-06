@@ -1,16 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, Modal, Pressable, TextInput, ActivityIndicator, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Modal, Pressable, TextInput, ActivityIndicator } from 'react-native';
 import { default as IconFeather } from 'react-native-vector-icons/Feather';
-import { range, windowHeight, windowWidth } from '../../variables';
+import { range, windowWidth } from '../../variables';
 import AdminContext from '../../contexts/Admin/AdminContext';
 import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import Timetable from 'react-native-calendar-timetable';
+import Event from '../common/Event';
 //import { Picker } from '@react-native-picker/picker';
-import Event from '../Event'
-
-
 
 
 
@@ -137,7 +135,9 @@ const AdminUserModal = () => {
                                             name: "group", value: value
                                         })}
                                         items={
-                                            groups.map(item => ({ label: item.group, value: item.group }))
+                                            groups
+                                            .filter(item => item.year == student.currentYear)
+                                            .map(item => ({ label: item.group, value: item.group }))
                                         }
                                     />
                                 </View>

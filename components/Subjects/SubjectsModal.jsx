@@ -1,18 +1,23 @@
-import { View, Text, Modal, StyleSheet, FlatList, TouchableOpacity, Pressable, TextInput } from "react-native"
+import { View, Text, Modal, StyleSheet, FlatList,  Pressable, TextInput } from "react-native"
 import { default as IconIonicons } from "react-native-vector-icons/Ionicons"
 import { default as IconAnt } from "react-native-vector-icons/AntDesign"
-import { windowHeight, windowWidth } from "../../variables"
+import { default as IconMaterial} from "react-native-vector-icons/MaterialIcons"
+import { default as IconMaterialCommunity} from "react-native-vector-icons/MaterialCommunityIcons"
+import { windowWidth } from "../../variables"
 import { useContext } from "react"
-import { React, useSelector } from "react-redux"
 import { default as IconAwesome } from "react-native-vector-icons/FontAwesome"
 import SubjectsContext from "../../contexts/Subjects/SubjectsContext"
-import { ScrollView } from "react-native"
 import { useEffect } from "react"
 import { default as IconFeather } from "react-native-vector-icons/Feather"
 import RNPickerSelect from "react-native-picker-select"
 import { ActivityIndicator } from "react-native"
 
+
+
+
 const SubjectsModal = ({ navigation }) => {
+	
+	
 	const {
 		subjects,
 		SubjectsInfo,
@@ -36,13 +41,16 @@ const SubjectsModal = ({ navigation }) => {
 
 	useEffect(() => {
 		getSubjects()
-	}, [modes.viewMode === true])
+	}, [modes.viewMode === true]);
+
+
+
 
 	return SubjectsInfo.mode === "view"
 		? <Modal
 			animationType="slide"
 			transparent={true}
-			visible={modes.viewMode || modes.editMode || modes.createMode}
+			visible={/*modes.viewMode*/ SubjectsInfo.mode === "view"}
 			onRequestClose={() => {
 				handleInfo("", "", "")
 				handleModes({ viewMode: false, editMode: false, createMode: false })
@@ -87,7 +95,12 @@ const SubjectsModal = ({ navigation }) => {
 					</View>
 
 					<View style={{ ...styles.list, display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
-						<View style={{
+						
+						<Pressable 
+							onPress={() => {
+								
+							}}
+							style={{
 							width: 0.4 * windowWidth,
 							backgroundColor: "#c5bac4",
 							borderRadius: 20,
@@ -97,18 +110,23 @@ const SubjectsModal = ({ navigation }) => {
 							justifyContent: "center",
 							height: 40
 						}}>
-							<IconFeather
-								name="sun"
+							<IconMaterial
+								name="groups"
 								size={18}
 								color="#000"
 								style={{
-									textAlign: "center"
+									textAlign: "center",
 								}}
 							/>
 
 							<Text style={{ ...styles.listItem, paddingBottom: 0 }}>Groups</Text>
-						</View>
-						<View style={{
+						</Pressable>
+						<Pressable 
+							onPress={() => {
+								handleInfo(SubjectsInfo.year, SubjectsInfo.semester ,"");
+								handleModes({ viewMode: true, editMode: false, createMode: false });
+							}}
+							style={{
 							width: 0.4 * windowWidth,
 							backgroundColor: "#c5bac4",
 							borderRadius: 20,
@@ -118,17 +136,18 @@ const SubjectsModal = ({ navigation }) => {
 							justifyContent: "center",
 							height: 40
 						}}>
-							<IconFeather
-								name="sun"
+							<IconMaterialCommunity
+								name="bookshelf"
 								size={18}
 								color="#000"
 								style={{
-									textAlign: "center"
+									textAlign: "center",
+									
 								}}
 							/>
 
 							<Text style={{ ...styles.listItem, paddingBottom: 0 }}>Subjects</Text>
-						</View>
+						</Pressable>
 					</View>
 
 
@@ -155,7 +174,7 @@ const SubjectsModal = ({ navigation }) => {
 				transparent={true}
 				visible={modes.viewMode || modes.editMode || modes.createMode}
 				onRequestClose={() => {
-					handleInfo("", "")
+					handleInfo("", "", "")
 					handleModes({ viewMode: false, editMode: false, createMode: false })
 				}}
 			>
@@ -194,7 +213,7 @@ const SubjectsModal = ({ navigation }) => {
 														createMode: false
 													})
 												}}
-												style={styles.listItemWrapper}
+												style={{...styles.listItemWrapper, width: 0.78 * windowWidth}}
 											>
 												<Text>{item.subject}</Text>
 											</Pressable>
@@ -216,9 +235,21 @@ const SubjectsModal = ({ navigation }) => {
 										handleModes({ viewMode: false, editMode: false, createMode: true })
 									}}
 								>
-									<IconIonicons name="add" size={24} color="#000" style={{ fontWeight: 600 }} />
+									<IconIonicons name="add" size={24} color="#000" style={{ fontWeight: 600, marginLeft: 2 }} />
 								</Pressable>
 							</View>
+
+
+						<View style={{ display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: "space-between", alignItems: "flex-end" }}>
+							<Pressable
+									style={{ width: 40 }}
+									onPress={() => {
+										handleInfo(SubjectsInfo.year, SubjectsInfo.semester ,"view");
+										handleModes({ viewMode: false, editMode: false, createMode: false })
+									}}
+								>		
+									<IconIonicons name="arrow-back" size={24} color="#000" style={{ textAlign: "center"}} />
+							</Pressable>
 							<Pressable
 								style={[styles.button, styles.buttonClose]}
 								onPress={() => {
@@ -230,9 +261,10 @@ const SubjectsModal = ({ navigation }) => {
 									handleActiveSubject({})
 								}}
 							>
-								<IconAnt name="close" size={20} color="#000" style={{ textAlign: "center" }} />
+								<IconAnt name="close" size={24} color="#000" style={{ textAlign: "center" }} />
 							</Pressable>
 						</View>
+					</View>
 					)
 						:
 						modes.editMode ? (
@@ -385,7 +417,7 @@ const SubjectsModal = ({ navigation }) => {
 
 											{!activeEditMode ? (
 												<Pressable style={{ width: 40, height: 40 }} onPress={() => handleActiveEditMode(true)}>
-													<IconAnt name="edit" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
+													<IconAnt name="edit" size={24} color="#000" style={{ textAlign: "center", marginTop: 26, height: 40 }} />
 												</Pressable>
 											) : (
 												<Pressable style={{ width: 40, height: 40 }} onPress={() => updateSubject(activeSubject)}>
@@ -592,7 +624,7 @@ const styles = StyleSheet.create({
 	},
 
 	filterButton: {
-		width: 80,
+		maxWidthwidth: 80,
 		borderColor: "#464742",
 		borderWidth: 2,
 		borderStyle: "solid",
@@ -629,7 +661,7 @@ const styles = StyleSheet.create({
 
 	list: {
 		marginTop: 10,
-		width: windowWidth * 0.9,
+		width: windowWidth * 0.85,
 		marginHorizontal: "auto"
 	},
 	barFirstItem: {
@@ -663,9 +695,9 @@ const styles = StyleSheet.create({
 	listItem: {
 		color: "#fff",
 		fontSize: 14,
-		width: 90,
+		width: 70,
 		paddingBottom: 10,
-		marginLeft: 30
+		marginLeft: 15
 	},
 	listItemFirstChild: {
 		color: "#fff",
@@ -693,8 +725,8 @@ const styles = StyleSheet.create({
 		justifyContent: "flex-start"
 	},
 	button: {
-		marginTop: 50,
-		width: 200
+		width: 40,
+		marginTop: 5
 	},
 	textError: {
 		fontSize: 22,

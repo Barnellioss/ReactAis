@@ -3,7 +3,11 @@ import React, { useContext } from 'react'
 import { windowHeight, windowWidth } from '../../variables'
 import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
 import AboutContext from '../../contexts/About/AboutContext'
-import Header from '../Header';
+import Header from '../common/Header';
+
+
+
+
 
 const AdminView = ({ navigation, route }) => {
 

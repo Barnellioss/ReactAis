@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { signOut } from "firebase/auth";
-import { firebaseAuth } from "../firebaseConfig";
-import { windowHeight, windowWidth } from "../variables";
+import { firebaseAuth } from "../../firebaseConfig";
+import { windowHeight, windowWidth } from "../../variables";
 import { default as IconAnt } from "react-native-vector-icons/AntDesign";
 import { default as IconMaterial } from "react-native-vector-icons/MaterialIcons";
 

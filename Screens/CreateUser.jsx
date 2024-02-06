@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ImageBackground, KeyboardAvoidingView, StyleSheet, Text, TextInput, View } from 'react-native'
-import { CustomButton } from '../components/Button';
+import { CustomButton } from '../components/common/Button';
 import { windowHeight, windowWidth } from '../variables';
 import { useContext } from 'react';
 import LoginContext from '../contexts/Login/LoginContext';
-import { signOut } from 'firebase/auth';
-import { firebaseAuth } from '../firebaseConfig';
 import { ActivityIndicator } from 'react-native';
 
 
