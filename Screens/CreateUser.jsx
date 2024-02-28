@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ImageBackground, KeyboardAvoidingView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { CustomButton } from '../components/common/Button';
-import { windowHeight, windowWidth } from '../variables';
+import { windowHeight, windowWidth } from '../constants';
 import { useContext } from 'react';
 import LoginContext from '../contexts/Login/LoginContext';
 import { ActivityIndicator } from 'react-native';

@@ -1,7 +1,7 @@
 import { View, Text, Modal, StyleSheet, FlatList, TouchableOpacity, Pressable } from 'react-native'
 import { default as IconSettings } from 'react-native-vector-icons/Feather';
 import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
-import { windowHeight, windowWidth } from '../../variables';
+import { windowHeight, windowWidth } from '../../constants';
 import RNPickerSelect from 'react-native-picker-select';
 import { useContext } from 'react';
 import AdminContext from '../../contexts/Admin/AdminContext';

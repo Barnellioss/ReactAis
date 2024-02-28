@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ImageBackground, FlatList, TouchableOpacity, Pressable, ScrollView } from 'react-native'
 import React from 'react'
-import { windowHeight, windowWidth } from '../variables';
+import { windowHeight, windowWidth } from '../constants';
 import { useEffect, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { default as IconSettings } from 'react-native-vector-icons/Feather';

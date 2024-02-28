@@ -2,7 +2,7 @@ import { View, StyleSheet, ImageBackground, ScrollView } from 'react-native'
 import React, { useEffect } from 'react'
 import { firebaseAuth } from '../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
-import { windowWidth, windowHeight} from '../variables';
+import { windowWidth, windowHeight} from '../constants';
 import Header from '../components/common/Header';
 import { useContext } from 'react';
 import MainContext from '../contexts/Main/MainContext';

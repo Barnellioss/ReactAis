@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Modal, Pressable, TextInput, ActivityIndicator } from 'react-native';
 import { default as IconFeather } from 'react-native-vector-icons/Feather';
-import { range, windowWidth } from '../../variables';
+import { range, windowWidth } from '../../constants';
 import AdminContext from '../../contexts/Admin/AdminContext';
 import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';

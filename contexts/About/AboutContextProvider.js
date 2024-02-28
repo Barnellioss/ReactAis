@@ -5,7 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { addDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { firebaseAuth, firebaseUserDatesColumn, firebaseUserInfo } from '../../firebaseConfig';
 import { setUserInfo, setWeek } from '../../redux/reducers/reducers';
-import { dayInSeconds, hourInSeconds, weekEnd, weekStart } from '../../variables';
+import { dayInSeconds, hourInSeconds, weekEnd, weekStart } from '../../constants';
 
 
 const AboutContextProvider = ({ children }) => {

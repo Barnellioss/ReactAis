@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, ScrollView }
 import React, { useContext, useEffect } from 'react'
 import AboutContext from '../../contexts/About/AboutContext'
 import Timetable from 'react-native-calendar-timetable'
-import { range, windowHeight, windowWidth } from '../../variables'
+import { range, windowHeight, windowWidth } from '../../constants'
 import Event from '../common/Event'
 import Header from '../common/Header'
 

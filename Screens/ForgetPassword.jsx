@@ -4,7 +4,7 @@ import { CustomButton } from '../components/common/Button';
 import { fetchSignInMethodsForEmail, sendPasswordResetEmail } from 'firebase/auth';
 import { firebaseAuth } from '../firebaseConfig';
 import { Switcher } from '../functions/Firebase__error';
-import { windowHeight, windowWidth } from '../variables';
+import { windowHeight, windowWidth } from '../constants';
 
 function ForgetPasswordScreen({ navigation }) {
 

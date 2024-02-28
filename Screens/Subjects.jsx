@@ -6,14 +6,13 @@ import Header from "../components/common/Header"
 import { default as IconFeather } from "react-native-vector-icons/Feather"
 import { default as IconAwesome } from "react-native-vector-icons/FontAwesome"
 import { Pressable } from "react-native"
-import { windowHeight, windowWidth } from "../variables"
+import { windowHeight, windowWidth } from "../constants"
 import { StyleSheet } from "react-native"
 
 const SubjectsScreen = ({ navigation, route }) => {
 	const { userInfo, semestersYear, years, SubjectsInfo, handleInfo, handleModes } = useContext(SubjectsContext)
 	const groups = useReducer((state) => state.groups);
 
-	console.log(groups);
 
 	return (
 		<View style={styles.container}>

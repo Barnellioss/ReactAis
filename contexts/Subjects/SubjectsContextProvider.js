@@ -1,21 +1,21 @@
-import React, { useState } from "react"
+import React, {useState} from "react"
 import SubjectsContext from "./SubjectsContext"
-import { useSelector } from "react-redux"
-import { addDoc, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore"
-import { firebaseSubjects } from "../../firebaseConfig"
-import { useDispatch } from "react-redux"
-import { setSubjects } from "../../redux/reducers/reducers"
-import { semestersYear } from "../../variables"
+import {useSelector} from "react-redux"
+import {addDoc, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where} from "firebase/firestore"
+import {firebaseSubjects} from "../../firebaseConfig"
+import {useDispatch} from "react-redux"
+import {setSubjects} from "../../redux/reducers/reducers"
+import {semestersYear} from "../../constants"
 
-const SubjectsContextProvider = ({ children }) => {
-	let { userInfo, subjects, groups } = useSelector((store) => store.state)
+const SubjectsContextProvider = ({children}) => {
+	let {userInfo, subjects, groups} = useSelector((store) => store.state)
 	const dispatch = useDispatch()
 
 	const getSubjects = () => {
 		let res = []
 		getDocs(query(firebaseSubjects, where("year", "==", SubjectsInfo.year), where("semester", "==", SubjectsInfo.semester))).then((data) => {
 			data.docs.forEach((item) => {
-				res.push({ ...item.data(), id: item.id })
+				res.push({...item.data(), id: item.id})
 			})
 			dispatch(setSubjects(JSON.parse(JSON.stringify(res))))
 		})
@@ -24,7 +24,7 @@ const SubjectsContextProvider = ({ children }) => {
 	const updateSubject = async (subject) => {
 		handleUpdating(true)
 
-		const { id } = subject
+		const {id} = subject
 		const subjectDocRef = doc(firebaseSubjects, `${id}`)
 
 		try {
@@ -33,8 +33,8 @@ const SubjectsContextProvider = ({ children }) => {
 				getSubjects()
 			})
 		} catch (e) {
-			handleUpdating(false);
-			handleError(e.message);
+			handleUpdating(false)
+			handleError(e.message)
 		} finally {
 			handleUpdating(false)
 			//alert("Profile has been updated");
@@ -50,10 +50,9 @@ const SubjectsContextProvider = ({ children }) => {
 				getSubjects()
 			})
 		} catch (e) {
-			handleUpdating(false);
-			handleError(e.message);
-		}
-		finally {
+			handleUpdating(false)
+			handleError(e.message)
+		} finally {
 			handleUpdating(false)
 			//alert("Profile has been updated");
 		}
@@ -65,12 +64,12 @@ const SubjectsContextProvider = ({ children }) => {
 		try {
 			await addDoc(firebaseSubjects, subject)
 		} catch (e) {
-			handleUpdating(false);
-			handleError(e.message);
+			handleUpdating(false)
+			handleError(e.message)
 		} finally {
-			handleUpdating(false);
-			getSubjects();
-			handleNewSubject({ subject: "", semester: "", year: "", teacher: "", info: "", id: 0 })
+			handleUpdating(false)
+			getSubjects()
+			handleNewSubject({subject: "", semester: "", year: "", teacher: "", info: "", id: 0})
 		}
 	}
 
@@ -90,8 +89,10 @@ const SubjectsContextProvider = ({ children }) => {
 		mode: ""
 	})
 
+	console.log(SubjectsInfo)
+
 	const handleInfo = (year, semester, mode) => {
-		setSubjectsInfo({ year: year, semester: semester, mode: mode });
+		setSubjectsInfo({year: year, semester: semester, mode: mode})
 	}
 
 	//Modal modes
@@ -102,14 +103,19 @@ const SubjectsContextProvider = ({ children }) => {
 	})
 
 	const handleModes = (obj) => {
-		setModes({ editMode: obj.editMode, createMode: obj.createMode, viewMode: obj.viewMode })
+		setModes({editMode: obj.editMode, createMode: obj.createMode, viewMode: obj.viewMode})
 	}
 
 	//Create new subject
-	const [newSubject, setNewSubject] = useState({ subject: "", semester: "", year: "", teacher: "", info: "", id: 0 })
+	const [newSubject, setNewSubject] = useState({subject: "", semester: "", year: "", teacher: "", info: "", id: 0})
 
 	const handleNewSubject = (subject) => {
 		setNewSubject(subject)
+	}
+
+	//reset inputs on popup closed
+	const resetSubject = () => {
+		setNewSubject({subject: "", semester: "", year: "", teacher: "", info: "", id: 0})
 	}
 
 	//Active edit subject or create handler
@@ -120,7 +126,7 @@ const SubjectsContextProvider = ({ children }) => {
 	}
 
 	const handleActiveSubjectChange = (e, handler) => {
-		const { name, value } = e
+		const {name, value} = e
 		handler((prevFormData) => ({
 			...prevFormData,
 			[name]: value
@@ -162,7 +168,10 @@ const SubjectsContextProvider = ({ children }) => {
 				deleteSubject,
 				handleNewSubject,
 				createSubject,
-				newSubject, error, groups
+				resetSubject,
+				newSubject,
+				error,
+				groups
 			}}
 		>
 			{children}

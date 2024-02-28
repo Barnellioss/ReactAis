@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
 import AboutContext from '../../contexts/About/AboutContext'
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { windowHeight, windowWidth } from '../../variables';
+import { windowHeight, windowWidth } from '../../constants';
 import { default as IconFeather } from 'react-native-vector-icons/Feather';
 
 

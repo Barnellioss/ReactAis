@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import { windowWidth } from '../../variables'
+import { windowWidth } from '../../constants'
 
 const Event = ({ props, height, width, left }) => {
 

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TextInput, Button, Image, TouchableOpacity, ActivityIndicator, ImageBackground } from 'react-native'
 import React, { useContext } from 'react'
-import { windowHeight, windowWidth } from '../../variables'
+import { windowHeight, windowWidth } from '../../constants'
 import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
 import AboutContext from '../../contexts/About/AboutContext'
 import Header from '../common/Header';

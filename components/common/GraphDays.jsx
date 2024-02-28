@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import React from 'react'
 import { windowWidth } from './variales'
-import { days } from '../../variables'
+import { days } from '../../constants'
 
 const GraphDays = () => {
 

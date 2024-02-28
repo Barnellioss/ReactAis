@@ -6,7 +6,7 @@ import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailA
 import { setUser } from '../../redux/reducers/reducers';
 import { Switcher } from '../../functions/Firebase__error';
 import { doc, setDoc } from 'firebase/firestore';
-import { dayInSeconds, startCounting, yearInSeconds } from '../../variables';
+import { dayInSeconds, startCounting, yearInSeconds } from '../../constants';
 
 const LoginContextProvider = ({ children, navigation }) => {
 
