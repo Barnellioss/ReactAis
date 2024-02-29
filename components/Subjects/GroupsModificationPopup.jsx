@@ -1,7 +1,7 @@
 import { View, Text, Modal, FlatList,  Pressable, TextInput, StyleSheet } from "react-native"
 import { default as IconIonicons } from "react-native-vector-icons/Ionicons"
 import { default as IconAnt } from "react-native-vector-icons/AntDesign"
-import { semesters, windowWidth, years } from "../../constants"
+import { semesters, stages, windowWidth, years } from "../../constants"
 import { useContext } from "react"
 import { default as IconAwesome } from "react-native-vector-icons/FontAwesome"
 import { default as IconFeather } from "react-native-vector-icons/Feather"
@@ -15,25 +15,29 @@ import { styles } from "./SubjectsModal"
 export const GroupsModificationPopup = () => {
 
     const {
-		subjects,
+		groups,
 		SubjectsInfo,
 		handleInfo,
 		modes,
+		activeGroup,
+		handleActiveGroup,
+		handleActiveGroupChange,
 		handleModes,
-		activeSubject,
+		handleNewGroup,
+		newGroup,
 		handleActiveSubject,
 		handleActiveSubjectChange,
 		activeEditMode,
 		handleActiveEditMode,
-		updateSubject,
+		updateGroup,
 		updating,
-		deleteSubject,
-		handleNewSubject,
+		deleteGroup,
 		newSubject,
-		createSubject,
 		error,
-		resetSubject
+		createGroup
 	} = useContext(SubjectsContext)
+
+	console.log(newGroup);
 
     return (
         <View style={styles.centeredView}>
@@ -61,24 +65,24 @@ export const GroupsModificationPopup = () => {
 							</View>
 							<FlatList
 								style={styles.list}
-								data={subjects}
+								data={groups}
 								renderItem={({ item }) => {
 									return (
 										<View style={{ display: "flex", flexDirection: "row", alignItems: "center", paddingHorizontal: 5 }}>
 											<Pressable
 												onLongPress={() => {
-													handleActiveSubject(item)
+													handleActiveGroup(item)
 													handleModes({
 														viewMode: false,
 														editMode: true,
 														createMode: false
-													})
+													});
 												}}
 												style={{...styles.listItemWrapper, width: 0.78 * windowWidth}}
 											>
-												<Text>{item.subject}</Text>
+												<Text>{item.group}</Text>
 											</Pressable>
-											<Pressable onPress={() => deleteSubject(item.id)}>
+											<Pressable onPress={() => deleteGroup(item.id)}>
 												<IconAnt name="close" size={20} color="#000" style={{ textAlign: "center" }} />
 											</Pressable>
 										</View>
@@ -119,7 +123,8 @@ export const GroupsModificationPopup = () => {
 										editMode: false,
 										createMode: false
 									})
-									handleActiveSubject({})
+									handleActiveSubject({});
+									handleInfo("", "", "");
 								}}
 							>
 								<IconAnt name="close" size={24} color="#000" style={{ textAlign: "center" }} />
@@ -137,16 +142,15 @@ export const GroupsModificationPopup = () => {
 										alignItems: "center"
 									}}
 								>
-									<Text style={styles.modalTitle}>Edit Subjects</Text>
+									<Text style={styles.modalTitle}>Edit Group</Text>
 									<IconAwesome name="university" size={26} style={{ marginLeft: 15, marginTop: 5 }} />
 								</View>
 
 								<View style={{ display: "flex", flexDirection: "row", width: 0.9 * windowWidth }}>
-									<View style={{ ...styles.studentWrapper, width: 80, marginHorizontal: 0 }}>
-										<Text style={styles.itemText}>Subject: </Text>
-										<Text style={styles.itemText}>Semester: </Text>
+									<View style={{ ...styles.studentWrapper, width: 80, marginHorizontal: 0, marginTop: 25 }}>
+										<Text style={styles.itemText}>Title: </Text>
 										<Text style={styles.itemText}>Year: </Text>
-										<Text style={styles.itemText}>Teacher: </Text>
+										<Text style={styles.itemText}>Stage: </Text>
 										<Text style={styles.itemText}>Info: </Text>
 									</View>
 
@@ -154,51 +158,28 @@ export const GroupsModificationPopup = () => {
 										{activeEditMode ? (
 											<TextInput
 												style={styles.input}
-												value={activeSubject.subject}
+												value={activeGroup.group}
 												placeholderTextColor="#000"
 												placeholder="Subject"
 												autoCapitalize="none"
 												clearButtonMode="always"
-												onChangeText={(value) => handleActiveSubjectChange({ name: "subject", value: value }, handleActiveSubject)}
+												onChangeText={(value) => handleActiveGroupChange({ name: "group", value: value }, handleActiveGroup)}
 											></TextInput>
 										) : (
-											<Text style={{ ...styles.itemText, width: 250 }}>{activeSubject.subject}</Text>
+											<Text style={{ ...styles.itemText, width: 250 }}>{activeGroup.group}</Text>
 										)}
 										{activeEditMode ? (
-											<View style={{ height: 30, paddingVertical: 4, marginLeft: 15 }}>
-												<RNPickerSelect
-													placeholder={{ label: "Select semester", value: "" }}
-													value={`${activeSubject.semester}`}
-													onValueChange={(value) =>
-														handleActiveSubjectChange(
-															{
-																name: "semester",
-																value: value
-															},
-															handleActiveSubject
-														)
-													}
-													items={[
-														{ label: "winter", value: `winter` },
-														{ label: "summer", value: `summer` }
-													]}
-												/>
-											</View>
-										) : (
-											<Text style={styles.itemText}>{activeSubject.semester}</Text>
-										)}
-										{activeEditMode ? (
-											<View style={{ height: 30, paddingVertical: 10, marginLeft: 15 }}>
+											<View style={{ height: 30, paddingVertical: 10, marginLeft: 15, paddingTop: 7, marginTop: 10 }}>
 												<RNPickerSelect
 													placeholder={{ label: "Select year", value: "" }}
-													value={`${activeSubject.year}`}
+													value={`${activeGroup.year}`}
 													onValueChange={(value) =>
-														handleActiveSubjectChange(
+														handleActiveGroupChange(
 															{
 																name: "year",
-																value: value
+																value: +value
 															},
-															handleActiveSubject
+															handleActiveGroup
 														)
 													}
 													items={[
@@ -211,34 +192,34 @@ export const GroupsModificationPopup = () => {
 												/>
 											</View>
 										) : (
-											<Text style={styles.itemText}>{activeSubject.year}</Text>
+											<Text style={styles.itemText}>{activeGroup.year}</Text>
 										)}
 										{activeEditMode ? (
 											<TextInput
-												style={styles.input}
-												value={activeSubject.teacher}
+												style={{...styles.input}}
+												value={activeGroup.stage}
 												placeholderTextColor="#000"
 												placeholder="Teacher"
 												autoCapitalize="none"
 												clearButtonMode="always"
-												onChangeText={(value) => handleActiveSubjectChange({ name: "teacher", value: value }, handleActiveSubject)}
+												onChangeText={(value) => handleActiveGroupChange({ name: "stage", value: value }, handleActiveGroup)}
 											></TextInput>
 										) : (
-											<Text style={{ ...styles.itemText, width: 250 }}>{activeSubject.teacher}</Text>
+											<Text style={{ ...styles.itemText, width: 250 }}>{activeGroup.stage}</Text>
 										)}
 
 										{activeEditMode ? (
 											<TextInput
-												style={styles.input}
-												value={activeSubject.info}
+												style={{...styles.input}}
+												value={activeGroup.info}
 												placeholderTextColor="#000"
 												placeholder="Info"
 												autoCapitalize="none"
 												clearButtonMode="always"
-												onChangeText={(value) => handleActiveSubjectChange({ name: "info", value: value }, handleActiveSubject)}
+												onChangeText={(value) => handleActiveSubjectChange({ name: "info", value: value }, handleActiveGroup)}
 											></TextInput>
 										) : (
-											<Text style={{ ...styles.itemText, width: 250 }}>{activeSubject.info}</Text>
+											<Text style={{ ...styles.itemText, width: 250 }}>{activeGroup.info}</Text>
 										)}
 									</View>
 								</View>
@@ -258,7 +239,7 @@ export const GroupsModificationPopup = () => {
 														handleActiveEditMode(false)
 													} else {
 														handleModes({ viewMode: true, editMode: false, createMode: false })
-														handleActiveSubject({})
+														handleActiveGroup({})
 													}
 												}}
 											>
@@ -269,7 +250,8 @@ export const GroupsModificationPopup = () => {
 												style={{ width: 40, height: 40 }}
 												onPress={() => {
 													handleModes({ viewMode: false, editMode: false, createMode: false })
-													handleActiveSubject({})
+													handleActiveGroup({})
+													handleInfo("", "", "");
 													handleActiveEditMode(false)
 												}}
 											>
@@ -281,7 +263,7 @@ export const GroupsModificationPopup = () => {
 													<IconAnt name="edit" size={24} color="#000" style={{ textAlign: "center", marginTop: 26, height: 40 }} />
 												</Pressable>
 											) : (
-												<Pressable style={{ width: 40, height: 40 }} onPress={() => updateSubject(activeSubject)}>
+												<Pressable style={{ width: 40, height: 40 }} onPress={() => updateGroup(activeGroup)}>
 													<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 												</Pressable>
 											)}
@@ -298,78 +280,72 @@ export const GroupsModificationPopup = () => {
 										alignItems: "center"
 									}}
 								>
-									<Text style={styles.modalTitle}>Create Subjects</Text>
+									<Text style={styles.modalTitle}>Create Group</Text>
 									<IconAwesome name="university" size={26} style={{ marginLeft: 15, marginTop: 5 }} />
 								</View>
 
 								<View style={{ display: "flex", flexDirection: "row", width: 0.9 * windowWidth }}>
 									<View style={{ ...styles.studentWrapper, width: 80, marginHorizontal: 0 }}>
-										<Text style={styles.itemText}>Subject: </Text>
-										<Text style={styles.itemText}>Semester: </Text>
+										<Text style={styles.itemText}>Title: </Text>
 										<Text style={styles.itemText}>Year: </Text>
-										<Text style={styles.itemText}>Teacher: </Text>
+										<Text style={styles.itemText}>Stage: </Text>
 										<Text style={styles.itemText}>Info: </Text>
 									</View>
 
 									<View style={{ ...styles.studentWrapper, marginHorizontal: 0, display: "flex" }}>
 										<TextInput
 											style={styles.input}
-											value={newSubject.subject}
+											value={newGroup.group}
 											placeholderTextColor="#000"
-											placeholder="Subject"
+											placeholder="Index"
 											autoCapitalize="none"
 											clearButtonMode="always"
-											onChangeText={(value) => handleActiveSubjectChange({ name: "subject", value: value }, handleNewSubject)}
+											onChangeText={(value) => handleActiveGroupChange({ name: "group", value: value }, handleNewGroup)}
 										></TextInput>
-										<View style={{ height: 30, paddingVertical: 4, marginLeft: 15, marginBottom: 5, paddingTop: 5 }}>
-											<RNPickerSelect
-												placeholder={{ label: "Select semester", value: "" }}
-												value={`${newSubject.semester}`}
-												onValueChange={(value) =>
-													handleActiveSubjectChange(
-														{
-															name: "semester",
-															value: value
-														},
-														handleNewSubject
-													)
-												}
-												items={semesters.filter(item => item.value === SubjectsInfo.semester)}
-											/>
-										</View>
-										<View style={{ height: 30, paddingVertical: 10, marginLeft: 15, marginBottom: 5, paddingTop: 5 }}>
+										
+										<View style={{ height: 30, paddingVertical: 10, marginLeft: 15, marginBottom: 5, paddingTop: 5, marginTop: 10}}>
 											<RNPickerSelect
 												placeholder={{ label: "Select year", value: "" }}
-												value={`${newSubject.year}`}
+												value={`${newGroup.year}`}
 												onValueChange={(value) =>
-													handleActiveSubjectChange(
+													handleActiveGroupChange(
 														{
 															name: "year",
 															value: +value
 														},
-														handleNewSubject
+														handleNewGroup
 													)
 												}
 												items={years.filter(item => item.value == SubjectsInfo.year)}
 											/>
 										</View>
+
+
+										<View style={{ height: 30, paddingVertical: 10, marginLeft: 15, marginBottom: 5, paddingTop: 5, marginTop: 10 }}>
+											<RNPickerSelect
+												placeholder={{ label: "Select stage", value: "" }}
+												value={`${newGroup.stage}`}
+												onValueChange={(value) =>
+													handleActiveGroupChange(
+														{
+															name: "stage",
+															value: value
+														},
+														handleNewGroup
+													)
+												}
+												items={stages}
+											/>
+										</View>
+										
 										<TextInput
 											style={styles.input}
-											value={newSubject.teacher}
-											placeholderTextColor="#000"
-											placeholder="Teacher"
-											autoCapitalize="none"
-											clearButtonMode="always"
-											onChangeText={(value) => handleActiveSubjectChange({ name: "teacher", value: value }, handleNewSubject)}
-										></TextInput>
-										<TextInput
-											style={styles.input}
-											value={newSubject.info}
+											value={newGroup.info}
 											placeholderTextColor="#000"
 											placeholder="Info"
 											autoCapitalize="none"
 											clearButtonMode="always"
-											onChangeText={(value) => handleActiveSubjectChange({ name: "info", value: value }, handleNewSubject)}
+											onChangeText={(value) => handleActiveGroupChange({ name: "info", value: value }, handleNewGroup)}
 										></TextInput>
 									</View>
 								</View>
@@ -393,13 +369,14 @@ export const GroupsModificationPopup = () => {
 											<Pressable
 												style={{ width: 40, height: 40 }}
 												onPress={() => {
-													resetSubject();
+													handleActiveGroup({});
+													handleInfo("", "", "");
 													handleModes({ viewMode: false, editMode: false, createMode: false })
 												}}
 											>
 												<IconAnt name="close" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 											</Pressable>
-											<Pressable style={{ width: 40, height: 40 }} onPress={() => createSubject({ ...newSubject, id: Date.now() })}>
+											<Pressable style={{ width: 40, height: 40 }} onPress={() => createGroup({ ...newGroup, id: Date.now() })}>
 												<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 											</Pressable>
 										</View>

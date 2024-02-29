@@ -1,7 +1,7 @@
 import { View, Text, Modal, FlatList,  Pressable, TextInput, StyleSheet } from "react-native"
 import { default as IconIonicons } from "react-native-vector-icons/Ionicons"
 import { default as IconAnt } from "react-native-vector-icons/AntDesign"
-import { semesters, windowWidth, years } from "../../constants"
+import { initialSubjectInfo, semesters, windowWidth, years } from "../../constants"
 import { useContext } from "react"
 import { default as IconAwesome } from "react-native-vector-icons/FontAwesome"
 import { default as IconFeather } from "react-native-vector-icons/Feather"
@@ -32,8 +32,7 @@ export const SubjectModificationPopup = () => {
 		handleNewSubject,
 		newSubject,
 		createSubject,
-		error,
-		resetSubject
+		error
 	} = useContext(SubjectsContext)
 
     return (
@@ -79,7 +78,9 @@ export const SubjectModificationPopup = () => {
 											>
 												<Text>{item.subject}</Text>
 											</Pressable>
-											<Pressable onPress={() => deleteSubject(item.id)}>
+											<Pressable onPress={() => {
+												deleteSubject(item.id);
+											}}>
 												<IconAnt name="close" size={20} color="#000" style={{ textAlign: "center" }} />
 											</Pressable>
 										</View>
@@ -119,8 +120,8 @@ export const SubjectModificationPopup = () => {
 										viewMode: false,
 										editMode: false,
 										createMode: false
-									})
-									handleActiveSubject({})
+									});
+									handleInfo("", "", "");
 								}}
 							>
 								<IconAnt name="close" size={24} color="#000" style={{ textAlign: "center" }} />
@@ -138,7 +139,7 @@ export const SubjectModificationPopup = () => {
 										alignItems: "center"
 									}}
 								>
-									<Text style={styles.modalTitle}>Edit Subjects</Text>
+									<Text style={styles.modalTitle}>Edit Subject</Text>
 									<IconAwesome name="university" size={26} style={{ marginLeft: 15, marginTop: 5 }} />
 								</View>
 
@@ -271,6 +272,7 @@ export const SubjectModificationPopup = () => {
 												onPress={() => {
 													handleModes({ viewMode: false, editMode: false, createMode: false })
 													handleActiveSubject({})
+													handleInfo("", "", "")
 													handleActiveEditMode(false)
 												}}
 											>
@@ -394,7 +396,8 @@ export const SubjectModificationPopup = () => {
 											<Pressable
 												style={{ width: 40, height: 40 }}
 												onPress={() => {
-													resetSubject();
+													handleActiveSubject({});
+													handleInfo("", "", "");
 													handleModes({ viewMode: false, editMode: false, createMode: false })
 												}}
 											>

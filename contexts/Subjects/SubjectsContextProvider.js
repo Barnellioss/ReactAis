@@ -1,15 +1,17 @@
 import React, {useState} from "react"
 import SubjectsContext from "./SubjectsContext"
-import {useSelector} from "react-redux"
 import {addDoc, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where} from "firebase/firestore"
-import {firebaseSubjects} from "../../firebaseConfig"
-import {useDispatch} from "react-redux"
-import {setSubjects} from "../../redux/reducers/reducers"
-import {semestersYear} from "../../constants"
+import {firebaseGroupsInfo, firebaseSubjects} from "../../firebaseConfig"
+import {useDispatch, useSelector} from "react-redux"
+import {setGroups, setSubjects} from "../../redux/reducers/reducers"
+import {initialSubjectInfo, semestersYear} from "../../constants"
 
 const SubjectsContextProvider = ({children}) => {
 	let {userInfo, subjects, groups} = useSelector((store) => store.state)
 	const dispatch = useDispatch()
+	const initialGroup = {group: "", info: "", stage: "", year: 0}
+	const initialSubject = {subject: "", semester: "", year: "", teacher: "", info: "", id: 0}
+
 
 	const getSubjects = () => {
 		let res = []
@@ -19,6 +21,16 @@ const SubjectsContextProvider = ({children}) => {
 			})
 			dispatch(setSubjects(JSON.parse(JSON.stringify(res))))
 		})
+	}
+
+	const getGroups = () => {
+		let res = [];
+		getDocs(query(firebaseGroupsInfo, where("year", "==", SubjectsInfo.year))).then((data) => {
+			data.docs.forEach((item) => {
+				res.push({...item.data(), id: item.id});
+			})
+			dispatch(setGroups(JSON.parse(JSON.stringify(res))));
+		});
 	}
 
 	const updateSubject = async (subject) => {
@@ -31,6 +43,26 @@ const SubjectsContextProvider = ({children}) => {
 			await setDoc(subjectDocRef, subject)
 			await updateDoc(subjectDocRef, subject).then(() => {
 				getSubjects()
+			})
+		} catch (e) {
+			handleUpdating(false)
+			handleError(e.message)
+		} finally {
+			handleUpdating(false)
+			//alert("Profile has been updated");
+		}
+	}
+
+	const updateGroup = async (group) => {
+		handleUpdating(true)
+
+		const {id} = group
+		const groupDocRef = doc(firebaseGroupsInfo, `${id}`)
+
+		try {
+			await setDoc(groupDocRef, group)
+			await updateDoc(groupDocRef, group).then(() => {
+				getGroups()
 			})
 		} catch (e) {
 			handleUpdating(false)
@@ -58,6 +90,26 @@ const SubjectsContextProvider = ({children}) => {
 		}
 	}
 
+
+
+	const deleteGroup = async (id) => {
+		handleUpdating(true)
+
+		const groupDocRef = doc(firebaseGroupsInfo, `${id}`)
+		try {
+			await deleteDoc(groupDocRef).then(() => {
+				getGroups()
+			})
+		} catch (e) {
+			handleUpdating(false)
+			handleError(e.message)
+		} finally {
+			handleUpdating(false)
+			//alert("Profile has been updated");
+		}
+	}
+
+
 	const createSubject = async (subject) => {
 		handleUpdating(true)
 
@@ -69,7 +121,22 @@ const SubjectsContextProvider = ({children}) => {
 		} finally {
 			handleUpdating(false)
 			getSubjects()
-			handleNewSubject({subject: "", semester: "", year: "", teacher: "", info: "", id: 0})
+			handleNewSubject(initialSubject)
+		}
+	}
+
+	const createGroup = async (group) => {
+		handleUpdating(true)
+
+		try {
+			await addDoc(firebaseGroupsInfo, group)
+		} catch (e) {
+			handleUpdating(false)
+			handleError(e.message)
+		} finally {
+			handleUpdating(false)
+			getGroups()
+			handleNewGroup(initialGroup);
 		}
 	}
 
@@ -83,13 +150,8 @@ const SubjectsContextProvider = ({children}) => {
 	}
 
 	//Popup visibility
-	const [SubjectsInfo, setSubjectsInfo] = useState({
-		year: 0,
-		semester: "",
-		mode: ""
-	})
+	const [SubjectsInfo, setSubjectsInfo] = useState(initialSubjectInfo)
 
-	console.log(SubjectsInfo)
 
 	const handleInfo = (year, semester, mode) => {
 		setSubjectsInfo({year: year, semester: semester, mode: mode})
@@ -106,8 +168,36 @@ const SubjectsContextProvider = ({children}) => {
 		setModes({editMode: obj.editMode, createMode: obj.createMode, viewMode: obj.viewMode})
 	}
 
+	//Create new group
+	const [newGroup, setNewGroup] = useState(initialGroup);
+
+	const handleNewGroup = (group) => {
+		setNewGroup(group)
+	}
+
+	const resetGroup = () => {
+		setNewSubject(initialGroup)
+	}
+
+
+	//Active group
+	const [activeGroup, setActiveGroup] = useState({})
+
+	const handleActiveGroup = (group) => {
+		setActiveGroup(group)
+	}
+
+	const handleActiveGroupChange = (e, handler) => {
+		const {name, value} = e
+		handler((prevFormData) => ({
+			...prevFormData,
+			[name]: value
+		}))
+	}
+
+
 	//Create new subject
-	const [newSubject, setNewSubject] = useState({subject: "", semester: "", year: "", teacher: "", info: "", id: 0})
+	const [newSubject, setNewSubject] = useState(initialSubject)
 
 	const handleNewSubject = (subject) => {
 		setNewSubject(subject)
@@ -115,7 +205,7 @@ const SubjectsContextProvider = ({children}) => {
 
 	//reset inputs on popup closed
 	const resetSubject = () => {
-		setNewSubject({subject: "", semester: "", year: "", teacher: "", info: "", id: 0})
+		setNewSubject(initialSubject)
 	}
 
 	//Active edit subject or create handler
@@ -145,18 +235,33 @@ const SubjectsContextProvider = ({children}) => {
 		setUpdating(state)
 	}
 
+
+
+
+
 	return (
 		<SubjectsContext.Provider
 			value={{
 				userInfo,
+				activeGroup,
+				createGroup,
+				resetGroup,
+				handleActiveGroup,
+				handleActiveGroupChange,
 				years,
+				newGroup,
+				handleNewGroup,
 				subjects,
+				groups,
+				getGroups,
 				semestersYear,
 				getSubjects,
+				deleteGroup,
 				SubjectsInfo,
 				handleInfo,
 				modes,
 				handleModes,
+				updateGroup,
 				activeSubject,
 				handleActiveSubject,
 				handleActiveSubjectChange,

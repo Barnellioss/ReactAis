@@ -26,11 +26,13 @@ const SubjectsModal = ({ navigation }) => {
 		getSubjects,
 		modes,
 		handleModes,	
-		resetSubject
+		handleActiveSubject,
+		getGroups
 	} = useContext(SubjectsContext)
 
 	useEffect(() => {
-		getSubjects()
+		getSubjects();
+		getGroups();
 	}, [modes.viewMode === true]);
 
 
@@ -43,6 +45,7 @@ const SubjectsModal = ({ navigation }) => {
 			onRequestClose={() => {
 				handleInfo("", "", "");
 				resetSubject();
+				handleActiveSubject({});
 				handleModes({ viewMode: false, editMode: false, createMode: false });
 			}}
 		>
@@ -57,6 +60,9 @@ const SubjectsModal = ({ navigation }) => {
 							marginBottom: 15
 						}}
 					>
+						<Text style={styles.modalTitle}>{SubjectsInfo.year } Year </Text>
+						
+						<Text style={styles.modalTitle}>Semester </Text>
 						{SubjectsInfo.semester === "winter" ? (
 							<IconAwesome
 								name="snowflake-o"
@@ -75,13 +81,13 @@ const SubjectsModal = ({ navigation }) => {
 								size={26}
 								color="#000"
 								style={{
+									marginTop: 1,
 									textAlign: "center",
 									marginRight: 10
 								}}
 							/>
 
 						)}
-						<Text style={styles.modalTitle}>Semester</Text>
 
 					</View>
 
@@ -188,6 +194,7 @@ export const styles = StyleSheet.create({
 		fontSize: 14,
 		marginVertical: 5,
 		color: "#000",
+		marginTop: 15,
 		paddingBottom: 5,
 		display: "flex",
 		flexDirection: "row",
@@ -196,8 +203,7 @@ export const styles = StyleSheet.create({
 		width: 120
 	},
 	input: {
-		marginTop: 0,
-		marginBottom: 8,
+		marginTop: 10,
 		borderBottomColor: "#000",
 		borderBottomWidth: 1,
 		width: windowWidth * 0.6,
