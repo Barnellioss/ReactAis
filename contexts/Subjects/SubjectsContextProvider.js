@@ -10,7 +10,7 @@ const SubjectsContextProvider = ({children}) => {
 	let {userInfo, subjects, groups} = useSelector((store) => store.state)
 	const dispatch = useDispatch()
 	const initialGroup = {group: "", info: "", stage: "", year: 0}
-	const initialSubject = {subject: "", semester: "", year: "", teacher: "", info: "", id: 0}
+	const initialSubject = {subject: "", semester: "", year: "", teacher: "", info: "", time: 0, id: 0}
 
 
 	const getSubjects = () => {
@@ -188,7 +188,8 @@ const SubjectsContextProvider = ({children}) => {
 	}
 
 	const handleActiveGroupChange = (e, handler) => {
-		const {name, value} = e
+		const {name, value} = e;
+		
 		handler((prevFormData) => ({
 			...prevFormData,
 			[name]: value
@@ -216,10 +217,14 @@ const SubjectsContextProvider = ({children}) => {
 	}
 
 	const handleActiveSubjectChange = (e, handler) => {
-		const {name, value} = e
+		const {name, value, keyboardType} = e;
+		let valueReference = value;
+		if(keyboardType === "numeric"){
+			valueReference = valueReference.replace(/[^0-9]/g, '');
+		}
 		handler((prevFormData) => ({
 			...prevFormData,
-			[name]: value
+			[name]: valueReference
 		}))
 	}
 

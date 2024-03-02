@@ -148,6 +148,7 @@ export const SubjectModificationPopup = () => {
 										<Text style={styles.itemText}>Subject: </Text>
 										<Text style={styles.itemText}>Semester: </Text>
 										<Text style={styles.itemText}>Year: </Text>
+										<Text style={styles.itemText}>Time: </Text>
 										<Text style={styles.itemText}>Teacher: </Text>
 										<Text style={styles.itemText}>Info: </Text>
 									</View>
@@ -167,7 +168,7 @@ export const SubjectModificationPopup = () => {
 											<Text style={{ ...styles.itemText, width: 250 }}>{activeSubject.subject}</Text>
 										)}
 										{activeEditMode ? (
-											<View style={{ height: 30, paddingVertical: 4, marginLeft: 15,  marginBottom: 10, paddingTop: 5 }}>
+											<View style={{ height: 30, paddingVertical: 4, marginLeft: 15,  marginBottom: 10, paddingTop: 5, marginTop: 10 }}>
 												<RNPickerSelect
 													placeholder={{ label: "Select semester", value: "" }}
 													value={`${activeSubject.semester}`}
@@ -190,7 +191,7 @@ export const SubjectModificationPopup = () => {
 											<Text style={styles.itemText}>{activeSubject.semester}</Text>
 										)}
 										{activeEditMode ? (
-											<View style={{ height: 30, paddingVertical: 10, marginLeft: 15,  marginBottom: 5, paddingTop: 5 }}>
+											<View style={{ height: 30, paddingVertical: 10, marginLeft: 15,  marginBottom: 5, paddingTop: 5, marginTop: 10 }}>
 												<RNPickerSelect
 													placeholder={{ label: "Select year", value: "" }}
 													value={`${activeSubject.year}`}
@@ -215,6 +216,19 @@ export const SubjectModificationPopup = () => {
 										) : (
 											<Text style={styles.itemText}>{activeSubject.year}</Text>
 										)}
+										{activeEditMode ? (
+											<TextInput
+											style={styles.input}
+											value={activeSubject.time}
+											placeholderTextColor="#000"
+											placeholder="Time for all lessons in minutes"
+											autoCapitalize="none"
+											clearButtonMode="always"
+											onChangeText={(value) => handleActiveSubjectChange({ name: "time", value: value, keyboardType: "numeric" }, handleActiveSubject)}
+										></TextInput>) : (
+											<Text style={{ ...styles.itemText, width: 250 }}>{activeSubject.time}</Text>
+										)}
+
 										{activeEditMode ? (
 											<TextInput
 												style={styles.input}
@@ -310,6 +324,7 @@ export const SubjectModificationPopup = () => {
 										<Text style={styles.itemText}>Subject: </Text>
 										<Text style={styles.itemText}>Semester: </Text>
 										<Text style={styles.itemText}>Year: </Text>
+										<Text style={styles.itemText}>Time: </Text>
 										<Text style={styles.itemText}>Teacher: </Text>
 										<Text style={styles.itemText}>Info: </Text>
 									</View>
@@ -324,7 +339,7 @@ export const SubjectModificationPopup = () => {
 											clearButtonMode="always"
 											onChangeText={(value) => handleActiveSubjectChange({ name: "subject", value: value }, handleNewSubject)}
 										></TextInput>
-										<View style={{ height: 30, paddingVertical: 4, marginLeft: 15, marginBottom: 5, paddingTop: 5 }}>
+										<View style={{ height: 30, paddingVertical: 4, marginLeft: 15, marginBottom: 5, paddingTop: 5, marginTop: 10 }}>
 											<RNPickerSelect
 												placeholder={{ label: "Select semester", value: "" }}
 												value={`${newSubject.semester}`}
@@ -340,7 +355,7 @@ export const SubjectModificationPopup = () => {
 												items={semesters.filter(item => item.value === SubjectsInfo.semester)}
 											/>
 										</View>
-										<View style={{ height: 30, paddingVertical: 10, marginLeft: 15, marginBottom: 5, paddingTop: 5 }}>
+										<View style={{ height: 30, paddingVertical: 10, marginLeft: 15, marginBottom: 5, paddingTop: 5, marginTop: 10 }}>
 											<RNPickerSelect
 												placeholder={{ label: "Select year", value: "" }}
 												value={`${newSubject.year}`}
@@ -356,6 +371,16 @@ export const SubjectModificationPopup = () => {
 												items={years.filter(item => item.value == SubjectsInfo.year)}
 											/>
 										</View>
+										<TextInput
+											style={styles.input}
+											value={newSubject.time}
+											placeholderTextColor="#000"
+											placeholder="Time for all lessons in minutes"
+											autoCapitalize="none"
+											clearButtonMode="always"
+											onChangeText={(value) => handleActiveSubjectChange({ name: "time", value: value, keyboardType: "numeric" }, handleNewSubject)}
+										></TextInput>
+
 										<TextInput
 											style={styles.input}
 											value={newSubject.teacher}

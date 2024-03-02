@@ -143,8 +143,35 @@ const SubjectsModal = ({ navigation }) => {
 									
 								}}
 							/>
-
 							<Text style={{ ...styles.listItem, paddingBottom: 0 }}>Subjects</Text>
+						</Pressable>
+						<Pressable 
+							onPress={() => {
+								//handleInfo(SubjectsInfo.year, SubjectsInfo.semester ,"Subjects");
+								//handleModes({ viewMode: true, editMode: false, createMode: false });
+							}}
+							style={{
+							width: 0.4 * windowWidth,
+							backgroundColor: "#c5bac4",
+							borderRadius: 20,
+							display: "flex",
+							flexDirection: "row",
+							alignItems: "center",
+							justifyContent: "center",
+							marginTop: 10,
+							height: 40
+						}}>
+							<IconMaterialCommunity
+								name="timetable"
+								size={18}
+								color="#000"
+								style={{
+									textAlign: "center",
+									
+								}}
+							/>
+
+							<Text style={{ ...styles.listItem, paddingBottom: 0 }}>TimeTable</Text>
 						</Pressable>
 					</View>
 

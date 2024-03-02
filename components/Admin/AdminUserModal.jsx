@@ -15,7 +15,7 @@ import Event from '../common/Event';
 
 const AdminUserModal = () => {
 
-    const { visibleUserSetUp, handleUserPopup, updateStudent, isUpdating, groups, userWeek, usersDates, findIndexByKeyValue } = useContext(AdminContext);
+    const { visibleUserSetUp, handleUserPopup, updateStudent, isUpdating, groups, getGroups, userWeek, usersDates, findIndexByKeyValue } = useContext(AdminContext);
     const { isVisible, item, start, end } = visibleUserSetUp;
 
     const [activeEdit, setEdit] = useState(false);
@@ -51,6 +51,9 @@ const AdminUserModal = () => {
     useEffect(() => {
         if (item) {
             setStudent(item);
+        }
+        if(item?.currentYear){
+            getGroups();
         }
     }, [item]);
 

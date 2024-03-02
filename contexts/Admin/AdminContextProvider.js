@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import AdminContext from './AdminContext';
 import { useSelector } from 'react-redux';
-import { firebaseUserDatesColumn, firebaseUserInfo } from '../../firebaseConfig';
+import { firebaseGroupsInfo, firebaseUserDatesColumn, firebaseUserInfo } from '../../firebaseConfig';
 import { doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { useDispatch } from 'react-redux';
-import { setUsersDates, setUsersInfo } from '../../redux/reducers/reducers';
+import { setGroups, setUsersDates, setUsersInfo } from '../../redux/reducers/reducers';
 
 const AdminContextProvider = ({ children }) => {
 
@@ -206,12 +206,23 @@ const AdminContextProvider = ({ children }) => {
         return -1; 
     }
 
+    const getGroups = () => {
+		let res = [];
+		getDocs(query(firebaseGroupsInfo, where("year", "==", +visibleUserSetUp.item.currentYear))).then((data) => {
+			data.docs.forEach((item) => {
+				res.push({...item.data(), id: item.id});
+			})
+			dispatch(setGroups(JSON.parse(JSON.stringify(res))));
+		});
+	}
+
 
     return (
         <AdminContext.Provider value={{
             visibleUserSetUp, handleUserPopup, filterState,
             setUserVisibility, handleFilterState, handleFilterChange,
             visibleState, handleVisibileColumnsChange,
+            getGroups,
             handleFilterVisibleState, updateStudent, isUpdating,
             getStudents, groups, getDatesForStudents, userWeek,
             usersDates, findIndexByKeyValue
