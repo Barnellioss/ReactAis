@@ -13,6 +13,8 @@ import RNPickerSelect from "react-native-picker-select"
 import { ActivityIndicator } from "react-native"
 import { SubjectModificationPopup } from "./SubjectModificationPopup"
 import { GroupsModificationPopup } from "./GroupsModificationPopup"
+import { TimetableModificationPopup } from "./TimetableModificationPopup"
+
 
 
 
@@ -147,8 +149,8 @@ const SubjectsModal = ({ navigation }) => {
 						</Pressable>
 						<Pressable 
 							onPress={() => {
-								//handleInfo(SubjectsInfo.year, SubjectsInfo.semester ,"Subjects");
-								//handleModes({ viewMode: true, editMode: false, createMode: false });
+								handleInfo(SubjectsInfo.year, SubjectsInfo.semester ,"Timetable");
+								handleModes({ viewMode: true, editMode: false, createMode: false });
 							}}
 							style={{
 							width: 0.4 * windowWidth,
@@ -196,9 +198,13 @@ const SubjectsModal = ({ navigation }) => {
 			<SubjectModificationPopup />
 		) : SubjectsInfo.mode === "Groups" ? (
 			<GroupsModificationPopup />
-		) : (
-			<></>
-		)}
+		) : SubjectsInfo.mode === "Timetable" ? (
+			< TimetableModificationPopup/>
+		)
+			: (
+				<></>
+			)
+	}
 		</Modal>
 
 }
@@ -379,7 +385,40 @@ export const styles = StyleSheet.create({
 	},
 	invisibleText: {
 		opacity: 0
-	}
+	},
+	item__wrapper: {
+        marginTop: 5,
+        width: windowWidth - 40
+    },
+    days__item: {
+        height: 40,
+        width: 40,
+        borderRadius: 20,
+        color: "#fff",
+        backgroundColor: "#005dff",
+        textAlign: "center",
+        paddingTop: 8,
+        overflow: 'hidden'
+    },
+    days__item_active: {
+        height: 40,
+        width: 40,
+        borderRadius: 20,
+        color: "#fff",
+        backgroundColor: "#00286C",
+        textAlign: "center",
+        paddingTop: 8,
+        overflow: 'hidden'
+    },
+    days__container: {
+        maxHeight: 150,
+        width: windowWidth * 0.85,
+        marginTop: 30,
+        marginBottom: 30,
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: 'space-between'
+    },
 })
 
 export default SubjectsModal

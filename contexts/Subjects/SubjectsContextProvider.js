@@ -7,7 +7,7 @@ import {setGroups, setSubjects} from "../../redux/reducers/reducers"
 import {initialSubjectInfo, semestersYear} from "../../constants"
 
 const SubjectsContextProvider = ({children}) => {
-	let {userInfo, subjects, groups} = useSelector((store) => store.state)
+	let {userInfo, subjects, groups, userWeek} = useSelector((store) => store.state)
 	const dispatch = useDispatch()
 	const initialGroup = {group: "", info: "", stage: "", year: 0}
 	const initialSubject = {subject: "", semester: "", year: "", teacher: "", info: "", time: 0, id: 0}
@@ -241,13 +241,62 @@ const SubjectsContextProvider = ({children}) => {
 	}
 
 
+	//Filtered days
+    const [filteredCalendarDays, setFilteredDays] = useState([]);
+
+    const handleFilteredDays = (calendar) => {
+        setFilteredDays(calendar)
+    }
+    let days = userWeek.map(a => a.day);
+
+	const [pressedID, setPressed] = useState(0);
+
+    const handlePressedID = (id) => {
+        setPressed(id);
+    }
+
+	function filterDays(userWeek, index) {
+        if (userWeek.length > 0) {
+            let filteredDays = [];
+            userWeek.filter(a => {
+                let americanDay = new Date(a.from * 1000).getDay();
+                if (americanDay === 0 && index === 6) {
+                    filteredDays.push({ title: a.title, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000) });
+                }
+                else if (americanDay === index + 1) {
+                    filteredDays.push({ title: a.title, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000) });
+                }
+            });
+            setFilteredDays(filteredDays);
+        }
+    }
+	
+	const [plannedDates, setDates] = useState({
+        from: new Date(userWeek[pressedID].from * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000)),
+        to: new Date(userWeek[pressedID].to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 120000))
+    });
 
 
+	const handlePlannedDates = (pressedID) => {
+        setDates((prevDatesData) => ({
+            ...prevDatesData,
+            from: new Date(userWeek[pressedID].from * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000)),
+            to: new Date(userWeek[pressedID].to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000))
+        }));
+    }
 
 	return (
 		<SubjectsContext.Provider
 			value={{
 				userInfo,
+				handlePlannedDates,
+				userWeek,
+				handleFilteredDays,
+				handlePressedID,
+				pressedID,
+				days,
+				filteredCalendarDays,
+				filterDays,
 				activeGroup,
 				createGroup,
 				resetGroup,
