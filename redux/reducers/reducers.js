@@ -12,7 +12,8 @@ const messageSlice = createSlice({
     usersInfo: [],
     usersDates: [],
     groups: [],
-    subjects: []
+    subjects: [],
+    subjectsTimetable: []
   },
   reducers: {
     setUser(state, action) {
@@ -39,10 +40,13 @@ const messageSlice = createSlice({
     },
     setSubjects(state, action) {
       state.subjects = action.payload
-    }
+    },
+    setSubjectsTimetable(state, action) {
+      state.subjectsTimetable = action.payload
+    },
   }
 })
 
 
-export const { setMessage, setUser, setUserInfo, setWeek, setBusyDays, setGroups, setUsersInfo, setSubjects, setUsersDates } = messageSlice.actions
+export const { setMessage, setUser, setUserInfo, setWeek, setBusyDays, setGroups, setUsersInfo, setSubjects, setUsersDates, setSubjectsTimetable } = messageSlice.actions
 export default messageSlice.reducer

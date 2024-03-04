@@ -29,7 +29,8 @@ const SubjectsModal = ({ navigation }) => {
 		modes,
 		handleModes,	
 		handleActiveSubject,
-		getGroups
+		getGroups,
+		getSubjectsTimetable
 	} = useContext(SubjectsContext)
 
 	useEffect(() => {

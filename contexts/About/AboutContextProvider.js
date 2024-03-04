@@ -33,7 +33,6 @@ const AboutContextProvider = ({ children }) => {
     }
 
 
-
     //Week days names
     let days = userWeek.map(a => a.day);
 

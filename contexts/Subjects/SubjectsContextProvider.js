@@ -1,17 +1,16 @@
 import React, {useState} from "react"
 import SubjectsContext from "./SubjectsContext"
 import {addDoc, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where} from "firebase/firestore"
-import {firebaseGroupsInfo, firebaseSubjects} from "../../firebaseConfig"
+import {firebaseGroupsInfo, firebaseSubjects, firebaseSubjectsTimetable} from "../../firebaseConfig"
 import {useDispatch, useSelector} from "react-redux"
-import {setGroups, setSubjects} from "../../redux/reducers/reducers"
+import {setGroups, setSubjects, setSubjectsTimetable} from "../../redux/reducers/reducers"
 import {initialSubjectInfo, semestersYear} from "../../constants"
 
 const SubjectsContextProvider = ({children}) => {
-	let {userInfo, subjects, groups, userWeek} = useSelector((store) => store.state)
+	let {userInfo, subjects, groups, userWeek, subjectsTimetable} = useSelector((store) => store.state)
 	const dispatch = useDispatch()
 	const initialGroup = {group: "", info: "", stage: "", year: 0}
 	const initialSubject = {subject: "", semester: "", year: "", teacher: "", info: "", time: 0, id: 0}
-
 
 	const getSubjects = () => {
 		let res = []
@@ -23,14 +22,31 @@ const SubjectsContextProvider = ({children}) => {
 		})
 	}
 
+	const getSubjectsTimetable = () => {
+		let res = []
+		getDocs(query(firebaseSubjectsTimetable)).then((data) => {
+			data.docs.forEach((item) => {
+				res.push({...item.data()})
+			})
+                    
+			res = res.map((item, i) => {
+				return item = {from: item.from.seconds, to: item.to.seconds, subjectID: item.subjectID};
+			})
+			
+			filterDays(res, 0);
+			dispatch(setSubjectsTimetable(JSON.parse(JSON.stringify(res))))
+		})
+	}
+
+
 	const getGroups = () => {
-		let res = [];
+		let res = []
 		getDocs(query(firebaseGroupsInfo, where("year", "==", SubjectsInfo.year))).then((data) => {
 			data.docs.forEach((item) => {
-				res.push({...item.data(), id: item.id});
+				res.push({...item.data(), id: item.id})
 			})
-			dispatch(setGroups(JSON.parse(JSON.stringify(res))));
-		});
+			dispatch(setGroups(JSON.parse(JSON.stringify(res))))
+		})
 	}
 
 	const updateSubject = async (subject) => {
@@ -90,8 +106,6 @@ const SubjectsContextProvider = ({children}) => {
 		}
 	}
 
-
-
 	const deleteGroup = async (id) => {
 		handleUpdating(true)
 
@@ -108,7 +122,6 @@ const SubjectsContextProvider = ({children}) => {
 			//alert("Profile has been updated");
 		}
 	}
-
 
 	const createSubject = async (subject) => {
 		handleUpdating(true)
@@ -136,7 +149,7 @@ const SubjectsContextProvider = ({children}) => {
 		} finally {
 			handleUpdating(false)
 			getGroups()
-			handleNewGroup(initialGroup);
+			handleNewGroup(initialGroup)
 		}
 	}
 
@@ -151,7 +164,6 @@ const SubjectsContextProvider = ({children}) => {
 
 	//Popup visibility
 	const [SubjectsInfo, setSubjectsInfo] = useState(initialSubjectInfo)
-
 
 	const handleInfo = (year, semester, mode) => {
 		setSubjectsInfo({year: year, semester: semester, mode: mode})
@@ -169,7 +181,7 @@ const SubjectsContextProvider = ({children}) => {
 	}
 
 	//Create new group
-	const [newGroup, setNewGroup] = useState(initialGroup);
+	const [newGroup, setNewGroup] = useState(initialGroup)
 
 	const handleNewGroup = (group) => {
 		setNewGroup(group)
@@ -179,7 +191,6 @@ const SubjectsContextProvider = ({children}) => {
 		setNewSubject(initialGroup)
 	}
 
-
 	//Active group
 	const [activeGroup, setActiveGroup] = useState({})
 
@@ -188,14 +199,13 @@ const SubjectsContextProvider = ({children}) => {
 	}
 
 	const handleActiveGroupChange = (e, handler) => {
-		const {name, value} = e;
-		
+		const {name, value} = e
+
 		handler((prevFormData) => ({
 			...prevFormData,
 			[name]: value
 		}))
 	}
-
 
 	//Create new subject
 	const [newSubject, setNewSubject] = useState(initialSubject)
@@ -217,10 +227,10 @@ const SubjectsContextProvider = ({children}) => {
 	}
 
 	const handleActiveSubjectChange = (e, handler) => {
-		const {name, value, keyboardType} = e;
-		let valueReference = value;
-		if(keyboardType === "numeric"){
-			valueReference = valueReference.replace(/[^0-9]/g, '');
+		const {name, value, keyboardType} = e
+		let valueReference = value
+		if (keyboardType === "numeric") {
+			valueReference = valueReference.replace(/[^0-9]/g, "")
 		}
 		handler((prevFormData) => ({
 			...prevFormData,
@@ -240,50 +250,47 @@ const SubjectsContextProvider = ({children}) => {
 		setUpdating(state)
 	}
 
-
 	//Filtered days
-    const [filteredCalendarDays, setFilteredDays] = useState([]);
+	const [filteredCalendarDays, setFilteredDays] = useState([])
 
-    const handleFilteredDays = (calendar) => {
-        setFilteredDays(calendar)
-    }
-    let days = userWeek.map(a => a.day);
+	const handleFilteredDays = (calendar) => {
+		setFilteredDays(calendar)
+	}
+	let days = userWeek.map((a) => a.day)
 
-	const [pressedID, setPressed] = useState(0);
+	const [pressedID, setPressed] = useState(0)
 
-    const handlePressedID = (id) => {
-        setPressed(id);
-    }
+	const handlePressedID = (id) => {
+		setPressed(id)
+	}
 
 	function filterDays(userWeek, index) {
-        if (userWeek.length > 0) {
-            let filteredDays = [];
-            userWeek.filter(a => {
-                let americanDay = new Date(a.from * 1000).getDay();
-                if (americanDay === 0 && index === 6) {
-                    filteredDays.push({ title: a.title, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000) });
-                }
-                else if (americanDay === index + 1) {
-                    filteredDays.push({ title: a.title, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000) });
-                }
-            });
-            setFilteredDays(filteredDays);
-        }
-    }
-	
-	const [plannedDates, setDates] = useState({
-        from: new Date(userWeek[pressedID].from * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000)),
-        to: new Date(userWeek[pressedID].to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 120000))
-    });
+		if (userWeek.length > 0) {
+			let filteredDays = []
+			userWeek.filter((a) => {
+				let americanDay = new Date(a.from * 1000).getDay()
+				if (americanDay === 0 && index === 6) {
+					filteredDays.push({...a, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000)})
+				} else if (americanDay === index + 1) {
+					filteredDays.push({...a, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000)})
+				}
+			})
+			setFilteredDays(filteredDays)
+		}
+	}
 
+	const [plannedDates, setDates] = useState({
+		from: new Date(userWeek[pressedID].from * 1000 + new Date(Date.now()).getTimezoneOffset() * 60000),
+		to: new Date(userWeek[pressedID].to * 1000 + new Date(Date.now()).getTimezoneOffset() * 120000)
+	})
 
 	const handlePlannedDates = (pressedID) => {
-        setDates((prevDatesData) => ({
-            ...prevDatesData,
-            from: new Date(userWeek[pressedID].from * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000)),
-            to: new Date(userWeek[pressedID].to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000))
-        }));
-    }
+		setDates((prevDatesData) => ({
+			...prevDatesData,
+			from: new Date(userWeek[pressedID].from * 1000 + new Date(Date.now()).getTimezoneOffset() * 60000),
+			to: new Date(userWeek[pressedID].to * 1000 + new Date(Date.now()).getTimezoneOffset() * 60000)
+		}))
+	}
 
 	return (
 		<SubjectsContext.Provider
@@ -295,6 +302,7 @@ const SubjectsContextProvider = ({children}) => {
 				handlePressedID,
 				pressedID,
 				days,
+				getSubjectsTimetable,
 				filteredCalendarDays,
 				filterDays,
 				activeGroup,
@@ -330,7 +338,8 @@ const SubjectsContextProvider = ({children}) => {
 				resetSubject,
 				newSubject,
 				error,
-				groups
+				groups,
+				subjectsTimetable
 			}}
 		>
 			{children}

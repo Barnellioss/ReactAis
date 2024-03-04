@@ -2,7 +2,7 @@ import { View, Text, Pressable, TextInput, TouchableOpacity, ScrollView, StyleSh
 import { default as IconIonicons } from "react-native-vector-icons/Ionicons"
 import { default as IconAnt } from "react-native-vector-icons/AntDesign"
 import { range, semesters, stages, windowHeight, windowWidth, years } from "../../constants"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { default as IconAwesome } from "react-native-vector-icons/FontAwesome"
 import { default as IconFeather } from "react-native-vector-icons/Feather"
 import RNPickerSelect from "react-native-picker-select"
@@ -11,6 +11,7 @@ import SubjectsContext from "../../contexts/Subjects/SubjectsContext"
 import { styles } from "./SubjectsModal"
 import Timetable from "react-native-calendar-timetable"
 import { default as IconMaterialCommunity} from "react-native-vector-icons/MaterialCommunityIcons"
+import Event from "../common/Event"
 
 
 
@@ -26,6 +27,7 @@ export const TimetableModificationPopup = () => {
         pressedID,
 		handleInfo,
 		handlePlannedDates,
+		filteredCalendarDays,
 		modes,
 		activeGroup,
 		handleActiveGroup,
@@ -40,12 +42,26 @@ export const TimetableModificationPopup = () => {
 		updateGroup,
 		updating,
 		error,
+		subjects,
 		filterDays,
+		getSubjectsTimetable,
 		createGroup
 	} = useContext(SubjectsContext)
 
+	useEffect(() => {
+		getSubjectsTimetable();
+	}, [SubjectsInfo.year, SubjectsInfo.semester]);
+
+
+
+	useEffect(() => {
+        filterDays(userWeek, pressedID);
+    }, [pressedID])
+
+	console.log(subjects)
+
+
     return (
-	//	<ScrollView style={{ height: windowHeight * 0.9 /* marginHorizontal: "auto", display: "flex", alignItems: "flex-start", flexDirection: "column" */}}>
         <View style={styles.centeredView}>
         {(modes.viewMode || modes.editMode || modes.createMode) && SubjectsInfo.mode === "Timetable" ? (
         <View>
@@ -107,12 +123,11 @@ export const TimetableModificationPopup = () => {
                                             fromHour={7.30}
                                             toHour={20.00}
                                             scrollViewProps={{ scrollEnabled: false }}
-                                            items={[]}
+                                            items={filteredCalendarDays}
                                             hideNowLine={true}
                                             columnWidth={windowWidth * 0.85}
                                             style={{ width: windowWidth * 0.85, marginLeft: 'auto', marginRight: 'auto' }}
-                                            renderItem={props => <Event props={props} key={Math.random() * 10000} height={60} width={0.5} left={0.1}/>}
-                                            // provide only one of these
+                                            renderItem={props => <Event props={props} key={Math.random() * 10000} height={60} width={0.5} left={0.1} show={true} subjects={subjects}/>}
                                             range={range}
                                         />
                                     </View>
@@ -165,8 +180,8 @@ export const TimetableModificationPopup = () => {
 					</View>
 					</ScrollView>
 					)
-						:
-						modes.editMode ? (
+					:
+					modes.editMode ? (
 							<View style={styles.modalView}>
 								<View
 									style={{
@@ -304,7 +319,9 @@ export const TimetableModificationPopup = () => {
 									)}
 								</View>
 							</View>
-						) : modes.createMode ? (
+					) 
+					: 
+					modes.createMode ? (
 							<View style={{...styles.modalView}}>
 								<View
 									style={{
@@ -313,7 +330,7 @@ export const TimetableModificationPopup = () => {
 										alignItems: "center"
 									}}
 								>
-									<Text style={styles.modalTitle}>Create subject in timetable</Text>
+									<Text style={styles.modalTitle}>Create in timetable</Text>
 									<IconAwesome name="university" size={26} style={{ marginLeft: 15, marginTop: 5 }} />
 								</View>
 
@@ -322,7 +339,7 @@ export const TimetableModificationPopup = () => {
 										<Text style={styles.itemText}>Subject: </Text>
 										<Text style={styles.itemText}>From: </Text>
 										<Text style={styles.itemText}>To: </Text>
-										<Text style={styles.itemText}>Place ID: </Text>
+										{/*<Text style={styles.itemText}>Place ID: </Text>*/}
 									</View>
 
 									<View style={{ ...styles.studentWrapper, marginHorizontal: 0, display: "flex" }}>

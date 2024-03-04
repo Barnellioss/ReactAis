@@ -18,6 +18,7 @@ const StudentView = ({ navigation, route }) => {
     }, [userWeek[pressedID].from, userWeek[pressedID].to])
 
 
+
     return (
 
         userInfo.status === "student"

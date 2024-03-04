@@ -24,6 +24,8 @@ export const firebaseUserDatesColumn = collection(firebaseDB, 'dates');
 export const firebaseUserInfo = collection(firebaseDB, 'userInfo');
 export const firebaseGroupsInfo = collection(firebaseDB, 'groups');
 export const firebaseSubjects = collection(firebaseDB, 'subjects');
+export const firebaseSubjectsTimetable = collection(firebaseDB, 'subjectsTimetable');
+
 
 
 
