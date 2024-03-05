@@ -106,11 +106,12 @@ const SubjectsScreen = ({ navigation, route }) => {
 																		size={18}
 																		color="#000"
 																		style={{
+																			marginTop: 2,
 																			textAlign: "center"
 																		}}
 																	/>
 																)}
-																<Text style={styles.listItem}>{item.semester}</Text>
+																<Text style={{...styles.listItem, paddingTop: 2, marginLeft: 10, textAlign: "left"}}>{item.semester}</Text>
 															</Pressable>
 														</Pressable>
 													)
@@ -172,6 +173,14 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.25,
 		shadowRadius: 4,
 		elevation: 5
+	},
+	date__row: {
+		flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 20,
+        maxHeight: 30
 	},
 	bg: {
 		width: windowWidth,

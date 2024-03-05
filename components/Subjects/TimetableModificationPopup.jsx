@@ -1,7 +1,7 @@
-import { View, Text, Pressable, TextInput, TouchableOpacity, ScrollView, StyleSheet } from "react-native"
+import { View, Text, Pressable, TextInput, TouchableOpacity, ScrollView } from "react-native"
 import { default as IconIonicons } from "react-native-vector-icons/Ionicons"
 import { default as IconAnt } from "react-native-vector-icons/AntDesign"
-import { range, semesters, stages, windowHeight, windowWidth, years } from "../../constants"
+import { range, windowHeight, windowWidth } from "../../constants"
 import { useContext, useEffect } from "react"
 import { default as IconAwesome } from "react-native-vector-icons/FontAwesome"
 import { default as IconFeather } from "react-native-vector-icons/Feather"
@@ -12,6 +12,8 @@ import { styles } from "./SubjectsModal"
 import Timetable from "react-native-calendar-timetable"
 import { default as IconMaterialCommunity} from "react-native-vector-icons/MaterialCommunityIcons"
 import Event from "../common/Event"
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 
 
@@ -25,16 +27,19 @@ export const TimetableModificationPopup = () => {
         days, 
         handlePressedID, 
         pressedID,
+		newTimetable, 
+		handleNewTimetable, 
+		resetNewTimetable,
 		handleInfo,
-		handlePlannedDates,
+		createTimetableItem,
+		//handlePlannedDates,
 		filteredCalendarDays,
 		modes,
 		activeGroup,
 		handleActiveGroup,
+		handleTimetableChange,
 		handleActiveGroupChange,
 		handleModes,
-		handleNewGroup,
-		newGroup,
 		handleActiveSubject,
 		handleActiveSubjectChange,
 		activeEditMode,
@@ -45,7 +50,7 @@ export const TimetableModificationPopup = () => {
 		subjects,
 		filterDays,
 		getSubjectsTimetable,
-		createGroup
+		subjectsTimetable
 	} = useContext(SubjectsContext)
 
 	useEffect(() => {
@@ -53,12 +58,11 @@ export const TimetableModificationPopup = () => {
 	}, [SubjectsInfo.year, SubjectsInfo.semester]);
 
 
-
 	useEffect(() => {
-        filterDays(userWeek, pressedID);
-    }, [pressedID])
+        filterDays(subjectsTimetable, pressedID);
+    }, [pressedID, modes])
 
-	console.log(subjects)
+	
 
 
     return (
@@ -74,111 +78,119 @@ export const TimetableModificationPopup = () => {
 				}
 				<View style={styles.centeredView}>
 					{modes.viewMode ? (
-					<ScrollView style={{ height: windowHeight * 0.9 /* marginHorizontal: "auto", display: "flex", alignItems: "flex-start", flexDirection: "column" */}}>
-						<View style={styles.modalView}>
+						<View style={{...styles.modalView, height: 0.9 * windowHeight}}>
 							<View
 								style={{
 									display: "flex",
 									flexDirection: "row",
-									alignItems: "center"
+									alignItems: "center",
 								}}
 							>
 								<Text style={styles.modalTitle}>Timetable</Text>
 								<IconMaterialCommunity
 								name="timetable" size={26} style={{ marginLeft: 15, marginTop: 5 }} />
 							</View>
-                            <View>
-                            {userWeek != "undefined" ?
-                                <View style={{ ...styles.item__wrapper, marginBottom: 30, width: windowWidth, flex: 1, flexDirection: "column",  alignItems: 'center' }}>
-                                    <View style={{...styles.days__container, justifyContent: 'space-evenly'}}>
-                                        {
-                                            days != "undefined" ?
-                                                days.map((item, i) => {
-                                                    return (
-                                                        <TouchableOpacity
-                                                            onLongPress={() => {
-                                                                handlePressedID(i);
-                                                                handlePlannedDates(i);
-                                                                filterDays(userWeek, i);
-                                                            }}
-                                                            onPress={() => { handlePressedID(i); handlePlannedDates(i); filterDays(userWeek, i) }}
-                                                            style={{
-                                                                height: 50
-                                                            }}
-                                                            key={i}>
-                                                            <Text
-                                                                style={pressedID === i ? styles.days__item_active : styles.days__item}>
-                                                                {item.slice(0, 1)}
-                                                            </Text>
-                                                        </TouchableOpacity>
-                                                    )
-                                                })
-                                                :
-                                                <></>
-                                        }
-                                    </View>
+								<View>
+									{userWeek != "undefined" ?
+										<View style={{ ...styles.item__wrapper, marginBottom: 5, width: windowWidth, flex: 1, flexDirection: "column",  alignItems: 'center' }}>
+											<View style={{...styles.days__container, justifyContent: 'space-evenly', marginTop: 20, marginBottom: 5}}>
+												{
+													days != "undefined" ?
+														days.map((item, i) => {
+															return (
+																<TouchableOpacity
+																	/*onLongPress={() => {
+																		handlePressedID(i);
+																		handlePlannedDates(i);
+																		filterDays(userWeek, i);
+																	}}*/
+																	onPress={() => {
+																		if (i !== pressedID) {
+																			handlePressedID(i) ; filterDays(userWeek, i) 
+																		}
+																	}}
+																	style={{
+																		height: 50
+																	}}
+																	key={i}>
+																	<Text
+																		style={pressedID === i ? styles.days__item_active : styles.days__item}>
+																		{item.slice(0, 1)}
+																	</Text>
+																</TouchableOpacity>
+															)
+														})
+														:
+														<></>
+												}
+											</View>
+											<View style={{marginTop: 50, marginBottom: 20}}>
+												<ScrollView >
+													<View style={{ width: windowWidth * 0.8 }}>
+														<Timetable
+															fromHour={7.30}
+															toHour={20.00}
+															scrollViewProps={{ scrollEnabled: false }}
+															items={filteredCalendarDays}
+															hideNowLine={true}
+															columnWidth={windowWidth * 0.85}
+															style={{ width: windowWidth * 0.85, marginLeft: 'auto', marginRight: 'auto'}}
+															renderItem={props => <Event props={props} key={Math.random() * 10000} height={60} width={0.5} left={0.1} show={true} subjects={subjects}/>}
+															range={range}
+														/>
+													</View>
+												</ScrollView>
+											</View>
+										</View>
+										: 
+										<></>
+										}
+										
+									<View>
+										<Pressable
+											style={{
+												marginTop: 5,
+												textAlign: "left",
+												width: windowWidth * 0.8,
+												marginLeft: 'auto',
+												marginRight: 'auto'
+											}}
+											onPress={() => {
+												handleModes({ viewMode: false, editMode: false, createMode: true })
+											}}
+										>
+											<IconIonicons name="add" size={24} color="#000" style={{ fontWeight: 600, marginLeft: 5 }} />
+										</Pressable>
+									</View>
 
-                                    <View style={{ width: windowWidth * 0.8 }}>
-                                        <Timetable
-                                            fromHour={7.30}
-                                            toHour={20.00}
-                                            scrollViewProps={{ scrollEnabled: false }}
-                                            items={filteredCalendarDays}
-                                            hideNowLine={true}
-                                            columnWidth={windowWidth * 0.85}
-                                            style={{ width: windowWidth * 0.85, marginLeft: 'auto', marginRight: 'auto' }}
-                                            renderItem={props => <Event props={props} key={Math.random() * 10000} height={60} width={0.5} left={0.1} show={true} subjects={subjects}/>}
-                                            range={range}
-                                        />
-                                    </View>
-                                </View>
-                                : <></>
-                            }
-                                
-                                <Pressable
-									style={{
-										marginTop: 5,
-										textAlign: "left",
-										width: windowWidth * 0.8,
-										marginLeft: 'auto',
-										marginRight: 'auto'
-									}}
-									onPress={() => {
-										handleModes({ viewMode: false, editMode: false, createMode: true })
-									}}
-								>
-									<IconIonicons name="add" size={24} color="#000" style={{ fontWeight: 600, marginLeft: 5 }} />
-								</Pressable>
-                                </View>
 
-
-						<View style={{ display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: "space-between", alignItems: "flex-end" }}>
-							<Pressable
-									style={{ width: 40 }}
-									onPress={() => {
-										handleInfo(SubjectsInfo.year, SubjectsInfo.semester ,"view");
-										handleModes({ viewMode: false, editMode: false, createMode: false })
-									}}
-								>		
-									<IconIonicons name="arrow-back" size={24} color="#000" style={{ textAlign: "center"}} />
-							</Pressable>
-							<Pressable
-								style={[styles.button, styles.buttonClose]}
-								onPress={() => {
-									handleModes({
-										viewMode: false,
-										editMode: false,
-										createMode: false
-									})
-									handleActiveSubject({});
-									handleInfo("", "", "");
-								}}
-							>
-								<IconAnt name="close" size={24} color="#000" style={{ textAlign: "center" }} />
-							</Pressable>
+								<View style={{ display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: "space-between", alignItems: "center", marginLeft: "auto", marginRight: "auto" }}>
+									<Pressable
+											style={{ width: 40 }}
+											onPress={() => {
+												handleInfo(SubjectsInfo.year, SubjectsInfo.semester ,"view");
+												handleModes({ viewMode: false, editMode: false, createMode: false })
+											}}
+										>		
+											<IconIonicons name="arrow-back" size={24} color="#000" style={{ textAlign: "center"}} />
+									</Pressable>
+									<Pressable
+										style={{...styles.button, marginTop: 0}}
+										onPress={() => {
+											handleModes({
+												viewMode: false,
+												editMode: false,
+												createMode: false
+											})
+											handleActiveSubject({});
+											handleInfo("", "", "");
+										}}
+									>
+										<IconAnt name="close" size={24} color="#000" style={{ textAlign: "center" }} />
+									</Pressable>
+								</View>
+							</View>
 						</View>
-					</View>
-					</ScrollView>
 					)
 					:
 					modes.editMode ? (
@@ -196,10 +208,9 @@ export const TimetableModificationPopup = () => {
 
 								<View style={{ display: "flex", flexDirection: "row", width: 0.9 * windowWidth }}>
 									<View style={{ ...styles.studentWrapper, width: 80, marginHorizontal: 0, marginTop: 25 }}>
-										<Text style={styles.itemText}>Title: </Text>
-										<Text style={styles.itemText}>Year: </Text>
-										<Text style={styles.itemText}>Stage: </Text>
-										<Text style={styles.itemText}>Info: </Text>
+										<Text style={styles.itemText}>Subject: </Text>
+										<Text style={styles.itemText}>From: </Text>
+										<Text style={styles.itemText}>To: </Text>
 									</View>
 
 									<View style={{ ...styles.studentWrapper, marginHorizontal: 0, display: "flex" }}>
@@ -337,56 +348,59 @@ export const TimetableModificationPopup = () => {
 								<View style={{ display: "flex", flexDirection: "row", width: 0.9 * windowWidth }}>
 									<View style={{ ...styles.studentWrapper, width: 80, marginHorizontal: 0 }}>
 										<Text style={styles.itemText}>Subject: </Text>
-										<Text style={styles.itemText}>From: </Text>
-										<Text style={styles.itemText}>To: </Text>
+										<Text style={{...styles.itemText, marginTop: 20}}>From: </Text>
+										<Text style={{...styles.itemText, marginTop: 20}}>To: </Text>
 										{/*<Text style={styles.itemText}>Place ID: </Text>*/}
 									</View>
 
-									<View style={{ ...styles.studentWrapper, marginHorizontal: 0, display: "flex" }}>
+									<View style={{ ...styles.studentWrapper, marginHorizontal: 0, display: "flex", alignItems: "center" }}>
 										<View style={{ height: 30, paddingVertical: 10, marginLeft: 15, marginBottom: 5, paddingTop: 5, marginTop: 10}}>
 											<RNPickerSelect
 												placeholder={{ label: "Select subject", value: "" }}
-												value={`${newGroup.year}`}
-												onValueChange={(value) =>
-													handleActiveGroupChange(
+												value={newTimetable.subject}
+													onValueChange={(value) =>
+													handleTimetableChange(
 														{
-															name: "year",
-															value: +value
-														},
-														handleNewGroup
-													)
-												}
-												items={years.filter(item => item.value == SubjectsInfo.year)}
-											/>
-										</View>
-
-
-										<View style={{ height: 30, paddingVertical: 10, marginLeft: 15, marginBottom: 5, paddingTop: 5, marginTop: 10 }}>
-											<RNPickerSelect
-												placeholder={{ label: "Select stage", value: "" }}
-												value={`${newGroup.stage}`}
-												onValueChange={(value) =>
-													handleActiveGroupChange(
-														{
-															name: "stage",
+															name: "subject",
 															value: value
 														},
-														handleNewGroup
+														handleNewTimetable
 													)
 												}
-												items={stages}
+												items={subjects.map(item => item = {...item, label: item.subject, value: item.subject})}
 											/>
 										</View>
+
+
+										<View style={{ height: 30, paddingVertical: 10, marginLeft: 0, marginBottom: 5, paddingTop: 5, marginTop: 10 }}>
+											
+												<DateTimePicker
+													testID="dateTimePicker"
+													timeZoneOffsetInMinutes={120}
+													value={newTimetable.from}
+													mode={"time"}
+													is24Hour={true}
+													display="default"
+													onChange={(e, value) => {
+														handleTimetableChange({ name: "from", value: value }, handleNewTimetable);
+													}}
+												/>
 										
-										<TextInput
-											style={styles.input}
-											value={newGroup.info}
-											placeholderTextColor="#000"
-											placeholder="Info"
-											autoCapitalize="none"
-											clearButtonMode="always"
-											onChangeText={(value) => handleActiveGroupChange({ name: "info", value: value }, handleNewGroup)}
-										></TextInput>
+										</View>
+										<View style={{ height: 30, paddingVertical: 10, marginLeft: 0, marginBottom: 5, paddingTop: 5, marginTop: 20 }}>
+
+													<DateTimePicker
+														testID="dateTimePicker"
+														timeZoneOffsetInMinutes={120}
+														value={newTimetable.to}
+														mode={"time"}
+														is24Hour={true}
+														display="default"
+														onChange={(e, value) => {
+															handleTimetableChange({ name: "to", value: value }, handleNewTimetable);
+														}}
+													/>
+										</View>
 									</View>
 								</View>
 
@@ -409,14 +423,13 @@ export const TimetableModificationPopup = () => {
 											<Pressable
 												style={{ width: 40, height: 40 }}
 												onPress={() => {
-													handleActiveGroup({});
 													handleInfo("", "", "");
 													handleModes({ viewMode: false, editMode: false, createMode: false })
 												}}
 											>
 												<IconAnt name="close" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 											</Pressable>
-											<Pressable style={{ width: 40, height: 40 }} onPress={() => createGroup({ ...newGroup, id: Date.now() })}>
+											<Pressable style={{ width: 40, height: 40 }} onPress={() => createTimetableItem({ ...newTimetable, id: Date.now() })}>
 												<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 											</Pressable>
 										</View>

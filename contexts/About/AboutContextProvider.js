@@ -118,9 +118,7 @@ const AboutContextProvider = ({ children }) => {
     }
 
 
-    //Range for calendar. From Monday: 5.01.1970, to Monday: 12.01.1970
-    const range = { from: new Date(weekStart), till: new Date(weekEnd) };
-
+    
 
     function filterDays(userWeek, index) {
         if (userWeek.length > 0) {
@@ -154,6 +152,7 @@ const AboutContextProvider = ({ children }) => {
         to: new Date(userWeek[pressedID].to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 120000))
     });
 
+    console.log(userWeek)
 
 
 
@@ -240,7 +239,7 @@ const AboutContextProvider = ({ children }) => {
             pressedID, pickImage, isActive, handleActiveMode,
             handlePlannedDates, userWeek, filteredCalendarDays,
             handleSetUserWeek, plannedDates,
-            range, studentPopup, handleStudentPopup,
+            studentPopup, handleStudentPopup,
             handlePickerChange, handleNameChange
         }}>
             {children}

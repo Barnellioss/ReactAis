@@ -4,13 +4,18 @@ import {addDoc, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where} from "
 import {firebaseGroupsInfo, firebaseSubjects, firebaseSubjectsTimetable} from "../../firebaseConfig"
 import {useDispatch, useSelector} from "react-redux"
 import {setGroups, setSubjects, setSubjectsTimetable} from "../../redux/reducers/reducers"
-import {initialSubjectInfo, semestersYear} from "../../constants"
+import {dayInSeconds, hourInSeconds, initialSubjectInfo,  semestersYear, weekStart} from "../../constants"
 
 const SubjectsContextProvider = ({children}) => {
 	let {userInfo, subjects, groups, userWeek, subjectsTimetable} = useSelector((store) => store.state)
 	const dispatch = useDispatch()
 	const initialGroup = {group: "", info: "", stage: "", year: 0}
 	const initialSubject = {subject: "", semester: "", year: "", teacher: "", info: "", time: 0, id: 0}
+	const initialTimetableItem = {
+		subject: "",
+		from: new Date(Date.now() + new Date(Date.now()).getTimezoneOffset() * 120000),
+		to: new Date(Date.now() + new Date(Date.now()).getTimezoneOffset() * 60000)
+	}
 
 	const getSubjects = () => {
 		let res = []
@@ -153,6 +158,32 @@ const SubjectsContextProvider = ({children}) => {
 		}
 	}
 
+	const createTimetableItem = async (timetable) => {
+
+
+		let dateFrom = new Date(timetable.from.getTime());
+        let dateTo = new Date(timetable.to.getTime());
+
+		const timetableModified = {
+			from: new Date(weekStart + ((pressedID) * dayInSeconds) + (dateFrom.getHours() * hourInSeconds) + (dateFrom.getMinutes() * 60000)),
+			to: new Date(weekStart + ((pressedID) * dayInSeconds) + (dateTo.getHours() * hourInSeconds) + (dateTo.getMinutes() * 60000)),
+			subjectID: subjects.filter(item => item.subject === timetable.subject)[0].id
+		}
+
+		handleUpdating(true)
+
+		try {
+			await addDoc(firebaseSubjectsTimetable, timetableModified)
+		} catch (e) {
+			handleUpdating(false)
+			handleError(e.message)
+		} finally {
+			handleUpdating(false)
+			getSubjectsTimetable()
+			handleNewTimetable(initialTimetableItem)
+		}
+	}
+
 	let years = [...new Set(semestersYear.map((item) => item.year))]
 
 	//error handling
@@ -212,6 +243,27 @@ const SubjectsContextProvider = ({children}) => {
 
 	const handleNewSubject = (subject) => {
 		setNewSubject(subject)
+	}
+
+	//Create new Timetable item
+
+	const [newTimetable, setTimetable] = useState(initialTimetableItem)
+
+	const handleNewTimetable = (subject) => {
+		setTimetable(subject)
+	}
+
+	const resetNewTimetable = () => {
+		setTimetable(initialTimetableItem)
+	}
+
+	const handleTimetableChange = (e, handler) => {
+		const {name, value} = e
+
+		handler((prevFormData) => ({
+			...prevFormData,
+			[name]: value
+		}))
 	}
 
 	//reset inputs on popup closed
@@ -278,25 +330,29 @@ const SubjectsContextProvider = ({children}) => {
 			setFilteredDays(filteredDays)
 		}
 	}
-
+	/*
 	const [plannedDates, setDates] = useState({
 		from: new Date(userWeek[pressedID].from * 1000 + new Date(Date.now()).getTimezoneOffset() * 60000),
 		to: new Date(userWeek[pressedID].to * 1000 + new Date(Date.now()).getTimezoneOffset() * 120000)
 	})
-
+	
 	const handlePlannedDates = (pressedID) => {
 		setDates((prevDatesData) => ({
 			...prevDatesData,
 			from: new Date(userWeek[pressedID].from * 1000 + new Date(Date.now()).getTimezoneOffset() * 60000),
 			to: new Date(userWeek[pressedID].to * 1000 + new Date(Date.now()).getTimezoneOffset() * 60000)
 		}))
-	}
+	}*/
 
 	return (
 		<SubjectsContext.Provider
 			value={{
 				userInfo,
-				handlePlannedDates,
+				newTimetable,
+				handleNewTimetable,
+				resetNewTimetable,
+				handleTimetableChange,
+				//handlePlannedDates,
 				userWeek,
 				handleFilteredDays,
 				handlePressedID,
@@ -338,6 +394,7 @@ const SubjectsContextProvider = ({children}) => {
 				resetSubject,
 				newSubject,
 				error,
+				createTimetableItem,
 				groups,
 				subjectsTimetable
 			}}
