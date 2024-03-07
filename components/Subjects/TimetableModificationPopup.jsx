@@ -1,7 +1,7 @@
 import { View, Text, Pressable, TextInput, TouchableOpacity, ScrollView } from "react-native"
 import { default as IconIonicons } from "react-native-vector-icons/Ionicons"
 import { default as IconAnt } from "react-native-vector-icons/AntDesign"
-import { range, windowHeight, windowWidth } from "../../constants"
+import { range, weekStart, windowHeight, windowWidth } from "../../constants"
 import { useContext, useEffect } from "react"
 import { default as IconAwesome } from "react-native-vector-icons/FontAwesome"
 import { default as IconFeather } from "react-native-vector-icons/Feather"
@@ -13,13 +13,14 @@ import Timetable from "react-native-calendar-timetable"
 import { default as IconMaterialCommunity} from "react-native-vector-icons/MaterialCommunityIcons"
 import Event from "../common/Event"
 import DateTimePicker from '@react-native-community/datetimepicker';
-
-
-
+import { createTimetableItem, getSubjectsTimetable, updateSubjectsTimetable } from "../../api/api"
+import { useDispatch } from "react-redux"
 
 
 
 export const TimetableModificationPopup = () => {
+
+	const dispatch = useDispatch()
 
     const {
 		SubjectsInfo,
@@ -33,10 +34,8 @@ export const TimetableModificationPopup = () => {
 		newTimetable, 
 		handleNewTimetable, 
 		handleInfo,
-		createTimetableItem,
 		filteredCalendarDays,
 		modes,
-		updateSubjectsTimetable,
 		handleActiveGroup,
 		handleTimetableChange,
 		handleModes,
@@ -49,13 +48,14 @@ export const TimetableModificationPopup = () => {
 		timeForPicker, 
 		handleTimeForPicker,
 		filterDays,
-		getSubjectsTimetable,
 		subjectsTimetable,
+		handleUpdating, 
+		handleError,
 		handleShowTimetable
 	} = useContext(SubjectsContext)
 
 	useEffect(() => {
-		getSubjectsTimetable();
+		getSubjectsTimetable(dispatch, filterDays);
 	}, [SubjectsInfo.year, SubjectsInfo.semester]);
 
 
@@ -322,7 +322,7 @@ export const TimetableModificationPopup = () => {
 													<IconAnt name="edit" size={24} color="#000" style={{ textAlign: "center", marginTop: 26, height: 40 }} />
 												</Pressable>
 											) : (
-												<Pressable style={{ width: 40, height: 40 }} onPress={() => updateSubjectsTimetable(activeTimetable)}>
+												<Pressable style={{ width: 40, height: 40 }} onPress={() => updateSubjectsTimetable(handleUpdating, handleError, handleShowTimetable, subjects, timeForPicker, activeTimetable)}>
 													<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 												</Pressable>
 											)}
@@ -428,8 +428,8 @@ export const TimetableModificationPopup = () => {
 												}}
 											>
 												<IconAnt name="close" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
-											</Pressable>
-											<Pressable style={{ width: 40, height: 40 }} onPress={() => createTimetableItem({ ...newTimetable, id: Date.now() })}>
+											</Pressable> 
+											<Pressable style={{ width: 40, height: 40 }} onPress={() => createTimetableItem(dispatch, handleUpdating, handleError, filterDays, subjects, handleNewTimetable, {...newTimetable, id: Date.now()}, pressedID)}>
 												<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 											</Pressable>
 										</View>

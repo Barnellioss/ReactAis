@@ -9,11 +9,15 @@ import RNPickerSelect from "react-native-picker-select"
 import { ActivityIndicator } from "react-native"
 import SubjectsContext from "../../contexts/Subjects/SubjectsContext"
 import { styles } from "./SubjectsModal"
+import { useDispatch } from "react-redux"
+import { createSubject, deleteSubject, updateSubject } from "../../api/api"
 
 
 
 
 export const SubjectModificationPopup = () => {
+
+	const dispatch = useDispatch()
 
     const {
 		subjects,
@@ -21,17 +25,16 @@ export const SubjectModificationPopup = () => {
 		handleInfo,
 		modes,
 		handleModes,
+		handleError, 
+		handleUpdating,
 		activeSubject,
 		handleActiveSubject,
 		handleActiveSubjectChange,
 		activeEditMode,
 		handleActiveEditMode,
-		updateSubject,
 		updating,
-		deleteSubject,
 		handleNewSubject,
 		newSubject,
-		createSubject,
 		error
 	} = useContext(SubjectsContext)
 
@@ -79,7 +82,7 @@ export const SubjectModificationPopup = () => {
 												<Text>{item.subject}</Text>
 											</Pressable>
 											<Pressable onPress={() => {
-												deleteSubject(item.id);
+												deleteSubject(handleUpdating, handleError, item.id);
 											}}>
 												<IconAnt name="close" size={20} color="#000" style={{ textAlign: "center" }} />
 											</Pressable>
@@ -298,7 +301,7 @@ export const SubjectModificationPopup = () => {
 													<IconAnt name="edit" size={24} color="#000" style={{ textAlign: "center", marginTop: 26, height: 40 }} />
 												</Pressable>
 											) : (
-												<Pressable style={{ width: 40, height: 40 }} onPress={() => updateSubject(activeSubject)}>
+												<Pressable style={{ width: 40, height: 40 }} onPress={() => updateSubject(dispatch, SubjectsInfo, handleError, handleUpdating, activeSubject)}>
 													<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 												</Pressable>
 											)}
@@ -428,7 +431,7 @@ export const SubjectModificationPopup = () => {
 											>
 												<IconAnt name="close" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 											</Pressable>
-											<Pressable style={{ width: 40, height: 40 }} onPress={() => createSubject({ ...newSubject, id: Date.now() })}>
+											<Pressable style={{ width: 40, height: 40 }} onPress={() => createSubject(dispatch, handleUpdating, handleError, handleNewSubject, { ...newSubject, id: Date.now() })}>
 												<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 											</Pressable>
 										</View>

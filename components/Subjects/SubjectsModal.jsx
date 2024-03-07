@@ -14,6 +14,8 @@ import { ActivityIndicator } from "react-native"
 import { SubjectModificationPopup } from "./SubjectModificationPopup"
 import { GroupsModificationPopup } from "./GroupsModificationPopup"
 import { TimetableModificationPopup } from "./TimetableModificationPopup"
+import { useDispatch } from "react-redux"
+import { getSubjects } from "../../api/api"
 
 
 
@@ -21,20 +23,19 @@ import { TimetableModificationPopup } from "./TimetableModificationPopup"
 
 const SubjectsModal = ({ navigation }) => {
 	
-	
+	const dispatch = useDispatch();
+
 	const {
 		SubjectsInfo,
 		handleInfo,
-		getSubjects,
 		modes,
 		handleModes,	
 		handleActiveSubject,
-		getGroups,
-		getSubjectsTimetable
+		getGroups
 	} = useContext(SubjectsContext)
 
 	useEffect(() => {
-		getSubjects();
+		getSubjects(dispatch, SubjectsInfo);
 		getGroups();
 	}, [modes.viewMode === true]);
 

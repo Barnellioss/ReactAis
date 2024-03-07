@@ -1,49 +1,15 @@
 import React, {useState} from "react"
 import SubjectsContext from "./SubjectsContext"
 import {addDoc, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where} from "firebase/firestore"
-import {firebaseGroupsInfo, firebaseSubjects, firebaseSubjectsTimetable} from "../../firebaseConfig"
+import {firebaseGroupsInfo} from "../../firebaseConfig"
 import {useDispatch, useSelector} from "react-redux"
-import {setGroups, setSubjects, setSubjectsTimetable} from "../../redux/reducers/reducers"
-import {dayInSeconds, hourInSeconds, initialSubjectInfo,  semestersYear, weekStart} from "../../constants"
+import {setGroups} from "../../redux/reducers/reducers"
+import { initialGroup, initialSubject, initialSubjectInfo,  initialTimetableItem,  semestersYear} from "../../constants"
 
 const SubjectsContextProvider = ({children}) => {
 	let {userInfo, subjects, groups, userWeek, subjectsTimetable} = useSelector((store) => store.state)
 	const dispatch = useDispatch()
-	const initialGroup = {group: "", info: "", stage: "", year: 0}
-	const initialSubject = {subject: "", semester: "", year: "", teacher: "", info: "", time: 0, id: 0}
-	const initialTimetableItem = {
-		subject: "",
-		from: new Date(Date.now() + new Date(Date.now()).getTimezoneOffset() * 120000),
-		to: new Date(Date.now() + new Date(Date.now()).getTimezoneOffset() * 60000)
-	}
 	
-	
-	const getSubjects = () => {
-		let res = []
-		getDocs(query(firebaseSubjects, where("year", "==", SubjectsInfo.year), where("semester", "==", SubjectsInfo.semester))).then((data) => {
-			data.docs.forEach((item) => {
-				res.push({...item.data(), id: item.id})
-			})
-			dispatch(setSubjects(JSON.parse(JSON.stringify(res))))
-		})
-	}
-
-	const getSubjectsTimetable = () => {
-		let res = []
-		getDocs(query(firebaseSubjectsTimetable)).then((data) => {
-			data.docs.forEach((item) => {
-				res.push({...item.data()})
-			})
-                    
-			res = res.map((item, i) => {
-				return item = {from: item.from.seconds, to: item.to.seconds, subjectID: item.subjectID, id: item.id};
-			})
-			
-			filterDays(res, 0);
-			dispatch(setSubjectsTimetable(JSON.parse(JSON.stringify(res))))
-		})
-	}
-
 
 	const getGroups = () => {
 		let res = []
@@ -55,25 +21,6 @@ const SubjectsContextProvider = ({children}) => {
 		})
 	}
 
-	const updateSubject = async (subject) => {
-		handleUpdating(true)
-
-		const {id} = subject
-		const subjectDocRef = doc(firebaseSubjects, `${id}`)
-
-		try {
-			await setDoc(subjectDocRef, subject)
-			await updateDoc(subjectDocRef, subject).then(() => {
-				getSubjects()
-			})
-		} catch (e) {
-			handleUpdating(false)
-			handleError(e.message)
-		} finally {
-			handleUpdating(false)
-			//alert("Profile has been updated");
-		}
-	}
 
 	const updateGroup = async (group) => {
 		handleUpdating(true)
@@ -95,52 +42,6 @@ const SubjectsContextProvider = ({children}) => {
 		}
 	}
 
-	const updateSubjectsTimetable = async (timetable) => {
-
-		handleUpdating(true);
-		
-		timetable = {
-			from: new Date(timeForPicker.from.getTime() - (new Date(Date.now()).getTimezoneOffset() * 60000)),
-			to: new Date(timeForPicker.to.getTime() - (new Date(Date.now()).getTimezoneOffset() * 60000)),
-			subjectID: subjects.filter(item => item.subject === timetable.subject)[0].id,
-			id: timetable.id
-		}
-
-		handleShowTimetable(timetable.from.getTime() / 1000, timetable.to.getTime() / 1000);
-		const {id} = timetable
-		const timetableDocRef = doc(firebaseSubjectsTimetable, `${id}`)
-
-		try {
-			await setDoc(timetableDocRef, timetable)
-			await updateDoc(timetableDocRef, timetable).then(() => {
-				getSubjectsTimetable();
-			})
-		} catch (e) {
-			handleUpdating(false)
-			handleError(e.message)
-		} finally {
-			handleUpdating(false)
-			//alert("Profile has been updated");
-		}
-
-	}
-
-	const deleteSubject = async (id) => {
-		handleUpdating(true)
-
-		const subjectDocRef = doc(firebaseSubjects, `${id}`)
-		try {
-			await deleteDoc(subjectDocRef).then(() => {
-				getSubjects()
-			})
-		} catch (e) {
-			handleUpdating(false)
-			handleError(e.message)
-		} finally {
-			handleUpdating(false)
-			//alert("Profile has been updated");
-		}
-	}
 
 	const deleteGroup = async (id) => {
 		handleUpdating(true)
@@ -159,21 +60,7 @@ const SubjectsContextProvider = ({children}) => {
 		}
 	}
 
-	const createSubject = async (subject) => {
-		handleUpdating(true)
-
-		try {
-			await addDoc(firebaseSubjects, subject)
-		} catch (e) {
-			handleUpdating(false)
-			handleError(e.message)
-		} finally {
-			handleUpdating(false)
-			getSubjects()
-			handleNewSubject(initialSubject)
-		}
-	}
-
+	
 	const createGroup = async (group) => {
 		handleUpdating(true)
 
@@ -189,32 +76,35 @@ const SubjectsContextProvider = ({children}) => {
 		}
 	}
 
-	const createTimetableItem = async (timetable) => {
+	//Filtered days
+	const [filteredCalendarDays, setFilteredDays] = useState([])
 
+	const handleFilteredDays = (calendar) => {
+		setFilteredDays(calendar)
+	}
+	let days = userWeek.map((a) => a.day)
 
-		let dateFrom = new Date(timetable.from.getTime());
-        let dateTo = new Date(timetable.to.getTime());
+	const [pressedID, setPressed] = useState(0)
 
-		const timetableModified = {
-			from: new Date(weekStart + ((pressedID) * dayInSeconds) + (dateFrom.getHours() * hourInSeconds) + (dateFrom.getMinutes() * 60000)),
-			to: new Date(weekStart + ((pressedID) * dayInSeconds) + (dateTo.getHours() * hourInSeconds) + (dateTo.getMinutes() * 60000)),
-			subjectID: subjects.filter(item => item.subject === timetable.subject)[0].id,
-			id: timetable.id
-		}
+	const handlePressedID = (id) => {
+		setPressed(id)
+	}
 
-		handleUpdating(true)
-
-		try {
-			await addDoc(firebaseSubjectsTimetable, timetableModified)
-		} catch (e) {
-			handleUpdating(false)
-			handleError(e.message)
-		} finally {
-			handleUpdating(false)
-			getSubjectsTimetable()
-			handleNewTimetable(initialTimetableItem)
+	function filterDays(userWeek, index) {
+		if (userWeek.length > 0) {
+			let filteredDays = []
+			userWeek.filter((a) => {
+				let americanDay = new Date(a.from * 1000).getDay()
+				if (americanDay === 0 && index === 6) {
+					filteredDays.push({...a, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000)})
+				} else if (americanDay === index + 1) {
+					filteredDays.push({...a, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000)})
+				}
+			})
+			setFilteredDays(filteredDays)
 		}
 	}
+
 
 	let years = [...new Set(semestersYear.map((item) => item.year))]
 
@@ -342,34 +232,6 @@ const SubjectsContextProvider = ({children}) => {
 		setUpdating(state)
 	}
 
-	//Filtered days
-	const [filteredCalendarDays, setFilteredDays] = useState([])
-
-	const handleFilteredDays = (calendar) => {
-		setFilteredDays(calendar)
-	}
-	let days = userWeek.map((a) => a.day)
-
-	const [pressedID, setPressed] = useState(0)
-
-	const handlePressedID = (id) => {
-		setPressed(id)
-	}
-
-	function filterDays(userWeek, index) {
-		if (userWeek.length > 0) {
-			let filteredDays = []
-			userWeek.filter((a) => {
-				let americanDay = new Date(a.from * 1000).getDay()
-				if (americanDay === 0 && index === 6) {
-					filteredDays.push({...a, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000)})
-				} else if (americanDay === index + 1) {
-					filteredDays.push({...a, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000)})
-				}
-			})
-			setFilteredDays(filteredDays)
-		}
-	}
 
 	const [showTimetableTime, setTimetableTime] = useState({from: "", to: ""})
 	
@@ -383,6 +245,7 @@ const SubjectsContextProvider = ({children}) => {
 		setTimetableTime({from: fromParsed, to: toParsed});
 	}
 
+
 	const [timeForPicker, setTimeForPicker] = useState({from: "", to: ""});
 
 	const handleTimeForPicker = (e) => {
@@ -392,8 +255,6 @@ const SubjectsContextProvider = ({children}) => {
 			[name]: value
 		}));
 	}
-
-
 
 	return (
 		<SubjectsContext.Provider
@@ -408,16 +269,16 @@ const SubjectsContextProvider = ({children}) => {
 				handleTimetableChange,
 				timeForPicker,
 				handleTimeForPicker,
+				handleError,
+				handleUpdating,
 				//handlePlannedDates,
 				showTimetableTime,
 				handleShowTimetable,
-				updateSubjectsTimetable, 
 				userWeek,
 				handleFilteredDays,
 				handlePressedID,
 				pressedID,
 				days,
-				getSubjectsTimetable,
 				filteredCalendarDays,
 				filterDays,
 				activeGroup,
@@ -432,7 +293,6 @@ const SubjectsContextProvider = ({children}) => {
 				groups,
 				getGroups,
 				semestersYear,
-				getSubjects,
 				deleteGroup,
 				SubjectsInfo,
 				handleInfo,
@@ -446,14 +306,10 @@ const SubjectsContextProvider = ({children}) => {
 				handleActiveEditMode,
 				updating,
 				activeEditMode,
-				updateSubject,
-				deleteSubject,
 				handleNewSubject,
-				createSubject,
 				resetSubject,
 				newSubject,
 				error,
-				createTimetableItem,
 				groups,
 				subjectsTimetable
 			}}

@@ -8,6 +8,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import Timetable from 'react-native-calendar-timetable';
 import Event from '../common/Event';
+import { useDispatch } from 'react-redux';
 //import { Picker } from '@react-native-picker/picker';
 
 
@@ -17,6 +18,7 @@ const AdminUserModal = () => {
 
     const { visibleUserSetUp, handleUserPopup, updateStudent, isUpdating, groups, getGroups, userWeek, usersDates, findIndexByKeyValue } = useContext(AdminContext);
     const { isVisible, item, start, end } = visibleUserSetUp;
+
 
     const [activeEdit, setEdit] = useState(false);
     const [student, setStudent] = useState(item);

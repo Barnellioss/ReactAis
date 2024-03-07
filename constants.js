@@ -69,4 +69,12 @@ export const stages = [
 	{label: "Approved", value: "Approved"}
 ]
 
+export const initialGroup = {group: "", info: "", stage: "", year: 0}
+export const initialSubject = {subject: "", semester: "", year: "", teacher: "", info: "", time: 0, id: 0}
 
+
+export const initialTimetableItem = {
+	subject: "",
+	from: new Date(Date.now() + new Date(Date.now()).getTimezoneOffset() * 120000),
+	to: new Date(Date.now() + new Date(Date.now()).getTimezoneOffset() * 60000)
+}
