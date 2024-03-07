@@ -65,11 +65,16 @@ export const TimetableModificationPopup = () => {
 
 	
 	useEffect(() => {
-		handleShowTimetable();
-		handleTimeForPicker();
+		filterDays(subjectsTimetable, pressedID);
+		handleShowTimetable(activeTimetable.from, activeTimetable.to);
+	//	handleTimeForPicker();
 	}, [modes.editMode === true])
 
-	console.log(new Date(activeTimetable.from * 1000))
+	useEffect(() => {
+		handlePressedID(0);
+		filterDays(subjectsTimetable, 0);
+	}, []);
+
 
     return (
         <View style={styles.centeredView}>
@@ -215,12 +220,13 @@ export const TimetableModificationPopup = () => {
 								<View style={{ display: "flex", flexDirection: "row", width: 0.9 * windowWidth }}>
 									<View style={{ ...styles.studentWrapper, width: 80, marginHorizontal: 0, marginTop: 25 }}>
 										<Text style={styles.itemText}>Subject: </Text>
-										<Text style={styles.itemText}>From: </Text>
-										<Text style={styles.itemText}>To: </Text>
+										<Text style={{...styles.itemText, marginTop: 20}}>From: </Text>
+										<Text style={{...styles.itemText, marginTop: 25}}>To: </Text>
 									</View>
 
-									<View style={{ ...styles.studentWrapper, marginHorizontal: 0, display: "flex" }}>
+									<View style={{ ...styles.studentWrapper, marginHorizontal: 0, display: "flex", justifyContent: "center", alignItems: "right" }}>
 										{activeEditMode ? (
+											<View style={{marginTop: 15, marginBottom: 10}}>	
 												<RNPickerSelect
 													placeholder={{ label: "Select subject", value: "" }}
 													value={activeTimetable.subject}
@@ -235,27 +241,30 @@ export const TimetableModificationPopup = () => {
 													}
 													items={subjects.map(item => item = {...item, label: item.subject, value: item.subject})}
 												/>
+												</View>
 										) : (
-											<Text style={{ ...styles.itemText, width: 250 }}>{activeTimetable.subject}</Text>
+											<Text style={{ ...styles.itemText, width: 250, marginTop: 15 }}>{activeTimetable.subject}</Text>
 										)}
 										{activeEditMode ? (
-											
-											<DateTimePicker
-												testID="dateTimePicker"
-												timeZoneOffsetInMinutes={120}
-												value={timeForPicker.from}
-												mode={"time"}
-												is24Hour={true}
-												display="default"
-												onChange={(e, value) => {
-													handleTimetableChange({ name: "from", value: value }, handleActiveTimetable);
-												}}
-											/>
+											<View style={{marginTop: 15, marginBottom: 10}}>	
+												<DateTimePicker
+													testID="dateTimePicker"
+													timeZoneOffsetInMinutes={120}
+													value={timeForPicker.from}
+													mode={"time"}
+													is24Hour={true}
+													display="default"
+													onChange={(e, value) => {
+														handleTimeForPicker({ name: "from", value: value });
+													}}
+												/>
+											</View>
 										) : (
-											<Text style={{ ...styles.itemText, width: 250 }}>{showTimetableTime.from}</Text>
+											<Text style={{ ...styles.itemText, width: 250, marginTop: 20 }}>{showTimetableTime.from}</Text>
 										)}
 
 										{activeEditMode ? (
+											<View style={{marginTop: 15, marginBottom: 10}}>	
 												<DateTimePicker
 												testID="dateTimePicker"
 												timeZoneOffsetInMinutes={120}
@@ -264,16 +273,17 @@ export const TimetableModificationPopup = () => {
 												is24Hour={true}
 												display="default"
 												onChange={(e, value) => {
-													handleTimetableChange({ name: "to", value: value }, handleActiveTimetable);
+													handleTimeForPicker({ name: "to", value: value });
 												}}
 											/>
+											</View>
 										) : (
-											<Text style={{ ...styles.itemText, width: 250 }}>{showTimetableTime.to}</Text>
+											<Text style={{ ...styles.itemText, width: 250, marginTop: 25 }}>{showTimetableTime.to}</Text>
 										)}
 									</View>
 								</View>
 
-								<View style={{ display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: "space-between" }}>
+								<View style={{ display: "flex", flexDirection: "row", height: 65, justifyContent: "space-between"}}>
 									{updating ? (
 										<View style={{ marginHorizontal: "auto", marginTop: 20 }}>
 											<ActivityIndicator size="large" color="#0000ff" />
@@ -281,7 +291,7 @@ export const TimetableModificationPopup = () => {
 									) : (
 										<View style={{ display: "flex", flexDirection: "row" }}>
 											<Pressable
-												style={{ width: 40, height: 40 }}
+												style={{ width: 40, height: 40, marginRight: 20 }}
 												onPress={() => {
 													if (activeEditMode) {
 														handleModes({ viewMode: false, editMode: true, createMode: false })
@@ -296,7 +306,7 @@ export const TimetableModificationPopup = () => {
 											</Pressable>
 
 											<Pressable
-												style={{ width: 40, height: 40 }}
+												style={{ width: 40, height: 40, marginRight: 20  }}
 												onPress={() => {
 													handleModes({ viewMode: false, editMode: false, createMode: false })
 													handleActiveGroup({})
@@ -394,15 +404,15 @@ export const TimetableModificationPopup = () => {
 									</View>
 								</View>
 
-								<View style={{ display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: "space-between" }}>
+								<View style={{ display: "flex", flexDirection: "row", height: 65, justifyContent: "space-between" }}>
 									{updating ? (
 										<View style={{ marginHorizontal: "auto", marginTop: 20 }}>
 											<ActivityIndicator size="large" color="#0000ff" />
 										</View>
 									) : (
-										<View style={{ display: "flex", flexDirection: "row" }}>
+										<View style={{ display: "flex", flexDirection: "row", marginLeft: "auto", marginRight: "auto" }}>
 											<Pressable
-												style={{ width: 40, height: 40 }}
+												style={{ width: 40, height: 40, marginRight: 20 }}
 												onPress={() => {
 													handleModes({ viewMode: true, editMode: false, createMode: false })
 												}}
@@ -411,7 +421,7 @@ export const TimetableModificationPopup = () => {
 											</Pressable>
 
 											<Pressable
-												style={{ width: 40, height: 40 }}
+												style={{ width: 40, height: 40, marginRight: 20 }}
 												onPress={() => {
 													handleInfo("", "", "");
 													handleModes({ viewMode: false, editMode: false, createMode: false })

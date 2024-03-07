@@ -36,7 +36,7 @@ const SubjectsContextProvider = ({children}) => {
 			})
                     
 			res = res.map((item, i) => {
-				return item = {from: item.from.seconds, to: item.to.seconds, subjectID: item.subjectID};
+				return item = {from: item.from.seconds, to: item.to.seconds, subjectID: item.subjectID, id: item.id};
 			})
 			
 			filterDays(res, 0);
@@ -96,22 +96,24 @@ const SubjectsContextProvider = ({children}) => {
 	}
 
 	const updateSubjectsTimetable = async (timetable) => {
-		handleUpdating(true)
 
+		handleUpdating(true);
+		
 		timetable = {
-			from: new Date(weekStart + ((pressedID) * dayInSeconds) + (timetable.from.getHours() * hourInSeconds) + (timetable.from.getMinutes() * 60000)),
-			to: new Date(weekStart + ((pressedID) * dayInSeconds) + (timetable.to.getHours() * hourInSeconds) + (timetable.to.getMinutes() * 60000)),
+			from: new Date(timeForPicker.from.getTime() - (new Date(Date.now()).getTimezoneOffset() * 60000)),
+			to: new Date(timeForPicker.to.getTime() - (new Date(Date.now()).getTimezoneOffset() * 60000)),
 			subjectID: subjects.filter(item => item.subject === timetable.subject)[0].id,
 			id: timetable.id
 		}
 
+		handleShowTimetable(timetable.from.getTime() / 1000, timetable.to.getTime() / 1000);
 		const {id} = timetable
 		const timetableDocRef = doc(firebaseSubjectsTimetable, `${id}`)
 
 		try {
 			await setDoc(timetableDocRef, timetable)
 			await updateDoc(timetableDocRef, timetable).then(() => {
-				getSubjectsTimetable()
+				getSubjectsTimetable();
 			})
 		} catch (e) {
 			handleUpdating(false)
@@ -120,6 +122,7 @@ const SubjectsContextProvider = ({children}) => {
 			handleUpdating(false)
 			//alert("Profile has been updated");
 		}
+
 	}
 
 	const deleteSubject = async (id) => {
@@ -371,21 +374,23 @@ const SubjectsContextProvider = ({children}) => {
 	const [showTimetableTime, setTimetableTime] = useState({from: "", to: ""})
 	
 
-	const handleShowTimetable = () => {
-		const fromServerTime = new Date(activeTimetable.from * 1000)
-		const toServerTime = new Date(activeTimetable.to * 1000)
+	const handleShowTimetable = (from, to) => {
+		const fromServerTime = new Date(from * 1000)
+		const toServerTime = new Date(to * 1000)
 
-		const fromParsed = `${fromServerTime.getHours()}.${fromServerTime.getMinutes() === 0 ? "00" : fromServerTime.getMinutes() < 10 ? `0` : fromServerTime.getMinutes()}`
-		const toParsed = `${toServerTime.getHours()}.${toServerTime.getMinutes() === 0 ? "00" : toServerTime.getMinutes() < 10 ? `0` : toServerTime.getMinutes()}`
+		const fromParsed = `${fromServerTime.getHours()}.${fromServerTime.getMinutes() === 0 ? "00" : fromServerTime.getMinutes() < 10 ? `0${fromServerTime.getMinutes()}` : fromServerTime.getMinutes()}`
+		const toParsed = `${toServerTime.getHours()}.${toServerTime.getMinutes() === 0 ? "00" : toServerTime.getMinutes() < 10 ? `0${toServerTime.getMinutes()}` : toServerTime.getMinutes()}`
 		setTimetableTime({from: fromParsed, to: toParsed});
 	}
 
 	const [timeForPicker, setTimeForPicker] = useState({from: "", to: ""});
 
-	const handleTimeForPicker = () => {
-		const from = new Date(activeTimetable.from * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000))
-		const to = new Date(activeTimetable.to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000))
-		setTimeForPicker({from: from, to: to});
+	const handleTimeForPicker = (e) => {
+		const {name, value} = e;
+		setTimeForPicker((prevValues) => ({
+			...prevValues, 
+			[name]: value
+		}));
 	}
 
 
@@ -394,6 +399,7 @@ const SubjectsContextProvider = ({children}) => {
 		<SubjectsContext.Provider
 			value={{
 				userInfo,
+				setTimeForPicker,
 				activeTimetable,
 				handleActiveTimetable,
 				newTimetable,

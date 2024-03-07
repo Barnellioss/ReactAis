@@ -224,15 +224,15 @@ export const GroupsModificationPopup = () => {
 									</View>
 								</View>
 
-								<View style={{ display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: "space-between" }}>
+								<View style={{ display: "flex", flexDirection: "row", height: 65, justifyContent: "space-between" }}>
 									{updating ? (
 										<View style={{ marginHorizontal: "auto", marginTop: 20 }}>
 											<ActivityIndicator size="large" color="#0000ff" />
 										</View>
 									) : (
-										<View style={{ display: "flex", flexDirection: "row" }}>
+										<View style={{ display: "flex", flexDirection: "row",  marginLeft: "auto", marginRight: "auto" }}>
 											<Pressable
-												style={{ width: 40, height: 40 }}
+												style={{ width: 40, height: 40, marginRight: 20 }}
 												onPress={() => {
 													if (activeEditMode) {
 														handleModes({ viewMode: false, editMode: true, createMode: false })
@@ -247,7 +247,7 @@ export const GroupsModificationPopup = () => {
 											</Pressable>
 
 											<Pressable
-												style={{ width: 40, height: 40 }}
+												style={{ width: 40, height: 40, marginRight: 20 }}
 												onPress={() => {
 													handleModes({ viewMode: false, editMode: false, createMode: false })
 													handleActiveGroup({})
@@ -350,15 +350,15 @@ export const GroupsModificationPopup = () => {
 									</View>
 								</View>
 
-								<View style={{ display: "flex", flexDirection: "row", width: 100, height: 65, justifyContent: "space-between" }}>
+								<View style={{ display: "flex", flexDirection: "row", height: 65, justifyContent: "space-between" }}>
 									{updating ? (
 										<View style={{ marginHorizontal: "auto", marginTop: 20 }}>
 											<ActivityIndicator size="large" color="#0000ff" />
 										</View>
 									) : (
-										<View style={{ display: "flex", flexDirection: "row" }}>
+										<View style={{ display: "flex", flexDirection: "row", marginLeft: "auto", marginRight: "auto"}}>
 											<Pressable
-												style={{ width: 40, height: 40 }}
+												style={{ width: 40, height: 40, marginRight: 20  }}
 												onPress={() => {
 													handleModes({ viewMode: true, editMode: false, createMode: false })
 												}}
@@ -367,7 +367,7 @@ export const GroupsModificationPopup = () => {
 											</Pressable>
 
 											<Pressable
-												style={{ width: 40, height: 40 }}
+												style={{ width: 40, height: 40, marginRight: 20 }}
 												onPress={() => {
 													handleActiveGroup({});
 													handleInfo("", "", "");

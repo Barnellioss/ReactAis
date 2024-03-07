@@ -15,7 +15,7 @@ const Event = ({ props, height, width, left, show, subjects }) => {
 
     const {userInfo} = useSelector((store) => store.state);
 
-    const {handleModes, handleActiveTimetable} = userInfo.status === "admin" && useContext(SubjectsContext)
+    const {handleModes, handleActiveTimetable, setTimeForPicker} = userInfo.status === "admin" && useContext(SubjectsContext)
         
 
 
@@ -36,7 +36,11 @@ const Event = ({ props, height, width, left, show, subjects }) => {
                 <TouchableOpacity onPress={() => {
                     userInfo.status === "admin" && 
                     handleModes({ viewMode: false, editMode: true, createMode: false }); 
-                    handleActiveTimetable({subject: subjects.filter(item => item.id === props.item.subjectID)[0].subject, from: props.item.from, to: props.item.to})
+                    handleActiveTimetable({subject: subjects.filter(item => item.id === props.item.subjectID)[0].subject, from: props.item.from, to: props.item.to, id: props.item.id})
+                    setTimeForPicker({
+                        from: new Date(props.item.from * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000)),
+                        to: new Date(props.item.to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000))
+                })
                 }}    
                 >
                 {show 
