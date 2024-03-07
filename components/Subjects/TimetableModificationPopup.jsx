@@ -25,32 +25,33 @@ export const TimetableModificationPopup = () => {
 		SubjectsInfo,
         userWeek, 
         days, 
+		showTimetableTime,
+		activeTimetable, 
+		handleActiveTimetable,
         handlePressedID, 
         pressedID,
 		newTimetable, 
 		handleNewTimetable, 
-		resetNewTimetable,
 		handleInfo,
 		createTimetableItem,
-		//handlePlannedDates,
 		filteredCalendarDays,
 		modes,
-		activeGroup,
+		updateSubjectsTimetable,
 		handleActiveGroup,
 		handleTimetableChange,
-		handleActiveGroupChange,
 		handleModes,
 		handleActiveSubject,
-		handleActiveSubjectChange,
 		activeEditMode,
 		handleActiveEditMode,
-		updateGroup,
 		updating,
 		error,
 		subjects,
+		timeForPicker, 
+		handleTimeForPicker,
 		filterDays,
 		getSubjectsTimetable,
-		subjectsTimetable
+		subjectsTimetable,
+		handleShowTimetable
 	} = useContext(SubjectsContext)
 
 	useEffect(() => {
@@ -63,7 +64,12 @@ export const TimetableModificationPopup = () => {
     }, [pressedID, modes])
 
 	
+	useEffect(() => {
+		handleShowTimetable();
+		handleTimeForPicker();
+	}, [modes.editMode === true])
 
+	console.log(new Date(activeTimetable.from * 1000))
 
     return (
         <View style={styles.centeredView}>
@@ -202,8 +208,8 @@ export const TimetableModificationPopup = () => {
 										alignItems: "center"
 									}}
 								>
-									<Text style={styles.modalTitle}>Edit Group</Text>
-									<IconAwesome name="university" size={26} style={{ marginLeft: 15, marginTop: 5 }} />
+									<Text style={styles.modalTitle}>Edit Timetable</Text>
+									<IconMaterialCommunity name="timetable" size={26} style={{ marginLeft: 15, marginTop: 5 }} />
 								</View>
 
 								<View style={{ display: "flex", flexDirection: "row", width: 0.9 * windowWidth }}>
@@ -215,70 +221,54 @@ export const TimetableModificationPopup = () => {
 
 									<View style={{ ...styles.studentWrapper, marginHorizontal: 0, display: "flex" }}>
 										{activeEditMode ? (
-											<TextInput
-												style={styles.input}
-												value={activeGroup.group}
-												placeholderTextColor="#000"
-												placeholder="Subject"
-												autoCapitalize="none"
-												clearButtonMode="always"
-												onChangeText={(value) => handleActiveGroupChange({ name: "group", value: value }, handleActiveGroup)}
-											></TextInput>
-										) : (
-											<Text style={{ ...styles.itemText, width: 250 }}>{activeGroup.group}</Text>
-										)}
-										{activeEditMode ? (
-											<View style={{ height: 30, paddingVertical: 10, marginLeft: 15, paddingTop: 7, marginTop: 10 }}>
 												<RNPickerSelect
-													placeholder={{ label: "Select year", value: "" }}
-													value={`${activeGroup.year}`}
-													onValueChange={(value) =>
-														handleActiveGroupChange(
+													placeholder={{ label: "Select subject", value: "" }}
+													value={activeTimetable.subject}
+														onValueChange={(value) =>
+														handleTimetableChange(
 															{
-																name: "year",
-																value: +value
+																name: "subject",
+																value: value
 															},
-															handleActiveGroup
+															handleActiveTimetable
 														)
 													}
-													items={[
-														{ label: "1", value: `1` },
-														{ label: "2", value: `2` },
-														{ label: "3", value: `3` },
-														{ label: "4", value: `4` },
-														{ label: "5", value: `5` }
-													]}
+													items={subjects.map(item => item = {...item, label: item.subject, value: item.subject})}
 												/>
-											</View>
 										) : (
-											<Text style={styles.itemText}>{activeGroup.year}</Text>
+											<Text style={{ ...styles.itemText, width: 250 }}>{activeTimetable.subject}</Text>
 										)}
 										{activeEditMode ? (
-											<TextInput
-												style={{...styles.input}}
-												value={activeGroup.stage}
-												placeholderTextColor="#000"
-												placeholder="Teacher"
-												autoCapitalize="none"
-												clearButtonMode="always"
-												onChangeText={(value) => handleActiveGroupChange({ name: "stage", value: value }, handleActiveGroup)}
-											></TextInput>
+											
+											<DateTimePicker
+												testID="dateTimePicker"
+												timeZoneOffsetInMinutes={120}
+												value={timeForPicker.from}
+												mode={"time"}
+												is24Hour={true}
+												display="default"
+												onChange={(e, value) => {
+													handleTimetableChange({ name: "from", value: value }, handleActiveTimetable);
+												}}
+											/>
 										) : (
-											<Text style={{ ...styles.itemText, width: 250 }}>{activeGroup.stage}</Text>
+											<Text style={{ ...styles.itemText, width: 250 }}>{showTimetableTime.from}</Text>
 										)}
 
 										{activeEditMode ? (
-											<TextInput
-												style={{...styles.input}}
-												value={activeGroup.info}
-												placeholderTextColor="#000"
-												placeholder="Info"
-												autoCapitalize="none"
-												clearButtonMode="always"
-												onChangeText={(value) => handleActiveSubjectChange({ name: "info", value: value }, handleActiveGroup)}
-											></TextInput>
+												<DateTimePicker
+												testID="dateTimePicker"
+												timeZoneOffsetInMinutes={120}
+												value={timeForPicker.to}
+												mode={"time"}
+												is24Hour={true}
+												display="default"
+												onChange={(e, value) => {
+													handleTimetableChange({ name: "to", value: value }, handleActiveTimetable);
+												}}
+											/>
 										) : (
-											<Text style={{ ...styles.itemText, width: 250 }}>{activeGroup.info}</Text>
+											<Text style={{ ...styles.itemText, width: 250 }}>{showTimetableTime.to}</Text>
 										)}
 									</View>
 								</View>
@@ -322,7 +312,7 @@ export const TimetableModificationPopup = () => {
 													<IconAnt name="edit" size={24} color="#000" style={{ textAlign: "center", marginTop: 26, height: 40 }} />
 												</Pressable>
 											) : (
-												<Pressable style={{ width: 40, height: 40 }} onPress={() => updateGroup(activeGroup)}>
+												<Pressable style={{ width: 40, height: 40 }} onPress={() => updateSubjectsTimetable(activeTimetable)}>
 													<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 												</Pressable>
 											)}
