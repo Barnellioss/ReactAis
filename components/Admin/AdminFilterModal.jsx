@@ -31,7 +31,7 @@ const AdminFilterModal = ({ navigation }) => {
                             <Text style={styles.modalTitle}>Settings</Text>
                             <IconSettings name="settings" size={26} style={{ marginLeft: 15, marginTop: 5 }} />
                         </View>
-
+                        
                         <FlatList
                             scrollEnabled={false}
                             contentContainerStyle={{ width: windowWidth * 0.8, minHeight: 150, maxHeight: 150, marginTop: 20, flex: 1, justifyContent: 'center' }}

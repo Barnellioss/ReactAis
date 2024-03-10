@@ -15,7 +15,7 @@ import { SubjectModificationPopup } from "./SubjectModificationPopup"
 import { GroupsModificationPopup } from "./GroupsModificationPopup"
 import { TimetableModificationPopup } from "./TimetableModificationPopup"
 import { useDispatch } from "react-redux"
-import { getSubjects } from "../../api/api"
+import { getGroups, getSubjects } from "../../api/api"
 
 
 
@@ -31,12 +31,11 @@ const SubjectsModal = ({ navigation }) => {
 		modes,
 		handleModes,	
 		handleActiveSubject,
-		getGroups
 	} = useContext(SubjectsContext)
 
 	useEffect(() => {
 		getSubjects(dispatch, SubjectsInfo);
-		getGroups();
+		getGroups(dispatch, SubjectsInfo);
 	}, [modes.viewMode === true]);
 
 

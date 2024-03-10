@@ -1,19 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, {useState } from 'react';
 import AdminContext from './AdminContext';
 import { useSelector } from 'react-redux';
-import { firebaseGroupsInfo, firebaseUserDatesColumn, firebaseUserInfo } from '../../firebaseConfig';
+import { firebaseUserDatesColumn, firebaseUserInfo } from '../../firebaseConfig';
 import { doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { useDispatch } from 'react-redux';
-import { setGroups, setUsersDates, setUsersInfo } from '../../redux/reducers/reducers';
+import { setUsersDates, setUsersInfo } from '../../redux/reducers/reducers';
 
 const AdminContextProvider = ({ children }) => {
 
     let { usersInfo, groups, usersDates, userWeek } = useSelector((store) => store.state);
 
-    //Updating loading
-    const [isUpdating, setUpdating] = useState(false);
     const dispatch = useDispatch();
 
+
+    //Updating loading
+    const [isUpdating, setUpdating] = useState(false);
+
+    const handleUpdating = (value) => {
+        setUpdating(value)
+    }
+    
 
     //Filter popup column visibility settings
     const [visibleState, setVisibleState] = useState({
@@ -146,57 +152,6 @@ const AdminContextProvider = ({ children }) => {
 
 
 
-    const updateStudent = async (item, data) => {
-
-        setUpdating(true)
-
-        const { userID } = item;
-        const userInfoDocRef = doc(firebaseUserInfo, `${userID}`);
-        await setDoc(userInfoDocRef, item);
-
-
-        try {
-            await updateDoc(userInfoDocRef, data).then(() => {
-                dispatch(setUsersInfo(data));
-            })
-            getStudents();
-        } finally {
-            setUpdating(false);
-            handleUserPopup(false, data);
-            //alert("Profile has been updated");
-        }
-    }
-
-
-    const getStudents = () => {
-        let res = []
-        getDocs(query(firebaseUserInfo, where("status", "==", "student")))
-            .then((data) => {
-                data.docs.forEach((item) => {
-                    res.push(({ ...item.data() }));
-                })
-            })
-            .then((data) => {
-                dispatch(setUsersInfo(JSON.parse(JSON.stringify(res))));
-                handleFilterState({
-                    ...filterState,
-                    students: JSON.parse(JSON.stringify(res)),
-                })
-            })
-    }
-
-    const getDatesForStudents = () => {
-        let res = [];
-        getDocs(query(firebaseUserDatesColumn))
-            .then((data) => {
-                data.docs.forEach((item) => {
-                    res.push(({ ...item.data() }));
-                });
-                dispatch(setUsersDates(JSON.parse(JSON.stringify(res))));
-            });
-    }
-
-
     function findIndexByKeyValue(array, key, value) {
         for (let i = 0; i < array.length; i++) {
             if (array[i][key] === value) {
@@ -205,26 +160,15 @@ const AdminContextProvider = ({ children }) => {
         }
         return -1; 
     }
-
-    const getGroups = () => {
-		let res = [];
-		getDocs(query(firebaseGroupsInfo, where("year", "==", +visibleUserSetUp.item.currentYear))).then((data) => {
-			data.docs.forEach((item) => {
-				res.push({...item.data(), id: item.id});
-			})
-			dispatch(setGroups(JSON.parse(JSON.stringify(res))));
-		});
-	}
-
+   
 
     return (
         <AdminContext.Provider value={{
             visibleUserSetUp, handleUserPopup, filterState,
             setUserVisibility, handleFilterState, handleFilterChange,
             visibleState, handleVisibileColumnsChange,
-            getGroups,
-            handleFilterVisibleState, updateStudent, isUpdating,
-            getStudents, groups, getDatesForStudents, userWeek,
+            handleFilterVisibleState, isUpdating,
+            groups, userWeek, handleUpdating,
             usersDates, findIndexByKeyValue
         }}>
             {children}

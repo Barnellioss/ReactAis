@@ -82,7 +82,7 @@ export const SubjectModificationPopup = () => {
 												<Text>{item.subject}</Text>
 											</Pressable>
 											<Pressable onPress={() => {
-												deleteSubject(handleUpdating, handleError, item.id);
+												deleteSubject(dispatch, handleUpdating, handleError, SubjectsInfo,item.id);
 											}}>
 												<IconAnt name="close" size={20} color="#000" style={{ textAlign: "center" }} />
 											</Pressable>

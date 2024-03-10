@@ -5,11 +5,12 @@ import { windowHeight, windowWidth } from '../constants';
 import { useContext } from 'react';
 import LoginContext from '../contexts/Login/LoginContext';
 import { ActivityIndicator } from 'react-native';
+import { signUp } from '../api/api';
 
 
 function CreateUserScreen({ navigation }) {
 
-    const { error, loading, signUp } = useContext(LoginContext);
+    const { error, loading, handleError, calculation, handleLoading} = useContext(LoginContext);
 
 
     const [formData, setFormData] = useState({
@@ -53,7 +54,7 @@ function CreateUserScreen({ navigation }) {
                         onChangeText={(value) => handleInputChange({ name: "password", value: value })}></TextInput>
                     <TextInput
                         style={styles.input}
-                        value={formData.сopyPassword}
+                        value={formData.copyPassword}
                         placeholderTextColor="#000"
                         placeholder="Confirm password"
                         autoCapitalize="none"
@@ -66,7 +67,7 @@ function CreateUserScreen({ navigation }) {
                         <ActivityIndicator size="large" color="#0000ff" />
                         :
                         <CustomButton onPress={() => {
-                            signUp(formData);
+                            signUp(handleError, calculation, handleLoading, formData);
                         }} title='Create User' state={(formData.password != "" && formData.password === formData.copyPassword) ? "active" : " "} type={"rounded"} />
 
                 }

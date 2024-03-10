@@ -4,12 +4,16 @@ import { CustomButton } from '../components/common/Button';
 import { windowWidth, windowHeight } from '../constants';
 import { useContext } from 'react';
 import LoginContext from '../contexts/Login/LoginContext';
+import { useDispatch } from 'react-redux';
+import { signIn } from '../api/api';
 
 
 
 const LoginScreen = ({ navigation }) => {
 
-  const { loading, error, signIn, } = useContext(LoginContext);
+
+  const dispatch = useDispatch();
+  const { loading, error, handleError, handleUploading } = useContext(LoginContext);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -53,7 +57,7 @@ const LoginScreen = ({ navigation }) => {
             :
             (
               <>
-                <CustomButton title='Login' onPress={() => { signIn(formData) }} type={"rounded"} state={"active"} />
+                <CustomButton title='Login' onPress={() => { signIn(dispatch, handleError, handleUploading, formData) }} type={"rounded"} state={"active"} />
                 {/*  <CustomButton title='Create account' onPress={() => navigation.navigate('Create User')} type={""} state={"active"} />*/}
                 <CustomButton title='Forget password' onPress={() => navigation.navigate('Forget password')} type={"rounded"} state={"danger"} />
               </>

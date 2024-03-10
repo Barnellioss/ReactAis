@@ -6,20 +6,24 @@ import { windowWidth, windowHeight} from '../constants';
 import Header from '../components/common/Header';
 import { useContext } from 'react';
 import MainContext from '../contexts/Main/MainContext';
+import { getDates, getUserInfo } from '../api/api';
+import { useDispatch } from 'react-redux';
 
 
 
 function MainScreen({ navigation, route }) {
 
-  const { getUserInfo, getDates, user, userInfo } = useContext(MainContext);
+
+  const dispatch = useDispatch();
+  const { user, userInfo, userWeek } = useContext(MainContext);
 
   useEffect(() => {
     onAuthStateChanged(firebaseAuth, (user) => {
 
       //Get info from firebase
       if (user != null) {
-        getUserInfo(user);
-        getDates(user);
+        getUserInfo(dispatch, user);
+        getDates(dispatch, userWeek, user);
       }
 
     })

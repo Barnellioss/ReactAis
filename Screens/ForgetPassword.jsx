@@ -1,31 +1,17 @@
 import React, { useState } from 'react'
 import { ImageBackground, StyleSheet, Text, TextInput, View } from 'react-native';
 import { CustomButton } from '../components/common/Button';
-import { fetchSignInMethodsForEmail, sendPasswordResetEmail } from 'firebase/auth';
-import { firebaseAuth } from '../firebaseConfig';
-import { Switcher } from '../functions/Firebase__error';
 import { windowHeight, windowWidth } from '../constants';
+import { ResetPassword } from '../api/api';
 
 function ForgetPasswordScreen({ navigation }) {
 
     const [email, setEmail] = useState("");
     const [error, setError] = useState(false);
-    const ResetPassword = async () => {
-        try {
-            let exist = (await fetchSignInMethodsForEmail(firebaseAuth, email)).length;
-            if (exist > 0) {
-                await sendPasswordResetEmail(firebaseAuth, email).then(() => {
-                    alert('Email has been sent');
-                    navigation.navigate('Login');
-                })
-            }
-            else {
-                setError("User with this email doesn't exit");
-            }
-
-        } catch (error) {
-            setError(Switcher(error, email));
-        }
+    
+  
+    const handleError = (value) => {
+        setError(value)
     }
 
 
@@ -34,7 +20,7 @@ function ForgetPasswordScreen({ navigation }) {
             <ImageBackground style={styles.bg} source={require('../images/Books.jpg')} blurRadius={1}>
                 <Text style={styles.title}>Reset password</Text>
                 <TextInput style={styles.input} value={email} placeholderTextColor="#000" placeholder="Email" autoCapitalize="none" clearButtonMode="always" onChangeText={(text) => setEmail(text)}></TextInput>
-                <CustomButton onPress={() => ResetPassword()} title='Confirm' state={"active"} type={"rounded"} />
+                <CustomButton onPress={() => ResetPassword(navigation, handleError, email)} title='Confirm' state={"active"} type={"rounded"} />
                 {
                     error.length > 3 ? <Text style={styles.textError}>{error}</Text>
                         :

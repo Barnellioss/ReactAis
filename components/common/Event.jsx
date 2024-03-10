@@ -15,10 +15,8 @@ const Event = ({ props, height, width, left, show, subjects }) => {
 
     const {userInfo} = useSelector((store) => store.state);
 
-    const {handleModes, handleActiveTimetable, setTimeForPicker} = userInfo.status === "admin" && useContext(SubjectsContext)
+    const {handleModes, handleActiveTimetable, setTimeForPicker} = userInfo.status === "admin" && show && useContext(SubjectsContext)
         
-
-
     return (
             < View 
                 style={{

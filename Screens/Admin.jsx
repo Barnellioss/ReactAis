@@ -7,21 +7,25 @@ import { default as IconSettings } from 'react-native-vector-icons/Feather';
 import Header from '../components/common/Header';
 import AdminContext from '../contexts/Admin/AdminContext';
 import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
+import { useDispatch } from 'react-redux';
+import { getStudents } from '../api/api';
 
 
 
 
 export default function AdminScreen({ navigation, route }) {
 
+    const dispatch = useDispatch();
+
     const { userInfo, userWeek, usersDates } = useSelector((store) => store.state);
-    const { filterState, handleUserPopup, handleFilterState, visibleState, getStudents, getDatesForStudents } = useContext(AdminContext);
+    const { filterState, handleUserPopup, handleFilterState, visibleState,  getDatesForStudents } = useContext(AdminContext);
 
 
     useEffect(() => {
         if (route.name === "Admin") {
             const unsubscribe = navigation.addListener('focus', () => {
-                getStudents();
-                getDatesForStudents();
+                getStudents(dispatch, handleFilterState, filterState);
+                getDatesForStudents(dispatch);
                 return unsubscribe;
 
             });
@@ -58,7 +62,7 @@ export default function AdminScreen({ navigation, route }) {
                     </ScrollView>
                 </View>
 
-
+                
                 <FlatList
                     style={styles.list}
                     data={filterState.students}
@@ -83,9 +87,6 @@ export default function AdminScreen({ navigation, route }) {
                                         {visibleState.Group === true ? <Text style={{ ...styles.listItem, width: 20, textAlign: 'left', marginRight: 20 }}>{item.group}</Text> : <></>}
                                         {visibleState.Start === true ? <Text style={{ ...styles.listItem, textAlign: 'center', marginLeft: 0 }}>{start}</Text> : <></>}
                                         {visibleState.End === true ? <Text style={{ ...styles.listItem, marginLeft: 0, textAlign: 'center' }}>{end}</Text> : <></>}
-                                        {/*<Text style={styles.listItemLastChild}>
-                                        <IconAnt name="edit" style={{ marginRight: 10, marginTop: 5 }} size={20} color="#fff" />
-                                    </Text>*/}
                                     </Pressable>
                                     {
                                         visibleState.Graph ?
@@ -232,7 +233,8 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         paddingBottom: 10,
         borderBottomWidth: 2,
-        borderBottomColor: "#fff"
+        borderBottomColor: "#fff",
+        height: 50
     },
     header: {
         width: windowWidth,

@@ -1,81 +1,13 @@
 import React, {useState} from "react"
 import SubjectsContext from "./SubjectsContext"
-import {addDoc, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where} from "firebase/firestore"
-import {firebaseGroupsInfo} from "../../firebaseConfig"
-import {useDispatch, useSelector} from "react-redux"
-import {setGroups} from "../../redux/reducers/reducers"
+import {useSelector} from "react-redux"
 import { initialGroup, initialSubject, initialSubjectInfo,  initialTimetableItem,  semestersYear} from "../../constants"
+
+
 
 const SubjectsContextProvider = ({children}) => {
 	let {userInfo, subjects, groups, userWeek, subjectsTimetable} = useSelector((store) => store.state)
-	const dispatch = useDispatch()
 	
-
-	const getGroups = () => {
-		let res = []
-		getDocs(query(firebaseGroupsInfo, where("year", "==", SubjectsInfo.year))).then((data) => {
-			data.docs.forEach((item) => {
-				res.push({...item.data(), id: item.id})
-			})
-			dispatch(setGroups(JSON.parse(JSON.stringify(res))))
-		})
-	}
-
-
-	const updateGroup = async (group) => {
-		handleUpdating(true)
-
-		const {id} = group
-		const groupDocRef = doc(firebaseGroupsInfo, `${id}`)
-
-		try {
-			await setDoc(groupDocRef, group)
-			await updateDoc(groupDocRef, group).then(() => {
-				getGroups()
-			})
-		} catch (e) {
-			handleUpdating(false)
-			handleError(e.message)
-		} finally {
-			handleUpdating(false)
-			//alert("Profile has been updated");
-		}
-	}
-
-
-	const deleteGroup = async (id) => {
-		handleUpdating(true)
-
-		const groupDocRef = doc(firebaseGroupsInfo, `${id}`)
-		try {
-			await deleteDoc(groupDocRef).then(() => {
-				getGroups()
-			})
-		} catch (e) {
-			handleUpdating(false)
-			handleError(e.message)
-		} finally {
-			handleUpdating(false)
-			//alert("Profile has been updated");
-		}
-	}
-
-	
-	const createGroup = async (group) => {
-		handleUpdating(true)
-
-		try {
-			await addDoc(firebaseGroupsInfo, group)
-		} catch (e) {
-			handleUpdating(false)
-			handleError(e.message)
-		} finally {
-			handleUpdating(false)
-			getGroups()
-			handleNewGroup(initialGroup)
-		}
-	}
-
 	//Filtered days
 	const [filteredCalendarDays, setFilteredDays] = useState([])
 
@@ -282,7 +214,6 @@ const SubjectsContextProvider = ({children}) => {
 				filteredCalendarDays,
 				filterDays,
 				activeGroup,
-				createGroup,
 				resetGroup,
 				handleActiveGroup,
 				handleActiveGroupChange,
@@ -291,14 +222,11 @@ const SubjectsContextProvider = ({children}) => {
 				handleNewGroup,
 				subjects,
 				groups,
-				getGroups,
 				semestersYear,
-				deleteGroup,
 				SubjectsInfo,
 				handleInfo,
 				modes,
 				handleModes,
-				updateGroup,
 				activeSubject,
 				handleActiveSubject,
 				handleActiveSubjectChange,

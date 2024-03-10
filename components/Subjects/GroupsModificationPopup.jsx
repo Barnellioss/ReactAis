@@ -1,7 +1,7 @@
-import { View, Text, Modal, FlatList,  Pressable, TextInput, StyleSheet } from "react-native"
+import { View, Text, FlatList,  Pressable, TextInput} from "react-native"
 import { default as IconIonicons } from "react-native-vector-icons/Ionicons"
 import { default as IconAnt } from "react-native-vector-icons/AntDesign"
-import { semesters, stages, windowWidth, years } from "../../constants"
+import {  stages, windowWidth, years } from "../../constants"
 import { useContext } from "react"
 import { default as IconAwesome } from "react-native-vector-icons/FontAwesome"
 import { default as IconFeather } from "react-native-vector-icons/Feather"
@@ -9,10 +9,14 @@ import RNPickerSelect from "react-native-picker-select"
 import { ActivityIndicator } from "react-native"
 import SubjectsContext from "../../contexts/Subjects/SubjectsContext"
 import { styles } from "./SubjectsModal"
+import { useDispatch } from "react-redux"
+import { createGroup, deleteGroup, updateGroup } from "../../api/api"
 
 
 
 export const GroupsModificationPopup = () => {
+
+	const dispatch = useDispatch();
 
     const {
 		groups,
@@ -25,19 +29,18 @@ export const GroupsModificationPopup = () => {
 		handleModes,
 		handleNewGroup,
 		newGroup,
+		handleError,
+		handleUpdating,
 		handleActiveSubject,
 		handleActiveSubjectChange,
 		activeEditMode,
 		handleActiveEditMode,
-		updateGroup,
 		updating,
-		deleteGroup,
-		newSubject,
 		error,
-		createGroup
 	} = useContext(SubjectsContext)
 
-	console.log(newGroup);
+
+
 
     return (
         <View style={styles.centeredView}>
@@ -82,7 +85,7 @@ export const GroupsModificationPopup = () => {
 											>
 												<Text>{item.group}</Text>
 											</Pressable>
-											<Pressable onPress={() => deleteGroup(item.id)}>
+											<Pressable onPress={() => deleteGroup(dispatch, handleUpdating, handleError, item)}>
 												<IconAnt name="close" size={20} color="#000" style={{ textAlign: "center" }} />
 											</Pressable>
 										</View>
@@ -263,7 +266,7 @@ export const GroupsModificationPopup = () => {
 													<IconAnt name="edit" size={24} color="#000" style={{ textAlign: "center", marginTop: 26, height: 40 }} />
 												</Pressable>
 											) : (
-												<Pressable style={{ width: 40, height: 40 }} onPress={() => updateGroup(activeGroup)}>
+												<Pressable style={{ width: 40, height: 40 }} onPress={() => updateGroup(dispatch, handleError, handleUpdating, activeGroup)}>
 													<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 												</Pressable>
 											)}
@@ -376,7 +379,7 @@ export const GroupsModificationPopup = () => {
 											>
 												<IconAnt name="close" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 											</Pressable>
-											<Pressable style={{ width: 40, height: 40 }} onPress={() => createGroup({ ...newGroup, id: Date.now() })}>
+											<Pressable style={{ width: 40, height: 40 }} onPress={() => createGroup(dispatch, handleUpdating, handleError, handleNewGroup, { ...newGroup, id: Date.now() })}>
 												<IconFeather name="save" size={24} color="#000" style={{ textAlign: "center", marginTop: 25, height: 40 }} />
 											</Pressable>
 										</View>

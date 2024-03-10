@@ -16,7 +16,9 @@ import { useDispatch } from 'react-redux';
 
 const AdminUserModal = () => {
 
-    const { visibleUserSetUp, handleUserPopup, updateStudent, isUpdating, groups, getGroups, userWeek, usersDates, findIndexByKeyValue } = useContext(AdminContext);
+    const dispatch = useDispatch();
+
+    const { visibleUserSetUp, handleUserPopup, isUpdating, groups, userWeek, usersDates, findIndexByKeyValue, handleUpdating } = useContext(AdminContext);
     const { isVisible, item, start, end } = visibleUserSetUp;
 
 
@@ -55,7 +57,7 @@ const AdminUserModal = () => {
             setStudent(item);
         }
         if(item?.currentYear){
-            getGroups();
+            getGroups(dispatch, {year: item?.currentYear});
         }
     }, [item]);
 
@@ -196,7 +198,7 @@ const AdminUserModal = () => {
                                         hideNowLine={true}
                                         columnWidth={windowWidth * 0.75}
                                         style={{ width: windowWidth * 0.75, marginLeft: 'auto', marginRight: 'auto' }}
-                                        renderItem={props => <Event props={props} key={Math.random() * 10000} height={18} width={0.05} left={0.08 * findIndexByKeyValue(userWeek, "day", props.item.day)} />}
+                                        renderItem={props => <Event props={props} key={Math.random() * 10000} height={18} show={false} width={0.05} left={0.08 * findIndexByKeyValue(userWeek, "day", props.item.day)} />}
                                         // provide only one of these
                                         range={range}
                                     />
@@ -243,7 +245,7 @@ const AdminUserModal = () => {
                                         style={{ width: 40, height: 30 }}
                                         onPress={() => {
                                             setEdit(false);
-                                            updateStudent(item, student);
+                                            updateStudent(dispatch, handleUpdating, handleUserPopup, item, student);
                                         }}>
                                         <IconFeather name="save" size={24} color="#000" style={{ textAlign: 'center', marginTop: 5, height: 30 }} />
                                     </Pressable>
@@ -346,7 +348,7 @@ const styles = StyleSheet.create({
         width: 0.05 * windowWidth,
         borderRadius: 20,
         color: "#000",
-        backgroundColor: "fff",
+        backgroundColor: "#fff",
         textAlign: "center",
         paddingTop: 8,
         marginLeft: 0.03 * windowWidth
@@ -356,7 +358,7 @@ const styles = StyleSheet.create({
         width: 0.05 * windowWidth,
         borderRadius: 20,
         color: "#000",
-        backgroundColor: "fff",
+        backgroundColor: "#fff",
         textAlign: "center",
         paddingTop: 8,
         marginLeft: 0
