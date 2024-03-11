@@ -75,7 +75,6 @@ export const TimetableModificationPopup = () => {
 	}, []);
 
 
-
     return (
         <View style={styles.centeredView}>
         {(modes.viewMode || modes.editMode || modes.createMode) && SubjectsInfo.mode === "Timetable" ? (
@@ -136,13 +135,14 @@ export const TimetableModificationPopup = () => {
 												}
 											</View>
 											<View style={{marginTop: 50, marginBottom: 20}}>
+												{ subjects != null &&
 												<ScrollView >
 													<View style={{ width: windowWidth * 0.8 }}>
 														<Timetable
 															fromHour={7.30}
 															toHour={20.00}
 															scrollViewProps={{ scrollEnabled: false }}
-															items={filteredCalendarDays}
+															items={filteredCalendarDays.filter(item => subjects.filter(sub => sub.id === item.subjectID).length > 0 )}
 															hideNowLine={true}
 															columnWidth={windowWidth * 0.85}
 															style={{ width: windowWidth * 0.85, marginLeft: 'auto', marginRight: 'auto'}}
@@ -151,6 +151,7 @@ export const TimetableModificationPopup = () => {
 														/>
 													</View>
 												</ScrollView>
+												}
 											</View>
 										</View>
 										: 

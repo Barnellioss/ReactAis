@@ -152,9 +152,6 @@ const AboutContextProvider = ({ children }) => {
         to: new Date(userWeek[pressedID].to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 120000))
     });
 
-    console.log(userWeek)
-
-
 
     const handlePlannedDates = (pressedID) => {
         setDates((prevDatesData) => ({

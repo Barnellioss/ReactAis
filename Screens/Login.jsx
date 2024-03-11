@@ -13,7 +13,7 @@ const LoginScreen = ({ navigation }) => {
 
 
   const dispatch = useDispatch();
-  const { loading, error, handleError, handleUploading } = useContext(LoginContext);
+  const { loading, error, handleError, handleLoading } = useContext(LoginContext);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -57,7 +57,7 @@ const LoginScreen = ({ navigation }) => {
             :
             (
               <>
-                <CustomButton title='Login' onPress={() => { signIn(dispatch, handleError, handleUploading, formData) }} type={"rounded"} state={"active"} />
+                <CustomButton title='Login' onPress={() => { signIn(dispatch, handleError, handleLoading, formData) }} type={"rounded"} state={"active"} />
                 {/*  <CustomButton title='Create account' onPress={() => navigation.navigate('Create User')} type={""} state={"active"} />*/}
                 <CustomButton title='Forget password' onPress={() => navigation.navigate('Forget password')} type={"rounded"} state={"danger"} />
               </>

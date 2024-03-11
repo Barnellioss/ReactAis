@@ -8,6 +8,7 @@ const messageSlice = createSlice({
     user: {},
     userInfo: null,
     userWeek: [{ from: "", to: "", day: "Monday", acronym: "M", docID: "" }, { from: "", to: "", day: "Tuesday", acronym: "T", docID: "" }, { from: "", to: "", day: "Wednesday", acronym: "W", docID: "" }, { from: "", to: "", day: "Thursday", acronym: "T", docID: "" }, { from: "", to: "", day: "Friday", acronym: "F", docID: "" }, { from: "", to: "", day: "Saturday", acronym: "S", docID: "" }, { from: "", to: "", day: "Sunday", acronym: "S", docID: "" }],
+    studentWeek: [{ from: "", to: "", day: "Monday", acronym: "M", docID: "" }, { from: "", to: "", day: "Tuesday", acronym: "T", docID: "" }, { from: "", to: "", day: "Wednesday", acronym: "W", docID: "" }, { from: "", to: "", day: "Thursday", acronym: "T", docID: "" }, { from: "", to: "", day: "Friday", acronym: "F", docID: "" }, { from: "", to: "", day: "Saturday", acronym: "S", docID: "" }, { from: "", to: "", day: "Sunday", acronym: "S", docID: "" }],
     busyDays: [],
     usersInfo: [],
     usersDates: [],
@@ -25,6 +26,9 @@ const messageSlice = createSlice({
     },
     setWeek(state, action) {
       state.userWeek = action.payload
+    },
+    setStudentWeek(state, action){
+      state.studentWeek = action.payload
     },
     setBusyDays(state, action) {
       state.busyDays = action.payload
@@ -48,5 +52,5 @@ const messageSlice = createSlice({
 })
 
 
-export const { setMessage, setUser, setUserInfo, setWeek, setBusyDays, setGroups, setUsersInfo, setSubjects, setUsersDates, setSubjectsTimetable } = messageSlice.actions
+export const { setMessage, setUser, setUserInfo, setWeek, setStudentWeek, setBusyDays, setGroups, setUsersInfo, setSubjects, setUsersDates, setSubjectsTimetable } = messageSlice.actions
 export default messageSlice.reducer

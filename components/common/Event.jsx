@@ -16,9 +16,15 @@ const Event = ({ props, height, width, left, show, subjects }) => {
     const {userInfo} = useSelector((store) => store.state);
 
     const {handleModes, handleActiveTimetable, setTimeForPicker} = userInfo.status === "admin" && show && useContext(SubjectsContext)
-        
+    
+    let subject;
+    
+    if(show){
+        subject = subjects.filter(item => item.id === props.item.subjectID)[0]
+    }
+
     return (
-            < View 
+        < View 
                 style={{
                 marginLeft: 0.15 * windowWidth,
                 zIndex: 100,
@@ -34,7 +40,7 @@ const Event = ({ props, height, width, left, show, subjects }) => {
                 <TouchableOpacity onPress={() => {
                     userInfo.status === "admin" && 
                     handleModes({ viewMode: false, editMode: true, createMode: false }); 
-                    handleActiveTimetable({subject: subjects.filter(item => item.id === props.item.subjectID)[0].subject, from: props.item.from, to: props.item.to, id: props.item.id})
+                    show && handleActiveTimetable({subject: subject.subject, from: props.item.from, to: props.item.to, id: props.item.id});
                     setTimeForPicker({
                         from: new Date(props.item.from * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000)),
                         to: new Date(props.item.to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000))
@@ -43,7 +49,8 @@ const Event = ({ props, height, width, left, show, subjects }) => {
                 >
                 {show 
                     ? 
-                        <Text style={{ fontSize: 16, color: "#000", textAlign: 'center' }}>{subjects.filter(item => item.id == props.item.subjectID)[0].subject}</Text>
+                        <Text style={{ fontSize: 16, color: "#000", textAlign: 'center' }}>{
+                            subject.subject}</Text>
                     :
                     <></>
                 }

@@ -47,7 +47,6 @@ const SubjectsModal = ({ navigation }) => {
 			visible={/*modes.viewMode*/ SubjectsInfo.mode != ""}
 			onRequestClose={() => {
 				handleInfo("", "", "");
-				resetSubject();
 				handleActiveSubject({});
 				handleModes({ viewMode: false, editMode: false, createMode: false });
 			}}

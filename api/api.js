@@ -2,13 +2,13 @@ import {addDoc, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where} from "
 import {setGroups, setSubjects, setSubjectsTimetable, setUser, setUserInfo, setUsersDates, setUsersInfo, setWeek} from "../redux/reducers/reducers"
 import {firebaseAuth, firebaseGroupsInfo, firebaseSubjects, firebaseSubjectsTimetable, firebaseUserDatesColumn, firebaseUserInfo} from "../firebaseConfig"
 import {dayInSeconds, hourInSeconds, initialGroup, initialSubject, initialTimetableItem, weekStart} from "../constants"
-import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth"
-import { Switcher } from "../functions/Firebase__error"
+import {createUserWithEmailAndPassword, fetchSignInMethodsForEmail, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut} from "firebase/auth"
+import {Switcher} from "../functions/Firebase__error"
 
 //Subject actions
 export const getSubjects = (dispatch, SubjectsInfo) => {
 	let res = []
-	getDocs(query(firebaseSubjects, where("year", "==", SubjectsInfo.year), where("semester", "==", SubjectsInfo.semester))).then((data) => {
+	getDocs(query(firebaseSubjects, where("year", "==", +SubjectsInfo.year), where("semester", "==", SubjectsInfo.semester))).then((data) => {
 		data.docs.forEach((item) => {
 			res.push({...item.data(), id: item.id})
 		})
@@ -266,165 +266,175 @@ export const updateStudent = async (dispatch, handleUpdating, handleUserPopup, i
 	}
 }
 
-
-
-//Main 
+//Main
 
 export const getUserInfo = (dispatch, user) => {
+	let infoRes = []
+	let usersInfoStorage = []
 
-    let infoRes = [];
-    let usersInfoStorage = [];
+	getDocs(query(firebaseUserInfo, where("userID", "==", user.uid)))
+		.then((data) => {
+			data.docs.forEach((item) => {
+				usersInfoStorage.push({...item.data()})
+			})
+			infoRes = JSON.parse(JSON.stringify(usersInfoStorage))
 
-    getDocs(query(firebaseUserInfo, where("userID", "==", user.uid)))
-        .then((data) => {
-            data.docs.forEach((item) => {
-                usersInfoStorage.push(({ ...item.data() }))
-            });
-            infoRes = JSON.parse(JSON.stringify(usersInfoStorage));
+			//After userInfo get, get group
+			getDocs(query(firebaseGroupsInfo), where("year", "==", infoRes[0]?.currentYear))
+				.then((snapshot) => {
+					let groups = []
+					snapshot.docs.forEach((item) => {
+						groups.push({...item.data()})
+					})
+					dispatch(setGroups(JSON.parse(JSON.stringify(groups))))
+				})
+				.catch((error) => {
+					console.log(error.message)
+				})
 
-        //After userInfo get, get group
-            getDocs(query(firebaseGroupsInfo), where("year", "==", infoRes[0]?.currentYear))
-                .then((snapshot) => {
-                    let groups = []
-                    snapshot.docs.forEach((item) => {
-                        groups.push(({ ...item.data() }))
-                    });
-                    dispatch(setGroups(JSON.parse(JSON.stringify(groups))))
-                }).catch(error => {
-                    console.log(error.message);
-                })
-
-            dispatch(setUserInfo(...infoRes))
-        }).catch(error => {
-            console.log(error.message);
-        })
+			dispatch(setUserInfo(...infoRes))
+		})
+		.catch((error) => {
+			console.log(error.message)
+		})
 }
 
 export const getDates = (dispatch, userWeek, user) => {
-    if (user != null) {
-        //Get dates
-        let usersStorage = [];
-        let res = [];
-        getDocs(query(firebaseUserDatesColumn, where("userID", "==", user.uid)))
-            .then((snapshot) => {
-                snapshot.docs.forEach((item) => {
-                    usersStorage.push(({ ...item.data(), docID: item.id }))
-                });
+	if (user != null) {
+		//Get dates
+		let usersStorage = []
+		let res = []
+		getDocs(query(firebaseUserDatesColumn, where("userID", "==", user.uid)))
+			.then((snapshot) => {
+				snapshot.docs.forEach((item) => {
+					usersStorage.push({...item.data(), docID: item.id})
+				})
 
-                let parsed = JSON.parse(JSON.stringify(usersStorage));
-                
-                userWeek.map((item, i) => {
-                    let serverDay = parsed.filter(a => a.day === item.day);
-                    if (serverDay.length === 1) {
-                        res.push({ ...item, from: serverDay[0].from.seconds, to: serverDay[0].to.seconds, title: serverDay[0].title, docID: serverDay[0].docID })
-                    }
-                    else {
-                        res.push(item)
-                    }
-                })
-                dispatch(setWeek(res));
+				let parsed = JSON.parse(JSON.stringify(usersStorage))
 
-            }).catch(error => {
-                console.log(error.message);
-            })
-    }
-
-    else {
-        dispatch(setWeek(week));
-        dispatch(setGroups([]));
-    }
+				userWeek.map((item, i) => {
+					let serverDay = parsed.filter((a) => a.day === item.day)
+					if (serverDay.length === 1) {
+						res.push({...item, from: serverDay[0].from.seconds, to: serverDay[0].to.seconds, title: serverDay[0].title, docID: serverDay[0].docID})
+					} else {
+						res.push(item)
+					}
+				})
+				dispatch(setWeek(res))
+			})
+			.catch((error) => {
+				console.log(error.message)
+			})
+	} else {
+		dispatch(setWeek(week))
+		dispatch(setGroups([]))
+	}
 }
-
 
 //Login
 
-const auth = firebaseAuth;
+const auth = firebaseAuth
 
 export const signIn = async (dispatch, handleError, handleLoading, formData) => {
-    handleError("CSS");
-    handleLoading(true);
-    try {
-        const { user } = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+	handleError("CSS")
+	handleLoading(true)
+	try {
+		const {user} = await signInWithEmailAndPassword(auth, formData.email, formData.password)
 
-        if (user != null) {
-            dispatch(setUser({ displayName: user?.displayName, email: user.email, emailVerified: user.emailVerified, photoURL: user?.photoURL, uid: user.uid }));
-        }
+		if (user != null) {
+			dispatch(setUser({displayName: user?.displayName, email: user.email, emailVerified: user.emailVerified, photoURL: user?.photoURL, uid: user.uid}))
+		}
 
-        if (!user.emailVerified) {
-            handleError("Email hasn't been verified");
-        }
-
-
-    } catch (error) {
-        handleError(Switcher(error, formData.email));
-    } finally {
-        handleLoading(false);
-    }
+		if (!user.emailVerified) {
+			handleError("Email hasn't been verified")
+		}
+	} catch (error) {
+		handleError(Switcher(error, formData.email))
+	} finally {
+		handleLoading(false)
+	}
 }
 
-export  const signUp = async (handleError, calculation, handleLoading, data) => {
-       
-    handleError("CSS");
-    handleLoading(true);
-    await signOut(auth);
+export const signUp = async (handleError, calculation, handleLoading, data) => {
+	handleError("CSS")
+	handleLoading(true)
+	await signOut(auth)
 
-    try {
-        const response = await createUserWithEmailAndPassword(auth, data.email, data.password);
-        let userData = {
-            birthDate: {
-                nanoseconds: Date.now(),
-                seconds: Date.now() / 1000
-            },
-            currentYear: "1",
-            degree: "bachelor",
-            email: data.email,
-            startDate: {
-                nanoseconds: Date.now(),
-                seconds: calculation("start")
-            },
-            endDate: {
-                nanoseconds: Date.now(),
-                seconds: calculation("end")
-            },
-            group: "05",
-            name: "John",
-            lastname: "Doe",
-            status: "student",
-            subGroup: [""],
-            userID: auth.currentUser.uid
-        }
+	try {
+		const response = await createUserWithEmailAndPassword(auth, data.email, data.password)
+		let userData = {
+			birthDate: {
+				nanoseconds: Date.now(),
+				seconds: Date.now() / 1000
+			},
+			currentYear: "1",
+			degree: "bachelor",
+			email: data.email,
+			startDate: {
+				nanoseconds: Date.now(),
+				seconds: calculation("start")
+			},
+			endDate: {
+				nanoseconds: Date.now(),
+				seconds: calculation("end")
+			},
+			group: "05",
+			name: "John",
+			lastname: "Doe",
+			status: "student",
+			subGroup: [""],
+			userID: auth.currentUser.uid
+		}
 
-        await sendEmailVerification(auth.currentUser);
-        await setDoc(doc(firebaseUserInfo, auth.currentUser.uid), userData);
-        await signOut(auth);
-        
-        //Firebase doesn't provide Admin SDK, for testing only
-        signIn({ email: "beautyofglassstore@gmail.com", password: "test123" });
-    } catch (error) {
-        console.log("Registration failed " + error.message)
-        handleError(Switcher(error));
-    } finally {
-        handleLoading(false);
-    }
+		await sendEmailVerification(auth.currentUser)
+		await setDoc(doc(firebaseUserInfo, auth.currentUser.uid), userData)
+		await signOut(auth)
 
+		//Firebase doesn't provide Admin SDK, for testing only
+		signIn({email: "beautyofglassstore@gmail.com", password: "test123"})
+	} catch (error) {
+		console.log("Registration failed " + error.message)
+		handleError(Switcher(error))
+	} finally {
+		handleLoading(false)
+	}
 }
 
-
-//ForgetPassword 
+//ForgetPassword
 export const ResetPassword = async (navigation, handleError, email) => {
-    try {
-        let exist = (await fetchSignInMethodsForEmail(firebaseAuth, email)).length;
-        if (exist > 0) {
-            await sendPasswordResetEmail(firebaseAuth, email).then(() => {
-                alert('Email has been sent');
-                navigation.navigate('Login');
-            })
-        }
-        else {
-            handleError("User with this email doesn't exit");
-        }
+	try {
+		let exist = (await fetchSignInMethodsForEmail(firebaseAuth, email)).length
+		if (exist > 0) {
+			await sendPasswordResetEmail(firebaseAuth, email).then(() => {
+				alert("Email has been sent")
+				navigation.navigate("Login")
+			})
+		} else {
+			handleError("User with this email doesn't exit")
+		}
+	} catch (error) {
+		handleError(Switcher(error, email))
+	}
+}
 
-    } catch (error) {
-        handleError(Switcher(error, email));
-    }
+//Main Student Group timetable
+
+export const getStudentTimetable = async (dispatch, subjects, handleCalendarDays) => {
+	let res = []
+	let timetableSubjects = []
+	getDocs(query(firebaseSubjectsTimetable)).then((data) => {
+		data.docs.forEach((item) => {
+			res.push({...item.data()})
+		})
+
+		res = res.map((item, i) => (item = {from: item.from.seconds, to: item.to.seconds, subjectID: item.subjectID, id: item.id}))
+	
+		for (let i = 0; i < subjects.length; i++) {
+			let item = res.filter((time) => time.subjectID === subjects[i].id)
+			if (item.length === 1) {
+				timetableSubjects = timetableSubjects.concat(item)
+			}
+		}
+		//dispatch(handleCalendarDays(timetableSubjects));
+	})
 }
