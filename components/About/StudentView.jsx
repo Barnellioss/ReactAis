@@ -17,7 +17,7 @@ const StudentView = ({ navigation, route }) => {
         filterDays(userWeek, pressedID);
     }, [userWeek[pressedID].from, userWeek[pressedID].to])
 
-
+    console.log(userWeek)
 
     return (
 

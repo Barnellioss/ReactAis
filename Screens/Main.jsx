@@ -17,7 +17,7 @@ function MainScreen({ navigation, route }) {
 
 
   const dispatch = useDispatch();
-  const { user, userInfo, studentWeek, days, pressedID, handlePressedID, filterDays, subjects, userWeek, filteredCalendarDays, handleCalendarDays } = useContext(MainContext);
+  const { user, userInfo, days, pressedID, handlePressedID, filterDays, subjects, userWeek, studentWeek, filteredCalendarDays } = useContext(MainContext);
 
   useEffect(() => {
     onAuthStateChanged(firebaseAuth, (user) => {
@@ -48,16 +48,16 @@ function MainScreen({ navigation, route }) {
 
   useEffect(() => {
     if(subjects.length > 0 && userInfo.status === "student"){
-      getStudentTimetable(dispatch, subjects, handleCalendarDays);
+      getStudentTimetable(dispatch, subjects);
     }
   }, [subjects, navigation])
 
 
   useEffect(() => {
     if(subjects.length > 0){
-      filterDays(studentWeek, pressedID);
+      filterDays(studentWeek, subjects, pressedID);
     }
-}, [studentWeek[pressedID].from, studentWeek[pressedID].to])
+}, [pressedID])
 
 
 
@@ -69,7 +69,7 @@ function MainScreen({ navigation, route }) {
               <ScrollView>
 
               <View>
-                  {studentWeek != "undefined" ?
+                  {userWeek != "undefined" ?
                       <View style={{ ...styles.item__wrapper, marginBottom: 30, width: windowWidth, flex: 1, flexDirection: "column", justifyContent: 'center', alignItems: 'center' }}>
                           <View style={styles.days__container}>
                               {
@@ -77,7 +77,7 @@ function MainScreen({ navigation, route }) {
                                       days.map((item, i) => {
                                           return (
                                               <TouchableOpacity
-                                                  onPress={() => { handlePressedID(i); filterDays(studentWeek, i) }}
+                                                  onPress={() => { handlePressedID(i); filterDays(studentWeek, subjects, i) }}
                                                   style={{
                                                       height: 50
                                                   }}

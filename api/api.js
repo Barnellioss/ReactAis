@@ -1,5 +1,5 @@
 import {addDoc, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where} from "firebase/firestore"
-import {setGroups, setSubjects, setSubjectsTimetable, setUser, setUserInfo, setUsersDates, setUsersInfo, setWeek} from "../redux/reducers/reducers"
+import {setGroups, setStudentWeek, setSubjects, setSubjectsTimetable, setUser, setUserInfo, setUsersDates, setUsersInfo, setWeek} from "../redux/reducers/reducers"
 import {firebaseAuth, firebaseGroupsInfo, firebaseSubjects, firebaseSubjectsTimetable, firebaseUserDatesColumn, firebaseUserInfo} from "../firebaseConfig"
 import {dayInSeconds, hourInSeconds, initialGroup, initialSubject, initialTimetableItem, weekStart} from "../constants"
 import {createUserWithEmailAndPassword, fetchSignInMethodsForEmail, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut} from "firebase/auth"
@@ -419,22 +419,20 @@ export const ResetPassword = async (navigation, handleError, email) => {
 
 //Main Student Group timetable
 
-export const getStudentTimetable = async (dispatch, subjects, handleCalendarDays) => {
-	let res = []
-	let timetableSubjects = []
-	getDocs(query(firebaseSubjectsTimetable)).then((data) => {
-		data.docs.forEach((item) => {
-			res.push({...item.data()})
-		})
+export const getStudentTimetable = async (dispatch) => {
+	try {
+		let res = []
 
-		res = res.map((item, i) => (item = {from: item.from.seconds, to: item.to.seconds, subjectID: item.subjectID, id: item.id}))
-	
-		for (let i = 0; i < subjects.length; i++) {
-			let item = res.filter((time) => time.subjectID === subjects[i].id)
-			if (item.length === 1) {
-				timetableSubjects = timetableSubjects.concat(item)
-			}
-		}
-		//dispatch(handleCalendarDays(timetableSubjects));
-	})
+		getDocs(query(firebaseSubjectsTimetable)).then((data) => {
+			data.docs.forEach((item) => {
+				res.push({...item.data()})
+			})
+
+			res = res.map((item, i) => (item = {from: item.from.seconds, to: item.to.seconds, subjectID: item.subjectID, id: item.id}))
+			
+			dispatch(setStudentWeek(JSON.parse(JSON.stringify(res))));
+		})
+	} catch (error) {
+		console.log(error)
+	}
 }

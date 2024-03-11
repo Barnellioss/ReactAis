@@ -3,7 +3,7 @@ import MainContext from "./MainContext"
 import {useSelector} from "react-redux"
 
 const MainContextProvider = ({children}) => {
-	let {studentWeek, user, userInfo, subjects, userWeek} = useSelector((store) => store.state)
+	let {user, userInfo, subjects, userWeek, studentWeek} = useSelector((store) => store.state)
 
 	//day handling
 	const [pressedID, setPressed] = useState(0)
@@ -33,12 +33,21 @@ const MainContextProvider = ({children}) => {
         }));
     }*/
 
-	let days = studentWeek.map((a) => a.day)
+	let days = userWeek.map((a) => a.day)
 
-    function filterDays(userWeek, index) {
-        if (userWeek.length > 0) {
+    function filterDays(userWeek, subjects, index) {
+        
+        let timetableSubjects = []
+        for (let i = 0; i < subjects.length; i++) {
+            let item = userWeek.filter((time) => time.subjectID === subjects[i].id)
+            if (item.length === 1) {
+                timetableSubjects = timetableSubjects.concat({...item[0], title: subjects[i].title})
+            }
+        }
+
+        if (timetableSubjects.length > 0) {
             let filteredDays = [];
-            userWeek.filter(a => {
+            timetableSubjects.filter(a => {
                 let americanDay = new Date(a.from * 1000).getDay();
                 if (americanDay === 0 && index === 6) {
                     filteredDays.push({ title: a.title, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000) });
@@ -56,11 +65,11 @@ const MainContextProvider = ({children}) => {
 			value={{
 				user,
 				userInfo,
-				studentWeek,
 				days,
                 subjects,
                 pressedID,
                 userWeek,
+                studentWeek,
                 handlePressedID,
                 filterDays,
                 filteredCalendarDays,
