@@ -17,10 +17,8 @@ const StudentView = ({ navigation, route }) => {
         filterDays(userWeek, pressedID);
     }, [userWeek[pressedID].from, userWeek[pressedID].to])
 
-    console.log(userWeek)
 
     return (
-
         userInfo.status === "student"
             ?
             <View style={styles.container}>
@@ -59,6 +57,7 @@ const StudentView = ({ navigation, route }) => {
                                                 :
                                                 <></>
                                         }
+
                                     </View>
 
                                     <View style={{ width: windowWidth * 0.85 }}>

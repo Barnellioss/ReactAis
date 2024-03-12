@@ -419,8 +419,9 @@ export const ResetPassword = async (navigation, handleError, email) => {
 
 //Main Student Group timetable
 
-export const getStudentTimetable = async (dispatch) => {
+export const getStudentTimetable = async (dispatch, subjects) => {
 	try {
+
 		let res = []
 
 		getDocs(query(firebaseSubjectsTimetable)).then((data) => {
@@ -428,7 +429,12 @@ export const getStudentTimetable = async (dispatch) => {
 				res.push({...item.data()})
 			})
 
-			res = res.map((item, i) => (item = {from: item.from.seconds, to: item.to.seconds, subjectID: item.subjectID, id: item.id}))
+			res = res.map((item, i) => {
+				let subject = subjects.filter(a => a.id === item.subjectID)
+				
+				return {from: item.from.seconds, to: item.to.seconds, subjectID: item.subjectID, subject: subject.length > 0 ? subject[0].subject : "", id: item.id} 
+			})
+			
 			
 			dispatch(setStudentWeek(JSON.parse(JSON.stringify(res))));
 		})

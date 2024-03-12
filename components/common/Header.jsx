@@ -1,12 +1,15 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { signOut } from "firebase/auth";
 import { firebaseAuth } from "../../firebaseConfig";
 import { windowHeight, windowWidth } from "../../constants";
 import { default as IconAnt } from "react-native-vector-icons/AntDesign";
 import { default as IconMaterial } from "react-native-vector-icons/MaterialIcons";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Header({ navigation, status }) {
+
+
   return (
     <View style={styles.header}>
       <TouchableOpacity onPress={() => navigation.navigate("Main")}>

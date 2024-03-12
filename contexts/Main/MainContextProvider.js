@@ -41,7 +41,7 @@ const MainContextProvider = ({children}) => {
         for (let i = 0; i < subjects.length; i++) {
             let item = userWeek.filter((time) => time.subjectID === subjects[i].id)
             if (item.length === 1) {
-                timetableSubjects = timetableSubjects.concat({...item[0], title: subjects[i].title})
+                timetableSubjects = timetableSubjects.concat({...item[0]})
             }
         }
 
@@ -50,10 +50,10 @@ const MainContextProvider = ({children}) => {
             timetableSubjects.filter(a => {
                 let americanDay = new Date(a.from * 1000).getDay();
                 if (americanDay === 0 && index === 6) {
-                    filteredDays.push({ title: a.title, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000) });
+                    filteredDays.push({ subject: a.subject, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000) });
                 }
                 else if (americanDay === index + 1) {
-                    filteredDays.push({ title: a.title, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000) });
+                    filteredDays.push({ subject: a.subject, startDate: new Date(a.from * 1000), endDate: new Date(a.to * 1000) });
                 }
             });
             setFilteredDays(filteredDays);

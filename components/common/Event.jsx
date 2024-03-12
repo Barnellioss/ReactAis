@@ -15,6 +15,7 @@ const Event = ({ props, height, width, left, show, subjects }) => {
 
     const {userInfo} = useSelector((store) => store.state);
 
+
     const {handleModes, handleActiveTimetable, setTimeForPicker} = userInfo.status === "admin" && show && useContext(SubjectsContext)
     
     let subject;
@@ -29,7 +30,7 @@ const Event = ({ props, height, width, left, show, subjects }) => {
                 marginLeft: 0.15 * windowWidth,
                 zIndex: 100,
                 position: 'absolute',
-                backgroundColor: 'red',
+                backgroundColor: show ? '#CEA2FD' : "#0087FF",
                 borderRadius: 10,
                 width: windowWidth * width,
                 left: windowWidth * left,
@@ -49,10 +50,11 @@ const Event = ({ props, height, width, left, show, subjects }) => {
                 >
                 {show 
                     ? 
-                        <Text style={{ fontSize: 16, color: "#000", textAlign: 'center' }}>{
-                            subject.subject}</Text>
+                    <Text style={{ fontSize: 16, color: "#000", textAlign: 'center' }}>{
+                        subject.subject}</Text>
                     :
-                    <></>
+                    <Text style={{ fontSize: 16, color: "#000", textAlign: 'center' }}>{
+                        props.item.subject}</Text>
                 }
                 </TouchableOpacity>
             </View>
