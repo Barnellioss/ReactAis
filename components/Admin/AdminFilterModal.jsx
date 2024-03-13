@@ -7,7 +7,6 @@ import { useContext } from 'react';
 import AdminContext from '../../contexts/Admin/AdminContext';
 import { React, useSelector } from 'react-redux';
 import { FontAwesome } from '@expo/vector-icons';
-import { default as Entypo } from 'react-native-vector-icons/Entypo';
 
 
 const AdminFilterModal = ({ navigation }) => {

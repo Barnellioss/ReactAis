@@ -158,7 +158,7 @@ export const deleteTimetableItem = async (dispatch, handleUpdating, handleError,
 
 export const getGroups = (dispatch, SubjectsInfo) => {
 	let res = []
-	getDocs(query(firebaseGroupsInfo, where("year", "==", SubjectsInfo.year))).then((data) => {
+	getDocs(query(firebaseGroupsInfo, where("year", "==", +SubjectsInfo.year))).then((data) => {
 		data.docs.forEach((item) => {
 			res.push({...item.data(), id: item.id})
 		})

@@ -9,6 +9,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import Timetable from 'react-native-calendar-timetable';
 import Event from '../common/Event';
 import { useDispatch } from 'react-redux';
+import { getGroups } from '../../api/api';
 //import { Picker } from '@react-native-picker/picker';
 
 
@@ -62,7 +63,6 @@ const AdminUserModal = () => {
     }, [item]);
 
 
-
     return (isVisible ?
         <Modal
             animationType="slide"
@@ -73,7 +73,7 @@ const AdminUserModal = () => {
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <TouchableOpacity>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }} >
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 40 }} >
                             <Text style={styles.modalTitle}>Settings</Text>
                             <IconFeather name="settings" size={26} style={{ marginLeft: 15, marginTop: 5 }} />
                         </View>
@@ -229,7 +229,7 @@ const AdminUserModal = () => {
                         isUpdating ?
                             <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 5 }} />
                             :
-                            <View style={{ display: "flex", flexDirection: "row", width: 100, height: 30, justifyContent: 'space-between' }}>
+                            <View style={{ display: "flex", flexDirection: "row", width: 100, height: 30, justifyContent: 'space-between', marginTop: 10 }}>
                                 <Pressable
                                     style={{ width: 40, height: 30 }}
                                     onPress={() => {
@@ -241,14 +241,15 @@ const AdminUserModal = () => {
 
 
                                 {activeEdit ?
-                                    <Pressable
-                                        style={{ width: 40, height: 30 }}
-                                        onPress={() => {
-                                            setEdit(false);
-                                            updateStudent(dispatch, handleUpdating, handleUserPopup, item, student);
-                                        }}>
-                                        <IconFeather name="save" size={24} color="#000" style={{ textAlign: 'center', marginTop: 5, height: 30 }} />
-                                    </Pressable>
+                                    
+                                        <Pressable
+                                            style={{ width: 40, height: 30 }}
+                                            onPress={() => {
+                                                setEdit(false);
+                                                updateStudent(dispatch, handleUpdating, handleUserPopup, item, student);
+                                            }}>
+                                            <IconFeather name="save" size={24} color="#000" style={{ textAlign: 'center', marginTop: 5, height: 30 }} />
+                                        </Pressable>
                                     :
                                     <Pressable
                                         style={{ width: 40, height: 30 }}
@@ -282,7 +283,7 @@ const styles = StyleSheet.create({
     pickerWrapper: {
         display: "flex",
         flexDirection: 'row',
-        marginTop: 10
+        marginTop: 20
     },
     itemText: {
         fontSize: 14,

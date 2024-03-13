@@ -8,7 +8,7 @@ import Header from '../components/common/Header';
 import AdminContext from '../contexts/Admin/AdminContext';
 import { default as IconAnt } from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
-import { getStudents } from '../api/api';
+import { getDatesForStudents, getStudents } from '../api/api';
 
 
 
@@ -18,7 +18,7 @@ export default function AdminScreen({ navigation, route }) {
     const dispatch = useDispatch();
 
     const { userInfo, userWeek, usersDates } = useSelector((store) => store.state);
-    const { filterState, handleUserPopup, handleFilterState, visibleState,  getDatesForStudents } = useContext(AdminContext);
+    const { filterState, handleUserPopup, handleFilterState, visibleState} = useContext(AdminContext);
 
 
     useEffect(() => {
@@ -31,6 +31,7 @@ export default function AdminScreen({ navigation, route }) {
             });
         }
     }, [navigation]);
+
 
     return (
         <View style={styles.container}>
@@ -234,7 +235,8 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         borderBottomWidth: 2,
         borderBottomColor: "#fff",
-        height: 50
+        height: 40,
+        marginBottom: 10
     },
     header: {
         width: windowWidth,
@@ -355,6 +357,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: 'row',
         flexWrap: 'nowrap',
+        marginLeft: 10,
         alignItems: "flex-end"
     }
 });
