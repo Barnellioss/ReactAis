@@ -5,7 +5,8 @@ import { firebaseAuth } from "../../firebaseConfig";
 import { windowHeight, windowWidth } from "../../constants";
 import { default as IconAnt } from "react-native-vector-icons/AntDesign";
 import { default as IconMaterial } from "react-native-vector-icons/MaterialIcons";
-import { useNavigation } from "@react-navigation/native";
+
+
 
 export default function Header({ navigation, status }) {
 

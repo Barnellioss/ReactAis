@@ -41,7 +41,7 @@ const SubjectsContextProvider = ({children}) => {
 	let years = [...new Set(semestersYear.map((item) => item.year))]
 
 	//error handling
-	const [error, setError] = useState("CSS")
+	const [error, setError] = useState("")
 
 	const handleError = (error) => {
 		setError(error)

@@ -37,7 +37,7 @@ const AboutContextProvider = ({ children }) => {
     let days = userWeek.map(a => a.day);
 
     //Error handling
-    const [error, setError] = useState("CSS");
+    const [error, setError] = useState("");
 
     const handleError = (error) => {
         setError(error);

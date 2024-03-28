@@ -22,9 +22,9 @@ function ForgetPasswordScreen({ navigation }) {
                 <TextInput style={styles.input} value={email} placeholderTextColor="#000" placeholder="Email" autoCapitalize="none" clearButtonMode="always" onChangeText={(text) => setEmail(text)}></TextInput>
                 <CustomButton onPress={() => ResetPassword(navigation, handleError, email)} title='Confirm' state={"active"} type={"rounded"} />
                 {
-                    error.length > 3 ? <Text style={styles.textError}>{error}</Text>
-                        :
-                        <Text style={styles.invisibleText}>{error}</Text>
+                    <View style={{position: "absolute", bottom: 150}}>
+                     <Text style={ error.length > 0  ? styles.textError : styles.invisibleText}>{error.length > 0  ? error : "none"}</Text>
+                   </View>
                 }
 
             </ImageBackground>

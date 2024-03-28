@@ -1,5 +1,5 @@
 import { View, Text, ImageBackground, ScrollView, FlatList } from "react-native"
-import React, { useReducer } from "react"
+import React from "react"
 import { useContext } from "react"
 import SubjectsContext from "../contexts/Subjects/SubjectsContext"
 import Header from "../components/common/Header"
@@ -10,9 +10,7 @@ import { windowHeight, windowWidth } from "../constants"
 import { StyleSheet } from "react-native"
 
 const SubjectsScreen = ({ navigation, route }) => {
-	const { userInfo, semestersYear, years, SubjectsInfo, handleInfo, handleModes } = useContext(SubjectsContext)
-	const groups = useReducer((state) => state.groups);
-
+	const { userInfo, semestersYear, years, handleInfo, handleModes } = useContext(SubjectsContext)
 
 	return (
 		<View style={styles.container}>

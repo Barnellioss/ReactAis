@@ -10,7 +10,7 @@ const LoginContextProvider = ({ children, navigation }) => {
         setLoading(state);
     }
 
-    const [error, setError] = useState("CSS");
+    const [error, setError] = useState("");
 
     const handleError = (state) => {
         setError(state);

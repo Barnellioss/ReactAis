@@ -336,7 +336,6 @@ export const getDates = (dispatch, userWeek, user) => {
 const auth = firebaseAuth
 
 export const signIn = async (dispatch, handleError, handleLoading, formData) => {
-	handleError("CSS")
 	handleLoading(true)
 	try {
 		const {user} = await signInWithEmailAndPassword(auth, formData.email, formData.password)
@@ -356,7 +355,7 @@ export const signIn = async (dispatch, handleError, handleLoading, formData) => 
 }
 
 export const signUp = async (handleError, calculation, handleLoading, data) => {
-	handleError("CSS")
+
 	handleLoading(true)
 	await signOut(auth)
 
@@ -391,7 +390,7 @@ export const signUp = async (handleError, calculation, handleLoading, data) => {
 		await signOut(auth)
 
 		//Firebase doesn't provide Admin SDK, for testing only
-		signIn({email: "beautyofglassstore@gmail.com", password: "test123"})
+		signIn({email: process.env.ADMIN_EMAIL, password:  process.env.ADMIN_PASSWORD})
 	} catch (error) {
 		console.log("Registration failed " + error.message)
 		handleError(Switcher(error))
@@ -403,9 +402,9 @@ export const signUp = async (handleError, calculation, handleLoading, data) => {
 //ForgetPassword
 export const ResetPassword = async (navigation, handleError, email) => {
 	try {
-		let exist = (await fetchSignInMethodsForEmail(firebaseAuth, email)).length
+		let exist = (await fetchSignInMethodsForEmail(auth, email)).length
 		if (exist > 0) {
-			await sendPasswordResetEmail(firebaseAuth, email).then(() => {
+			await sendPasswordResetEmail(auth, email).then(() => {
 				alert("Email has been sent")
 				navigation.navigate("Login")
 			})

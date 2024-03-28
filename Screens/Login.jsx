@@ -64,9 +64,9 @@ const LoginScreen = ({ navigation }) => {
             )
         }
         {
-          error.length > 3 ? <Text style={styles.textError}>{error}</Text>
-            :
-            <Text style={styles.invisibleText}>{error}</Text>
+          <View style={{position: "absolute", bottom: 150}}>
+            <Text style={ error.length > 0  ? styles.textError : styles.invisibleText}>{error.length > 0  ? error : "none"}</Text>
+          </View>
         }
       </ImageBackground>
     </View >
