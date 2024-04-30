@@ -74,6 +74,7 @@ export const TimetableModificationPopup = () => {
 		filterDays(subjectsTimetable, 0);
 	}, []);
 
+	console.log(timeForPicker.from)
 
     return (
         <View style={styles.centeredView}>
@@ -250,7 +251,7 @@ export const TimetableModificationPopup = () => {
 											<View style={{marginTop: 15, marginBottom: 10}}>	
 												<DateTimePicker
 													testID="dateTimePicker"
-													timeZoneOffsetInMinutes={120}
+													timeZoneOffsetInMinutes={180}
 													value={timeForPicker.from}
 													mode={"time"}
 													is24Hour={true}
@@ -268,7 +269,7 @@ export const TimetableModificationPopup = () => {
 											<View style={{marginTop: 15, marginBottom: 10}}>	
 												<DateTimePicker
 												testID="dateTimePicker"
-												timeZoneOffsetInMinutes={120}
+												timeZoneOffsetInMinutes={180}
 												value={timeForPicker.to}
 												mode={"time"}
 												is24Hour={true}
