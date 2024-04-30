@@ -74,7 +74,6 @@ export const TimetableModificationPopup = () => {
 		filterDays(subjectsTimetable, 0);
 	}, []);
 
-	console.log(timeForPicker.from)
 
     return (
         <View style={styles.centeredView}>
