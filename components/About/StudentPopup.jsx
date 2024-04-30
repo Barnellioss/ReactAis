@@ -11,7 +11,6 @@ import { default as IconFeather } from 'react-native-vector-icons/Feather';
 const StudentPopup = () => {
     const { studentPopup, handleStudentPopup, plannedDates, handleSetUserWeek, userWeek, pressedID, handlePickerChange, loading } = useContext(AboutContext);
 
-
     return (
         studentPopup.isVisible ?
             <Modal
@@ -38,7 +37,7 @@ const StudentPopup = () => {
                                 <View style={styles.date__row}>
                                     <DateTimePicker
                                         testID="dateTimePicker"
-                                        timeZoneOffsetInMinutes={120}
+                                        timeZoneOffsetInMinutes={60}
                                         value={plannedDates.from}
                                         mode={"time"}
                                         is24Hour={true}
@@ -52,7 +51,7 @@ const StudentPopup = () => {
                                 <View style={styles.date__row}>
                                     <DateTimePicker
                                         testID="dateTimePicker"
-                                        timeZoneOffsetInMinutes={120}
+                                        timeZoneOffsetInMinutes={60}
                                         value={plannedDates.to}
                                         mode={"time"}
                                         is24Hour={true}

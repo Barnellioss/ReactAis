@@ -148,16 +148,16 @@ const AboutContextProvider = ({ children }) => {
 
 
     const [plannedDates, setDates] = useState({
-        from: new Date(userWeek[pressedID].from * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000)),
-        to: new Date(userWeek[pressedID].to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 120000))
+        from: new Date(userWeek[pressedID].from * 1000 - (new Date(userWeek[pressedID].from).getTimezoneOffset() * 60000)),
+        to: new Date(userWeek[pressedID].to * 1000 - (new Date(userWeek[pressedID].to).getTimezoneOffset() * 60000))
     });
 
 
     const handlePlannedDates = (pressedID) => {
         setDates((prevDatesData) => ({
             ...prevDatesData,
-            from: new Date(userWeek[pressedID].from * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000)),
-            to: new Date(userWeek[pressedID].to * 1000 + (new Date(Date.now()).getTimezoneOffset() * 60000))
+            from: new Date(userWeek[pressedID].from * 1000),
+            to: new Date(userWeek[pressedID].to * 1000)
         }));
     }
 
@@ -176,8 +176,8 @@ const AboutContextProvider = ({ children }) => {
     const handleSetUserWeek = async (pressedID) => {
 
         handleLoading(true);
-        let dateFrom = new Date(plannedDates.from.getTime());
-        let dateTo = new Date(plannedDates.to.getTime());
+        let dateFrom = new Date(plannedDates.from.getTime() + plannedDates.from.getTimezoneOffset() * 60000);
+        let dateTo = new Date(plannedDates.to.getTime() + plannedDates.from.getTimezoneOffset() * 60000);
 
 
         let fromFirebase = new Date(weekStart + ((pressedID) * dayInSeconds) + (dateFrom.getHours() * hourInSeconds) + (dateFrom.getMinutes() * 60000)).getTime();
